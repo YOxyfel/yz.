@@ -20,7 +20,7 @@ export function Hero() {
     <section
       id="top"
       data-station-tone="bridge"
-      className="station-section station-section--bridge relative flex min-h-screen scroll-mt-[5.5rem] flex-col items-center justify-center overflow-hidden !py-0 px-6"
+      className="station-section station-section--bridge relative flex min-h-screen scroll-mt-[5.5rem] flex-col items-center justify-center overflow-x-hidden !py-0 px-6"
     >
       <div className="station-sector-backdrop" aria-hidden />
       <div className="station-sector-rail" aria-hidden />

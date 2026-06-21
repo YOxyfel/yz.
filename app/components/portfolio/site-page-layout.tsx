@@ -23,7 +23,7 @@ export function SitePageLayout({
   const back = backHref ?? home
 
   return (
-    <StationSection tone="page" className="!pt-28">
+    <StationSection tone="page" className="!pt-10 sm:!pt-12">
       {breadcrumbs ? <JsonLd data={buildBreadcrumbSchema(locale, breadcrumbs)} /> : null}
       <div className="mx-auto max-w-4xl">
         {breadcrumbs ? (

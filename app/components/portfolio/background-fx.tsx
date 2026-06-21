@@ -63,7 +63,6 @@ export function BackgroundFx() {
     showScreenFx &&
     (skyLabOpen || mobileSkyLab || (showHeavyFx && !fxLite))
   const constellationLite = skyLabLite || mobileSkyLab
-  const animateGrid = showHeavyFx && performanceTier === 'high' && !mobileSkyLab && !skyLabOpen
 
   useEffect(() => {
     document.documentElement.dataset.bgFxActive = showHeavyFx ? 'on' : 'off'
@@ -89,18 +88,6 @@ export function BackgroundFx() {
           <div className="bg-fx-blur-blob animate-breathe-slow absolute -right-40 top-1/2 h-[40rem] w-[40rem] rounded-full bg-violet/[0.04] blur-3xl max-md:hidden" />
         </>
       ) : null}
-
-      <div
-        className={`bg-grid absolute inset-0 ${
-          mobileSkyLab
-            ? 'opacity-0'
-            : cosmicLite
-              ? 'opacity-[0.14]'
-              : animateGrid
-                ? 'animate-grid-pan opacity-[0.28]'
-                : 'opacity-[0.2]'
-        }`}
-      />
 
       {showStarship ? (
         <StarshipTraffic

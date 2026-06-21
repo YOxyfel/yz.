@@ -85,6 +85,9 @@
   --station-screen: oklch(0.09 0.02 262);
   --station-glow: oklch(0.78 0.14 200 / 0.35);
 
+  --station-grid-size: 56px;
+  --station-grid-line: oklch(1 0 0 / 0.028);
+
   --chart-1: oklch(0.84 0.16 200);
   --chart-2: oklch(0.55 0.24 295);
   --chart-3: oklch(0.7 0.14 220);
@@ -196,14 +199,79 @@
 
   .bg-grid {
     background-image:
-      linear-gradient(to right, oklch(1 0 0 / 0.06) 1px, transparent 1px),
-      linear-gradient(to bottom, oklch(1 0 0 / 0.06) 1px, transparent 1px);
-    background-size: 56px 56px;
+      linear-gradient(to right, var(--station-grid-line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--station-grid-line) 1px, transparent 1px);
+    background-size: var(--station-grid-size) var(--station-grid-size);
+    background-position: 0 0;
   }
 
   /* ── Ship station console ── */
   .station-deck {
     position: relative;
+  }
+
+  .station-deck::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.42;
+    background-image:
+      linear-gradient(to right, var(--station-grid-line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--station-grid-line) 1px, transparent 1px);
+    background-size: var(--station-grid-size) var(--station-grid-size);
+    background-attachment: fixed;
+    mask-image: linear-gradient(
+      180deg,
+      black 0%,
+      black calc(100% - 12rem),
+      transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+      180deg,
+      black 0%,
+      black calc(100% - 12rem),
+      transparent 100%
+    );
+  }
+
+  /* Continuous nebula field — fixed to viewport so all sectors feel like one cloud */
+  .station-deck::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.92;
+    background-attachment: fixed;
+    background-image:
+      radial-gradient(ellipse 58% 42% at 8% 6%, oklch(0.55 0.1 200 / 0.16), transparent 66%),
+      radial-gradient(ellipse 36% 54% at 92% 11%, oklch(0.58 0.12 290 / 0.12), transparent 62%),
+      radial-gradient(ellipse 64% 38% at 78% 31%, oklch(0.72 0.14 55 / 0.13), transparent 64%),
+      radial-gradient(ellipse 44% 50% at 14% 44%, oklch(0.62 0.12 350 / 0.11), transparent 58%),
+      radial-gradient(ellipse 52% 46% at 96% 49%, oklch(0.65 0.16 35 / 0.12), transparent 61%),
+      radial-gradient(ellipse 48% 40% at 32% 63%, oklch(0.62 0.1 180 / 0.1), transparent 60%),
+      radial-gradient(ellipse 56% 44% at 71% 74%, oklch(0.58 0.12 290 / 0.14), transparent 63%),
+      radial-gradient(ellipse 40% 52% at 11% 86%, oklch(0.55 0.1 230 / 0.1), transparent 57%),
+      radial-gradient(ellipse 46% 36% at 54% 92%, oklch(0.58 0.12 290 / 0.11), transparent 59%);
+    mask-image: linear-gradient(
+      180deg,
+      black 0%,
+      black calc(100% - 14rem),
+      transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+      180deg,
+      black 0%,
+      black calc(100% - 14rem),
+      transparent 100%
+    );
+  }
+
+  .station-deck > * {
+    position: relative;
+    z-index: 1;
   }
 
   .station-section {
@@ -229,37 +297,124 @@
   .station-sector-backdrop {
     pointer-events: none;
     position: absolute;
-    inset: 0;
+    inset: clamp(-4.5rem, -9vh, -7.5rem) 0;
     z-index: 0;
     opacity: 1;
+    mask-image: linear-gradient(
+      180deg,
+      transparent 0%,
+      rgb(0 0 0 / 0.22) 5%,
+      black 12%,
+      black 88%,
+      rgb(0 0 0 / 0.22) 95%,
+      transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+      180deg,
+      transparent 0%,
+      rgb(0 0 0 / 0.22) 5%,
+      black 12%,
+      black 88%,
+      rgb(0 0 0 / 0.22) 95%,
+      transparent 100%
+    );
+  }
+
+  .station-section[class*='station-section--'] .station-sector-backdrop::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-attachment: scroll;
+    mask-image: linear-gradient(
+      180deg,
+      transparent 0%,
+      rgb(0 0 0 / 0.22) 5%,
+      black 12%,
+      black 88%,
+      rgb(0 0 0 / 0.22) 95%,
+      transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+      180deg,
+      transparent 0%,
+      rgb(0 0 0 / 0.22) 5%,
+      black 12%,
+      black 88%,
+      rgb(0 0 0 / 0.22) 95%,
+      transparent 100%
+    );
   }
 
   .station-sector-rail {
     pointer-events: none;
     position: absolute;
-    top: 5.5rem;
-    bottom: 3rem;
-    left: max(0.75rem, env(safe-area-inset-left, 0px));
-    width: 2px;
+    top: 4rem;
+    bottom: 2.5rem;
+    left: max(0.5rem, env(safe-area-inset-left, 0px));
+    width: 3px;
     border-radius: 999px;
-    opacity: 0.55;
+    opacity: 0.45;
+    mask-image: linear-gradient(
+      180deg,
+      transparent 0%,
+      black 12%,
+      black 88%,
+      transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+      180deg,
+      transparent 0%,
+      black 12%,
+      black 88%,
+      transparent 100%
+    );
   }
 
   @media (min-width: 1024px) {
     .station-sector-rail {
       left: calc((100% - 72rem) / 2 - 1.25rem);
     }
+
+    .station-section--stack .station-sector-rail,
+    .station-section--signal .station-sector-rail {
+      left: auto;
+      right: calc((100% - 72rem) / 2 - 1.25rem);
+    }
   }
+
+  /* ── Sector nebula clusters (asymmetric — each section unique) ── */
 
   .station-section--bridge .station-sector-backdrop {
     background:
-      radial-gradient(ellipse 80% 55% at 50% 20%, oklch(0.55 0.1 200 / 0.14), transparent 70%),
-      linear-gradient(180deg, oklch(0.12 0.02 270 / 0.35), transparent 55%);
+      radial-gradient(ellipse 78% 62% at 14% 18%, oklch(0.55 0.1 200 / 0.26), transparent 56%),
+      radial-gradient(ellipse 34% 48% at 82% 32%, oklch(0.58 0.12 290 / 0.08), transparent 54%),
+      radial-gradient(ellipse 52% 38% at 58% 88%, oklch(0.12 0.02 270 / 0.3), transparent 58%);
+  }
+
+  .station-section--bridge .station-sector-backdrop::after {
+    opacity: 0.85;
+    background-image:
+      radial-gradient(circle at 22% 34%, oklch(0.78 0.14 200 / 0.35) 0 1px, transparent 2.5px),
+      radial-gradient(circle at 67% 21%, oklch(0.55 0.1 200 / 0.25) 0 1px, transparent 2px),
+      radial-gradient(circle at 48% 72%, oklch(0.78 0.14 200 / 0.2) 0 1.5px, transparent 3px),
+      radial-gradient(circle at 91% 58%, oklch(0.58 0.12 290 / 0.18) 0 1px, transparent 2px),
+      radial-gradient(circle at 31% 91%, oklch(0.55 0.1 200 / 0.22) 0 1px, transparent 2px);
   }
 
   .station-section--bridge .station-sector-rail {
-    background: linear-gradient(180deg, transparent, var(--cyan), transparent);
-    box-shadow: 0 0 18px oklch(0.55 0.1 200 / 0.45);
+    top: 2rem;
+    bottom: 18%;
+    left: max(0.5rem, env(safe-area-inset-left, 0px));
+    opacity: 0.55;
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      oklch(0.55 0.1 200 / 0.35) 28%,
+      var(--cyan) 62%,
+      transparent 100%
+    );
+    box-shadow: 0 0 24px oklch(0.55 0.1 200 / 0.4);
   }
 
   .station-section--nav {
@@ -269,27 +424,65 @@
 
   .station-section--nav .station-sector-backdrop {
     background:
-      linear-gradient(135deg, oklch(0.55 0.08 200 / 0.07) 0%, transparent 45%),
-      repeating-linear-gradient(
-        -12deg,
-        oklch(1 0 0 / 0.015) 0 1px,
-        transparent 1px 28px
-      );
+      radial-gradient(ellipse 55% 70% at 88% 12%, oklch(0.55 0.08 200 / 0.18), transparent 58%),
+      radial-gradient(ellipse 42% 36% at 6% 58%, oklch(0.55 0.1 200 / 0.14), transparent 52%),
+      radial-gradient(ellipse 68% 44% at 38% 96%, oklch(0.72 0.14 55 / 0.06), transparent 55%);
+  }
+
+  .station-section--nav .station-sector-backdrop::after {
+    opacity: 0.65;
+    background-image:
+      radial-gradient(circle at 74% 18%, oklch(0.78 0.14 200 / 0.28) 0 1px, transparent 2px),
+      radial-gradient(circle at 12% 47%, oklch(0.55 0.1 200 / 0.22) 0 1.5px, transparent 3px),
+      radial-gradient(circle at 56% 68%, oklch(0.55 0.08 200 / 0.18) 0 1px, transparent 2px),
+      radial-gradient(circle at 93% 81%, oklch(0.72 0.14 55 / 0.12) 0 1px, transparent 2px);
   }
 
   .station-section--nav .station-sector-rail {
-    background: linear-gradient(180deg, transparent, oklch(0.55 0.1 200 / 0.85), transparent);
+    top: 35%;
+    bottom: 8%;
+    left: max(1.25rem, env(safe-area-inset-left, 0px));
+    opacity: 0.22;
+    width: 2px;
+    background: linear-gradient(
+      180deg,
+      transparent,
+      oklch(0.55 0.1 200 / 0.55) 45%,
+      transparent
+    );
+    box-shadow: none;
   }
 
   .station-section--engine .station-sector-backdrop {
     background:
-      radial-gradient(ellipse 70% 50% at 15% 40%, oklch(0.72 0.14 55 / 0.11), transparent 65%),
-      radial-gradient(ellipse 50% 40% at 90% 70%, oklch(0.55 0.1 200 / 0.06), transparent 60%);
+      radial-gradient(ellipse 62% 54% at 22% 72%, oklch(0.72 0.14 55 / 0.22), transparent 57%),
+      radial-gradient(ellipse 38% 62% at 91% 28%, oklch(0.72 0.14 55 / 0.12), transparent 50%),
+      radial-gradient(ellipse 28% 34% at 64% 8%, oklch(0.55 0.1 200 / 0.07), transparent 48%);
+  }
+
+  .station-section--engine .station-sector-backdrop::after {
+    opacity: 0.8;
+    background-image:
+      radial-gradient(circle at 18% 63%, oklch(0.72 0.14 55 / 0.32) 0 1.5px, transparent 3px),
+      radial-gradient(circle at 39% 28%, oklch(0.72 0.14 55 / 0.22) 0 1px, transparent 2px),
+      radial-gradient(circle at 84% 44%, oklch(0.72 0.14 55 / 0.25) 0 1px, transparent 2.5px),
+      radial-gradient(circle at 71% 86%, oklch(0.55 0.1 200 / 0.14) 0 1px, transparent 2px),
+      radial-gradient(circle at 52% 51%, oklch(0.72 0.14 55 / 0.18) 0 2px, transparent 4px),
+      radial-gradient(circle at 8% 19%, oklch(0.72 0.14 55 / 0.2) 0 1px, transparent 2px);
   }
 
   .station-section--engine .station-sector-rail {
-    background: linear-gradient(180deg, transparent, oklch(0.72 0.14 55 / 0.9), transparent);
-    box-shadow: 0 0 16px oklch(0.72 0.14 55 / 0.35);
+    top: 8%;
+    bottom: 28%;
+    opacity: 0.48;
+    background: linear-gradient(
+      180deg,
+      transparent 8%,
+      oklch(0.72 0.14 55 / 0.75) 42%,
+      oklch(0.72 0.14 55 / 0.35) 78%,
+      transparent
+    );
+    box-shadow: 0 0 22px oklch(0.72 0.14 55 / 0.35);
   }
 
   .station-section--engine .station-sector-heading {
@@ -298,22 +491,55 @@
 
   .station-section--signal .station-sector-backdrop {
     background:
-      radial-gradient(circle at 85% 25%, oklch(0.58 0.12 290 / 0.12), transparent 45%),
-      linear-gradient(180deg, transparent, oklch(0.58 0.12 290 / 0.04) 50%, transparent);
+      radial-gradient(ellipse 48% 72% at 94% 38%, oklch(0.58 0.12 290 / 0.2), transparent 55%),
+      radial-gradient(ellipse 58% 42% at 8% 22%, oklch(0.62 0.12 350 / 0.08), transparent 52%),
+      radial-gradient(ellipse 36% 58% at 42% 92%, oklch(0.58 0.12 290 / 0.11), transparent 54%);
+  }
+
+  .station-section--signal .station-sector-backdrop::after {
+    opacity: 0.75;
+    background-image:
+      radial-gradient(circle at 88% 31%, oklch(0.58 0.12 290 / 0.35) 0 1.5px, transparent 3px),
+      radial-gradient(circle at 76% 67%, oklch(0.55 0.24 295 / 0.28) 0 1px, transparent 2px),
+      radial-gradient(circle at 14% 14%, oklch(0.62 0.12 350 / 0.16) 0 1px, transparent 2px),
+      radial-gradient(circle at 33% 78%, oklch(0.58 0.12 290 / 0.22) 0 1px, transparent 2.5px),
+      radial-gradient(circle at 61% 46%, oklch(0.58 0.12 290 / 0.15) 0 2px, transparent 3.5px);
   }
 
   .station-section--signal .station-sector-rail {
-    background: linear-gradient(180deg, transparent, var(--violet), transparent);
+    top: 14%;
+    bottom: 12%;
+    left: auto;
+    right: max(0.5rem, env(safe-area-inset-right, 0px));
+    opacity: 0.4;
+    background: linear-gradient(
+      180deg,
+      transparent,
+      var(--violet) 38%,
+      oklch(0.58 0.12 290 / 0.4) 72%,
+      transparent
+    );
+    box-shadow: -4px 0 24px oklch(0.58 0.12 290 / 0.28);
   }
 
   .station-section--partner .station-sector-backdrop {
     background:
-      radial-gradient(ellipse 60% 45% at 50% 100%, oklch(0.62 0.12 350 / 0.1), transparent 70%),
-      linear-gradient(0deg, oklch(0.62 0.12 350 / 0.03), transparent 40%);
+      radial-gradient(ellipse 70% 48% at 12% 84%, oklch(0.62 0.12 350 / 0.19), transparent 56%),
+      radial-gradient(ellipse 44% 66% at 78% 16%, oklch(0.62 0.12 350 / 0.13), transparent 53%),
+      radial-gradient(ellipse 32% 28% at 52% 44%, oklch(0.58 0.12 290 / 0.06), transparent 46%);
+  }
+
+  .station-section--partner .station-sector-backdrop::after {
+    opacity: 0.7;
+    background-image:
+      radial-gradient(circle at 16% 79%, oklch(0.62 0.12 350 / 0.3) 0 1.5px, transparent 3px),
+      radial-gradient(circle at 69% 24%, oklch(0.62 0.12 350 / 0.22) 0 1px, transparent 2px),
+      radial-gradient(circle at 44% 58%, oklch(0.62 0.12 350 / 0.18) 0 1px, transparent 2px),
+      radial-gradient(circle at 92% 71%, oklch(0.58 0.12 290 / 0.12) 0 1px, transparent 2px);
   }
 
   .station-section--partner .station-sector-rail {
-    background: linear-gradient(180deg, transparent, oklch(0.62 0.12 350 / 0.85), transparent);
+    display: none;
   }
 
   .station-section--arsenal {
@@ -322,55 +548,153 @@
 
   .station-section--arsenal .station-sector-backdrop {
     background:
-      radial-gradient(ellipse 90% 60% at 50% 0%, oklch(0.65 0.16 35 / 0.1), transparent 60%),
-      repeating-linear-gradient(
-        90deg,
-        oklch(1 0 0 / 0.02) 0 1px,
-        transparent 1px 48px
-      );
-    mask-image: linear-gradient(180deg, black, black 85%, transparent);
+      radial-gradient(ellipse 52% 78% at 6% 34%, oklch(0.65 0.16 35 / 0.2), transparent 58%),
+      radial-gradient(ellipse 46% 40% at 96% 62%, oklch(0.72 0.14 55 / 0.07), transparent 50%),
+      radial-gradient(ellipse 64% 36% at 48% 6%, oklch(0.65 0.16 35 / 0.11), transparent 52%);
+  }
+
+  .station-section--arsenal .station-sector-backdrop::after {
+    opacity: 0.82;
+    background-image:
+      radial-gradient(circle at 9% 41%, oklch(0.65 0.16 35 / 0.32) 0 1.5px, transparent 3px),
+      radial-gradient(circle at 28% 12%, oklch(0.65 0.16 35 / 0.2) 0 1px, transparent 2px),
+      radial-gradient(circle at 87% 55%, oklch(0.65 0.16 35 / 0.24) 0 1px, transparent 2.5px),
+      radial-gradient(circle at 63% 78%, oklch(0.72 0.14 55 / 0.14) 0 1px, transparent 2px),
+      radial-gradient(circle at 41% 63%, oklch(0.65 0.16 35 / 0.16) 0 2px, transparent 3.5px);
   }
 
   .station-section--arsenal .station-sector-rail {
-    background: linear-gradient(180deg, transparent, oklch(0.65 0.16 35 / 0.95), transparent);
+    top: 22%;
+    bottom: 5%;
+    opacity: 0.32;
+    width: 2px;
+    background: linear-gradient(
+      180deg,
+      transparent 15%,
+      oklch(0.65 0.16 35 / 0.7) 55%,
+      transparent
+    );
+    box-shadow: 0 0 16px oklch(0.65 0.16 35 / 0.25);
   }
 
   .station-section--stack .station-sector-backdrop {
     background:
-      radial-gradient(ellipse 55% 45% at 20% 80%, oklch(0.62 0.1 180 / 0.1), transparent 60%),
-      linear-gradient(180deg, transparent, oklch(0.62 0.1 180 / 0.05));
+      radial-gradient(ellipse 58% 50% at 72% 78%, oklch(0.62 0.1 180 / 0.18), transparent 56%),
+      radial-gradient(ellipse 40% 68% at 18% 38%, oklch(0.62 0.1 180 / 0.12), transparent 54%),
+      radial-gradient(ellipse 26% 32% at 91% 14%, oklch(0.55 0.1 230 / 0.07), transparent 44%);
+  }
+
+  .station-section--stack .station-sector-backdrop::after {
+    opacity: 0.72;
+    background-image:
+      radial-gradient(circle at 76% 74%, oklch(0.62 0.1 180 / 0.28) 0 1.5px, transparent 3px),
+      radial-gradient(circle at 21% 35%, oklch(0.62 0.1 180 / 0.22) 0 1px, transparent 2px),
+      radial-gradient(circle at 58% 19%, oklch(0.55 0.1 230 / 0.14) 0 1px, transparent 2px),
+      radial-gradient(circle at 38% 88%, oklch(0.62 0.1 180 / 0.18) 0 1px, transparent 2.5px);
   }
 
   .station-section--stack .station-sector-rail {
-    background: linear-gradient(180deg, transparent, oklch(0.62 0.1 180 / 0.85), transparent);
+    top: 6%;
+    bottom: 20%;
+    left: auto;
+    right: max(0.5rem, env(safe-area-inset-right, 0px));
+    opacity: 0.38;
+    background: linear-gradient(
+      180deg,
+      transparent,
+      oklch(0.62 0.1 180 / 0.65) 35%,
+      transparent 90%
+    );
+    box-shadow: -3px 0 20px oklch(0.62 0.1 180 / 0.22);
   }
 
   .station-section--faq .station-sector-backdrop {
     background:
-      radial-gradient(circle at 10% 20%, oklch(0.55 0.1 230 / 0.1), transparent 42%),
-      linear-gradient(180deg, oklch(0.55 0.1 230 / 0.03), transparent 55%);
+      radial-gradient(ellipse 66% 44% at 28% 14%, oklch(0.55 0.1 230 / 0.16), transparent 55%),
+      radial-gradient(ellipse 50% 62% at 86% 68%, oklch(0.58 0.12 290 / 0.1), transparent 52%),
+      radial-gradient(ellipse 38% 48% at 4% 88%, oklch(0.55 0.1 230 / 0.13), transparent 50%);
+  }
+
+  .station-section--faq .station-sector-backdrop::after {
+    opacity: 0.68;
+    background-image:
+      radial-gradient(circle at 31% 19%, oklch(0.55 0.1 230 / 0.26) 0 1px, transparent 2px),
+      radial-gradient(circle at 79% 62%, oklch(0.58 0.12 290 / 0.18) 0 1.5px, transparent 3px),
+      radial-gradient(circle at 11% 72%, oklch(0.55 0.1 230 / 0.22) 0 1px, transparent 2.5px),
+      radial-gradient(circle at 54% 42%, oklch(0.55 0.1 230 / 0.14) 0 2px, transparent 3px);
   }
 
   .station-section--faq .station-sector-rail {
-    background: linear-gradient(180deg, transparent, oklch(0.55 0.1 230 / 0.9), transparent);
+    top: 42%;
+    bottom: 6%;
+    opacity: 0.28;
+    width: 2px;
+    background: linear-gradient(
+      180deg,
+      transparent,
+      oklch(0.55 0.1 230 / 0.6) 50%,
+      transparent
+    );
+    box-shadow: none;
   }
 
   .station-section--comms .station-sector-backdrop {
     background:
-      radial-gradient(ellipse 80% 55% at 50% 100%, oklch(0.58 0.12 290 / 0.14), transparent 65%),
-      linear-gradient(0deg, oklch(0.58 0.12 290 / 0.06), transparent 45%);
+      radial-gradient(ellipse 74% 52% at 52% 108%, oklch(0.58 0.12 290 / 0.22), transparent 58%),
+      radial-gradient(ellipse 42% 58% at 8% 42%, oklch(0.58 0.12 290 / 0.11), transparent 52%),
+      radial-gradient(ellipse 34% 40% at 94% 18%, oklch(0.55 0.1 230 / 0.08), transparent 48%);
+  }
+
+  .station-section--comms .station-sector-backdrop::after {
+    opacity: 0.78;
+    background-image:
+      radial-gradient(circle at 48% 94%, oklch(0.58 0.12 290 / 0.32) 0 1.5px, transparent 3px),
+      radial-gradient(circle at 14% 38%, oklch(0.58 0.12 290 / 0.2) 0 1px, transparent 2px),
+      radial-gradient(circle at 82% 22%, oklch(0.55 0.1 230 / 0.16) 0 1px, transparent 2px),
+      radial-gradient(circle at 67% 58%, oklch(0.58 0.12 290 / 0.24) 0 1px, transparent 2.5px),
+      radial-gradient(circle at 26% 68%, oklch(0.58 0.12 290 / 0.18) 0 2px, transparent 3.5px);
   }
 
   .station-section--comms .station-sector-rail {
-    background: linear-gradient(180deg, transparent, oklch(0.58 0.12 290 / 0.95), transparent);
+    top: 10%;
+    bottom: 4%;
+    opacity: 0.52;
+    background: linear-gradient(
+      180deg,
+      transparent 5%,
+      oklch(0.58 0.12 290 / 0.5) 30%,
+      var(--violet) 58%,
+      oklch(0.58 0.12 290 / 0.35) 85%,
+      transparent
+    );
+    box-shadow: 0 0 26px oklch(0.58 0.12 290 / 0.38);
   }
 
   .station-section--page .station-sector-backdrop {
-    background: linear-gradient(180deg, oklch(0.55 0.1 200 / 0.04), transparent 35%);
+    background:
+      radial-gradient(ellipse 54% 46% at 76% 8%, oklch(0.55 0.1 200 / 0.1), transparent 52%),
+      radial-gradient(ellipse 38% 52% at 9% 62%, oklch(0.58 0.12 290 / 0.06), transparent 48%);
+  }
+
+  .station-section--page .station-sector-backdrop::after {
+    opacity: 0.45;
+    background-image:
+      radial-gradient(circle at 71% 14%, oklch(0.55 0.1 200 / 0.18) 0 1px, transparent 2px),
+      radial-gradient(circle at 18% 55%, oklch(0.55 0.1 200 / 0.12) 0 1px, transparent 2px);
   }
 
   .station-section--page .station-sector-rail {
-    background: linear-gradient(180deg, transparent, oklch(0.55 0.1 200 / 0.5), transparent);
+    top: 18%;
+    bottom: 40%;
+    opacity: 0.18;
+    width: 2px;
+    background: linear-gradient(
+      180deg,
+      transparent,
+      oklch(0.55 0.1 200 / 0.35) 50%,
+      transparent
+    );
+    box-shadow: none;
   }
 
   .station-sector-heading[data-section-tone='engine'] {
@@ -444,7 +768,18 @@
 
   .site-footer {
     position: relative;
-    border-top: 1px solid oklch(1 0 0 / 0.08);
+    z-index: 2;
+    isolation: isolate;
+    border-top: 1px solid oklch(0.58 0.12 290 / 0.45);
+    background: linear-gradient(
+      180deg,
+      oklch(0.15 0.024 285),
+      oklch(0.1 0.018 272) 55%,
+      oklch(0.09 0.016 270)
+    );
+    box-shadow:
+      inset 0 1px 0 oklch(0.58 0.12 290 / 0.14),
+      0 -28px 56px -16px oklch(0.58 0.12 290 / 0.22);
     padding: 3rem 1.5rem 2rem;
     scroll-margin-top: 5.5rem;
   }
@@ -497,7 +832,7 @@
     gap: 0.5rem;
     margin-top: 2rem;
     padding-top: 1.5rem;
-    border-top: 1px solid oklch(1 0 0 / 0.06);
+    border-top: 1px solid oklch(0.58 0.12 290 / 0.2);
     margin-inline: auto;
     max-width: 72rem;
   }
@@ -2507,7 +2842,9 @@ html[data-mobile-sky-lab='on'] .corner-tools-dock:not(.corner-tools-dock-minimal
 html[data-mobile-sky-lab='on'] .site-nav-header,
 html[data-mobile-sky-lab='on'] .feature-hint-card,
 html[data-mobile-sky-lab='on'] .sky-lab-mobile-status,
-html[data-mobile-sky-lab='on'] .bg-grid {
+html[data-mobile-sky-lab='on'] .bg-grid,
+html[data-mobile-sky-lab='on'] .station-deck::before,
+html[data-mobile-sky-lab='on'] .station-deck::after {
   display: none !important;
   visibility: hidden !important;
   pointer-events: none !important;
@@ -2565,7 +2902,37 @@ html[data-mobile-sky-lab='on'] .constellation-label {
 }
 
 .site-nav-header {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 100;
   isolation: isolate;
+  display: flex;
+  justify-content: center;
+  overflow-x: clip;
+  padding-inline: 1rem;
+  padding-top: max(0.75rem, env(safe-area-inset-top, 0px));
+  pointer-events: none;
+}
+
+.site-nav-header .station-nav-bar {
+  pointer-events: auto;
+}
+
+.site-nav-spacer {
+  height: calc(3.5rem + max(0.75rem, env(safe-area-inset-top, 0px)));
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+.site-nav-header-scrolled .station-nav-bar {
+  border-color: oklch(0.45 0.06 248 / 0.65);
+  box-shadow:
+    inset 0 1px 0 oklch(0.5 0.04 245 / 0.3),
+    0 16px 40px -14px oklch(0 0 0 / 0.75),
+    0 0 0 1px oklch(0 0 0 / 0.35),
+    0 0 32px -8px oklch(0.55 0.1 200 / 0.25);
 }
 
 html[data-narrow='on'] .site-nav-desktop-links,

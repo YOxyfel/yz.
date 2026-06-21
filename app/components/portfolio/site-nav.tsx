@@ -183,59 +183,68 @@ export function SiteNav() {
         )
       : null
 
+  const navBar = (
+    <nav
+      className={`station-nav-bar flex w-full min-w-0 max-w-4xl items-center justify-between gap-2 px-3 py-2.5 transition-all duration-300 sm:px-5 ${
+        scrolled ? 'opacity-100' : 'opacity-95'
+      }`}
+    >
+      <a
+        href={home}
+        className="flex shrink-0 items-center gap-2 font-heading text-sm font-bold tracking-widest"
+      >
+        <StationLed active pulse />
+        YZ<span className="text-cyan">.</span>
+      </a>
+
+      <ul className="site-nav-desktop-links hidden min-w-0 xl:flex items-center gap-0.5">
+        {allLinks.map((link) => (
+          <li key={link.key}>
+            <a href={navHref(link.href)} className="station-nav-link">
+              {t(link.key)}
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <div className="flex shrink-0 items-center gap-2">
+        <StationButton
+          href={navHref('#contact')}
+          variant="ghost"
+          className="site-nav-desktop-hire hidden !px-3.5 !py-1.5 !text-[10px] !uppercase !tracking-[0.18em] text-cyan xl:inline-flex"
+        >
+          {t('hireMe')}
+        </StationButton>
+
+        <button
+          type="button"
+          className="site-nav-mobile-trigger station-button station-button-secondary !h-10 !w-10 !p-0 xl:hidden"
+          aria-label={menuOpen ? t('menuClose') : t('menuOpen')}
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen((open) => !open)}
+        >
+          {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+        </button>
+      </div>
+    </nav>
+  )
+
+  const navHeader = (
+    <motion.header
+      data-portfolio-chrome
+      className={`site-nav-header ${scrolled ? 'site-nav-header-scrolled' : ''}`}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5, ease: 'easeOut' }}
+    >
+      {navBar}
+    </motion.header>
+  )
+
   return (
     <>
-      <motion.header
-        data-portfolio-chrome
-        className="site-nav-header sticky top-0 z-[60] flex justify-center overflow-x-clip px-4 pt-[max(0.75rem,env(safe-area-inset-top,0px))]"
-        initial={{ y: -80, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6, ease: 'easeOut' }}
-      >
-        <nav
-          className={`station-nav-bar flex w-full min-w-0 max-w-4xl items-center justify-between gap-2 px-3 py-2.5 transition-all duration-300 sm:px-5 ${
-            scrolled ? 'opacity-100' : 'opacity-95'
-          }`}
-        >
-          <a
-            href={home}
-            className="flex shrink-0 items-center gap-2 font-heading text-sm font-bold tracking-widest"
-          >
-            <StationLed active pulse />
-            YZ<span className="text-cyan">.</span>
-          </a>
-
-          <ul className="site-nav-desktop-links hidden min-w-0 xl:flex items-center gap-0.5">
-            {allLinks.map((link) => (
-              <li key={link.key}>
-                <a href={navHref(link.href)} className="station-nav-link">
-                  {t(link.key)}
-                </a>
-              </li>
-            ))}
-          </ul>
-
-          <div className="flex shrink-0 items-center gap-2">
-            <StationButton
-              href={navHref('#contact')}
-              variant="ghost"
-              className="site-nav-desktop-hire hidden !px-3.5 !py-1.5 !text-[10px] !uppercase !tracking-[0.18em] text-cyan xl:inline-flex"
-            >
-              {t('hireMe')}
-            </StationButton>
-
-            <button
-              type="button"
-              className="site-nav-mobile-trigger station-button station-button-secondary !h-10 !w-10 !p-0 xl:hidden"
-              aria-label={menuOpen ? t('menuClose') : t('menuOpen')}
-              aria-expanded={menuOpen}
-              onClick={() => setMenuOpen((open) => !open)}
-            >
-              {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-            </button>
-          </div>
-        </nav>
-      </motion.header>
+      {mounted ? createPortal(navHeader, document.body) : null}
+      <div className="site-nav-spacer" aria-hidden />
       {mobileMenu}
     </>
   )
