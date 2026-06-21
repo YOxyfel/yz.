@@ -1,0 +1,25 @@
+---
+description: Restore the portfolio to the saved V1.0 baseline when the user asks to revert
+alwaysApply: true
+---
+
+# Revert to V1.0
+
+The portfolio baseline is saved as git tag **`v1.0`** (commit before optimization/polish work).
+
+See `RELEASES.md` for deployment URLs and details.
+
+## When the user says "revert to V1.0" (or similar)
+
+1. Confirm they want to discard optimization changes since V1.0.
+2. Restore tracked files from the tag:
+   - `git checkout v1.0 -- .`
+   - `git clean -fd -e .env.local -e node_modules -e .next -e .vercel`
+3. Run `npm run build` and fix only breakages caused by the restore.
+4. Offer to redeploy with `npx vercel --prod` if they want production restored.
+
+For a full hard reset (exact tree, loses all commits after V1.0):
+
+- `git reset --hard v1.0`
+
+Do not delete the `v1.0` tag. Future baselines should use new tags (`v1.1`, `v2.0`, etc.).
