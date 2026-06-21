@@ -2284,7 +2284,8 @@ html[data-tablet='on'] .site-nav-mobile-trigger {
   width: min(100%, 22rem);
   max-height: min(32rem, calc(100dvh - 2rem));
   flex-direction: column;
-  overflow: hidden;
+  overflow: auto;
+  pointer-events: auto;
   border-radius: 1rem;
   border: 1px solid oklch(0.45 0.05 248 / 0.55);
   background: linear-gradient(

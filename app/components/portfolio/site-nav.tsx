@@ -2,10 +2,10 @@
 
 import { motion } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
-import { useEffect, useState, type MouseEvent } from 'react'
+import { useEffect, useState, useSyncExternalStore, type MouseEvent } from 'react'
 import { createPortal } from 'react-dom'
 import { useTranslations } from 'next-intl'
-import { useDeviceProfile } from './device-profile'
+import { TABLET_MAX_PX } from './breakpoints'
 import { isBlockScrollPair, requestBlockNavScroll } from './block-scroll-nav'
 import { StationButton, StationLed } from './station-console'
 
@@ -24,12 +24,29 @@ function onNavAnchorClick(event: MouseEvent<HTMLAnchorElement>, href: string) {
   requestBlockNavScroll(href)
 }
 
+function subscribeCompactNav(onStoreChange: () => void) {
+  const media = window.matchMedia(`(max-width: ${TABLET_MAX_PX}px)`)
+  media.addEventListener('change', onStoreChange)
+  return () => media.removeEventListener('change', onStoreChange)
+}
+
+function getCompactNavSnapshot() {
+  return window.matchMedia(`(max-width: ${TABLET_MAX_PX}px)`).matches
+}
+
+function getServerCompactNavSnapshot() {
+  return false
+}
+
 export function SiteNav() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
-  const { isDesktop } = useDeviceProfile()
-  const useMobileNav = !isDesktop
+  const compactNav = useSyncExternalStore(
+    subscribeCompactNav,
+    getCompactNavSnapshot,
+    getServerCompactNavSnapshot
+  )
   const t = useTranslations('Nav')
 
   useEffect(() => {
@@ -44,7 +61,7 @@ export function SiteNav() {
   }, [])
 
   useEffect(() => {
-    if (isDesktop) {
+    if (!compactNav) {
       document.body.style.overflow = ''
       return
     }
@@ -52,11 +69,11 @@ export function SiteNav() {
     return () => {
       document.body.style.overflow = ''
     }
-  }, [menuOpen, isDesktop])
+  }, [menuOpen, compactNav])
 
   useEffect(() => {
-    if (isDesktop) setMenuOpen(false)
-  }, [isDesktop])
+    if (!compactNav) setMenuOpen(false)
+  }, [compactNav])
 
   useEffect(() => {
     if (!menuOpen) return
@@ -68,9 +85,14 @@ export function SiteNav() {
   }, [menuOpen])
 
   const mobileMenu =
-    useMobileNav && menuOpen && mounted
+    menuOpen && mounted
       ? createPortal(
-          <div className="site-nav-mobile-menu" role="dialog" aria-modal="true">
+          <div
+            className="site-nav-mobile-menu pointer-events-auto"
+            role="dialog"
+            aria-modal="true"
+            data-sky-lab-keep
+          >
             <button
               type="button"
               className="site-nav-mobile-scrim"
