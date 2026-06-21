@@ -1,0 +1,389 @@
+'use client'
+
+import { Eye, EyeOff } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
+import { useTranslations } from 'next-intl'
+import { useConstellations } from './constellation-context'
+import { isMobileSkyLabViewport, useDeviceProfile } from './device-profile'
+import { StationChip, StationLed, StationPanel } from './station-console'
+import type { MaxVisibleOption } from './constellation-store'
+import type { ConstellationRecord, Constellation } from './constellation-logic'
+
+const LIMIT_OPTIONS: MaxVisibleOption[] = [2, 4, 6, 8, 10]
+
+function variantBadge(record: { variant?: string; starCount: number }) {
+  if (record.variant && record.variant !== 'normal') {
+    return record.variant.replace('meme-', '').toUpperCase()
+  }
+  return `${record.starCount}★`
+}
+
+function NavChartBody({
+  listItems,
+  listMode,
+  skyList,
+  archive,
+  maxVisible,
+  manualMode,
+  crazyMode,
+  toggleListMode,
+  setMaxVisible,
+  runAuto,
+  toggleManualMode,
+  toggleCrazyMode,
+  toggleCrazySkyFocus,
+  crazySkyFocus,
+  revive,
+  compact,
+  mobileOnly,
+}: {
+  listItems: Array<{
+    key: string | number
+    name: string
+    meta: string
+    record: ConstellationRecord | null
+  }>
+  listMode: 'sky' | 'archive'
+  skyList: Constellation[]
+  archive: ConstellationRecord[]
+  maxVisible: MaxVisibleOption
+  manualMode: boolean
+  crazyMode: boolean
+  toggleListMode: () => void
+  setMaxVisible: (value: MaxVisibleOption) => void
+  runAuto: () => void
+  toggleManualMode: () => void
+  toggleCrazyMode: () => void
+  toggleCrazySkyFocus: () => void
+  crazySkyFocus: boolean
+  revive: (record: ConstellationRecord) => void
+  compact?: boolean
+  mobileOnly?: boolean
+}) {
+  const t = useTranslations('SkyLab')
+
+  if (mobileOnly) {
+    return (
+      <StationPanel variant="module" iso={false} className="mobile-sky-lab-panel p-3">
+        <div className="relative z-[1] flex items-center justify-between gap-2">
+          <p className="station-readout-label flex items-center gap-2">
+            <StationLed active pulse />
+            {t('navChart')}
+          </p>
+          <StationChip className="station-chip-active !text-xs">Manual</StationChip>
+        </div>
+        <p className="relative z-[1] mt-2 font-mono text-sm leading-relaxed tracking-wide text-muted-foreground">
+          {t('manualDraw')}
+        </p>
+        <p className="relative z-[1] mb-2 mt-3 font-mono text-xs uppercase tracking-[0.16em] text-muted-foreground">
+          {listMode === 'sky' ? `On sky (${skyList.length})` : `Archive (${archive.length})`}
+        </p>
+        <ul className="station-screen relative z-[1] max-h-28 space-y-1.5 overflow-y-auto p-2">
+          {listItems.length === 0 ? (
+            <li className="px-2 py-2 text-sm text-muted-foreground">No constellations yet.</li>
+          ) : (
+            listItems.slice(0, 6).map((item) => (
+              <li
+                key={`${listMode}-${item.key}`}
+                className="rounded-md border border-[var(--station-bezel)]/30 bg-[var(--station-hull-dark)]/60 px-2.5 py-1.5"
+              >
+                <p className="truncate text-sm font-medium text-foreground">{item.name}</p>
+              </li>
+            ))
+          )}
+        </ul>
+        {archive.length > 0 ? (
+          <button
+            type="button"
+            onClick={toggleListMode}
+            className="station-chip relative z-[1] mt-2 !px-2.5 !py-1 !text-[10px]"
+          >
+            {listMode === 'sky' ? 'Archive' : 'On sky'}
+          </button>
+        ) : null}
+      </StationPanel>
+    )
+  }
+
+  return (
+    <StationPanel variant="module" iso={false} className="p-4">
+      <div className="relative z-[1] mb-3 flex items-center justify-between gap-2">
+        <p className="station-readout-label flex items-center gap-2">
+          <StationLed active pulse />
+          Nav chart
+        </p>
+        <button
+          type="button"
+          onClick={toggleListMode}
+          className="station-chip !px-2.5 !py-1 !text-[10px]"
+        >
+          {listMode === 'sky' ? 'Archive' : 'On sky'}
+        </button>
+      </div>
+
+      <p className="relative z-[1] mb-2 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+        {listMode === 'sky' ? `Current (${skyList.length})` : `Last ${archive.length} / 30`}
+      </p>
+
+      <ul className="station-screen relative z-[1] mb-4 max-h-44 space-y-1.5 overflow-y-auto p-2">
+        {listItems.length === 0 ? (
+          <li className="px-2 py-2 text-xs text-muted-foreground">
+            {listMode === 'sky' ? 'No constellations yet.' : 'No archive entries yet.'}
+          </li>
+        ) : (
+          listItems.map((item) => (
+            <li
+              key={`${listMode}-${item.key}`}
+              className="flex items-center justify-between gap-2 rounded-md border border-[var(--station-bezel)]/30 bg-[var(--station-hull-dark)]/60 px-2.5 py-2"
+            >
+              <div className="min-w-0">
+                <p className="truncate text-xs font-medium text-foreground">{item.name}</p>
+                <p className="truncate font-mono text-[10px] text-muted-foreground">{item.meta}</p>
+              </div>
+              {item.record ? (
+                <button
+                  type="button"
+                  onClick={() => revive(item.record!)}
+                  className="station-chip station-chip-active shrink-0 !border-violet/40 !text-violet !px-2 !py-0.5 !text-[10px]"
+                >
+                  Revive
+                </button>
+              ) : null}
+            </li>
+          ))
+        )}
+      </ul>
+
+      <div className="relative z-[1] mb-4">
+        <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+          Sky limit
+        </p>
+        <div className="flex flex-wrap gap-1.5">
+          {LIMIT_OPTIONS.map((option) => (
+            <button
+              key={option}
+              type="button"
+              disabled={crazyMode}
+              onClick={() => setMaxVisible(option)}
+              className={`station-chip transition-colors ${
+                maxVisible === option && !crazyMode ? 'station-chip-active' : ''
+              } ${crazyMode ? 'opacity-40' : ''}`}
+            >
+              {option}
+            </button>
+          ))}
+        </div>
+        {crazyMode ? (
+          <p className="mt-1.5 font-mono text-[10px] text-amber-200/70">Crazy mode cap: 20</p>
+        ) : null}
+      </div>
+
+      <div className="relative z-[1] space-y-2">
+        <button
+          type="button"
+          onClick={runAuto}
+          className="station-button station-button-secondary w-full !justify-start !px-3 !py-2 text-left"
+        >
+          <span className="block font-mono text-[10px] uppercase tracking-[0.22em] text-cyan">
+            Auto
+          </span>
+          <span className="mt-0.5 block text-[11px] text-muted-foreground">
+            {compact ? 'Spawn constellations + planets' : 'Spawn 2–10 constellations + planets'}
+          </span>
+        </button>
+
+        <button
+          type="button"
+          onClick={toggleManualMode}
+          disabled={crazyMode}
+          className={`station-button w-full !justify-start !px-3 !py-2 text-left ${
+            manualMode && !crazyMode
+              ? 'station-button-manual-on border-cyan/40'
+              : 'station-button-secondary'
+          } ${crazyMode ? 'opacity-40' : ''}`}
+        >
+          <span className="station-button-title block font-mono text-[10px] uppercase tracking-[0.16em]">
+            Manual {manualMode && !crazyMode ? 'ON' : 'OFF'}
+          </span>
+          <span className="station-button-subtitle mt-0.5 block text-xs leading-relaxed">
+            {crazyMode
+              ? 'Drawing locked — crazy spawns only'
+              : compact
+                ? 'Tap sky to draw'
+                : 'Tap sky to draw · clears auto spawns'}
+          </span>
+        </button>
+
+        <button
+          type="button"
+          onClick={toggleCrazyMode}
+          className={`station-button w-full !justify-start !px-3 !py-2 text-left ${
+            crazyMode
+              ? 'station-button-secondary border-rose-400/35 !bg-rose-500/15 !text-rose-100'
+              : 'station-button-secondary'
+          }`}
+        >
+          <span className="block font-mono text-[10px] uppercase tracking-[0.22em]">
+            Crazy mode {crazyMode ? 'ON' : 'OFF'}
+          </span>
+          <span className="mt-0.5 block text-[11px] text-muted-foreground">
+            {compact ? 'Wild spawns · 2.5× traffic' : 'Nonstop wild spawns · up to 20 · 2.5× traffic'}
+          </span>
+        </button>
+
+        {crazyMode ? (
+          <button
+            type="button"
+            data-crazy-sky-keep
+            onClick={toggleCrazySkyFocus}
+            className={`station-button w-full !justify-start !px-3 !py-2 text-left ${
+              crazySkyFocus
+                ? 'station-button-secondary border-cyan/40 !bg-cyan/15 !text-cyan'
+                : 'station-button-secondary'
+            }`}
+          >
+            <span className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em]">
+              {crazySkyFocus ? (
+                <Eye className="h-3.5 w-3.5" aria-hidden />
+              ) : (
+                <EyeOff className="h-3.5 w-3.5" aria-hidden />
+              )}
+              {crazySkyFocus ? 'Show UI' : 'Sky view'}
+            </span>
+            <span className="mt-0.5 block text-[11px] text-muted-foreground">
+              {crazySkyFocus
+                ? 'Restore site sections'
+                : compact
+                  ? 'Hide site · keep sky + chart'
+                  : 'Hide everything except sky, ships, and nav chart'}
+            </span>
+          </button>
+        ) : null}
+      </div>
+    </StationPanel>
+  )
+}
+
+export function ConstellationPanel() {
+  const [mounted, setMounted] = useState(false)
+  const deviceProfile = useDeviceProfile()
+  const { isNarrow, isTablet } = deviceProfile
+  const {
+    constellationLabEnabled,
+    mobileSkyLabMode,
+    skyList,
+    archive,
+    maxVisible,
+    manualMode,
+    crazyMode,
+    listMode,
+    setMaxVisible,
+    toggleListMode,
+    toggleManualMode,
+    toggleCrazyMode,
+    toggleCrazySkyFocus,
+    crazySkyFocus,
+    runAuto,
+    revive,
+  } = useConstellations()
+
+  const hidePanelOnTouch =
+    mobileSkyLabMode || (constellationLabEnabled && isMobileSkyLabViewport(deviceProfile))
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  const listItems =
+    listMode === 'sky'
+      ? skyList.map((item) => ({
+          key: item.id,
+          name: item.name ?? (item.complete ? `${item.stars.length}★` : 'Drawing…'),
+          meta: item.complete
+            ? `${item.starCount ?? item.stars.length} stars · ${item.source ?? 'manual'}`
+            : 'In progress',
+          record: null as ConstellationRecord | null,
+        }))
+      : [...archive]
+          .reverse()
+          .map((record) => ({
+            key: `${record.id}-${record.completedAt}`,
+            name: record.name,
+            meta: `${record.starCount} stars · ${variantBadge(record)}`,
+            record,
+          }))
+
+  const bodyProps = {
+    listItems,
+    listMode,
+    skyList,
+    archive,
+    maxVisible,
+    manualMode,
+    crazyMode,
+    toggleListMode,
+    setMaxVisible,
+    runAuto,
+    toggleManualMode,
+    toggleCrazyMode,
+    toggleCrazySkyFocus,
+    crazySkyFocus,
+    revive,
+    compact: isNarrow,
+    mobileOnly: isNarrow,
+  }
+
+  const panel =
+    hidePanelOnTouch || isNarrow ? null : (
+    <aside
+      data-no-constellation
+      data-sky-lab-panel
+      className={`pointer-events-auto fixed left-4 top-1/2 z-50 ${
+        isTablet ? 'w-[min(16rem,calc(100vw-2rem))]' : 'w-[min(19rem,calc(100vw-2rem))]'
+      } -translate-y-1/2`}
+    >
+      <NavChartBody {...bodyProps} />
+    </aside>
+  )
+
+  if (!mounted || !constellationLabEnabled || hidePanelOnTouch) return null
+
+  const skyViewButton =
+    crazyMode && !isNarrow ? (
+      <button
+        type="button"
+        data-no-constellation
+        data-crazy-sky-keep
+        aria-label={crazySkyFocus ? 'Show portfolio UI' : 'Hide portfolio UI for sky view'}
+        aria-pressed={crazySkyFocus}
+        onPointerDown={(event) => event.stopPropagation()}
+        onClick={(event) => {
+          event.stopPropagation()
+          toggleCrazySkyFocus()
+        }}
+        className={`crazy-sky-focus-toggle pointer-events-auto fixed left-1/2 z-[80] inline-flex -translate-x-1/2 items-center gap-2 rounded-full border px-4 py-2.5 font-mono text-[10px] uppercase tracking-[0.18em] transition-colors ${
+          crazySkyFocus
+            ? 'border-cyan/55 bg-cyan/15 text-cyan'
+            : 'border-white/15 bg-[oklch(0.1_0.012_270/0.94)] text-foreground hover:border-cyan/35'
+        }`}
+      >
+        {crazySkyFocus ? (
+          <Eye className="h-3.5 w-3.5" aria-hidden />
+        ) : (
+          <EyeOff className="h-3.5 w-3.5" aria-hidden />
+        )}
+        <span>{crazySkyFocus ? 'Show UI' : 'Sky view'}</span>
+      </button>
+    ) : null
+
+  const navLayoutKey = isNarrow ? 'narrow' : 'wide'
+
+  return createPortal(
+    <div key={navLayoutKey} data-crazy-sky-keep>
+      {panel}
+      {skyViewButton}
+    </div>,
+    document.body
+  )
+}

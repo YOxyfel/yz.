@@ -1,0 +1,25 @@
+{
+  "Nav": {
+    "engine": "Движок",
+    "arsenal": "Арсенал",
+    "stack": "Стек",
+    "contact": "Контакт",
+    "hireMe": "Наеми ме",
+    "skyLab": "Sky Lab",
+    "skyLabOn": "Sky Lab вкл.",
+    "openSkyLab": "Отвори Sky Lab",
+    "closeSkyLab": "Затвори Sky Lab",
+    "themes": "Теми",
+    "interactiveTools": "Инструменти",
+    "menuOpen": "Отвори меню",
+    "menuClose": "Затвори меню"
+  },
+  "SkyLab": {
+    "hintNarrow": "Докосни небето, за да рисуваш звезди. Затвори Sky Lab от бутона в ъгла.",
+    "hintTouch": "Докосни небето, за да рисуваш звезди. Sky Lab е горе вляво.",
+    "hintDesktop": "Кликни върху небето, за да рисуваш съзвездия. Sky Lab е горе вляво.",
+    "manualDraw": "Ръчно рисуване · докосни небето",
+    "navChart": "Нав. карта",
+    "gotIt": "Разбрах"
+  }
+}

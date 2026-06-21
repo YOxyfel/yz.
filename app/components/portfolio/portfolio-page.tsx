@@ -1,0 +1,127 @@
+'use client'
+
+import dynamic from 'next/dynamic'
+import { useEffect } from 'react'
+import { BackgroundFx } from './background-fx'
+import { ConstellationProvider, useConstellations } from './constellation-context'
+import { ConstellationLabToggle } from './constellation-lab-toggle'
+import { Hero } from './hero'
+import { ProjectsSection } from './projects-section'
+import { ContactSection } from './contact-section'
+import { SiteNav } from './site-nav'
+import { SiteVariantShell } from './site-variant-shell'
+import { useSiteVariant } from './site-variant-context'
+import { LazySection } from './lazy-section'
+
+const SkyDecorLayer = dynamic(
+  () => import('./sky-decor-layer').then((mod) => ({ default: mod.SkyDecorLayer })),
+  { ssr: false }
+)
+
+const ConstellationPanel = dynamic(
+  () => import('./constellation-panel').then((mod) => ({ default: mod.ConstellationPanel })),
+  { ssr: false }
+)
+
+const ArsenalSection = dynamic(
+  () => import('./arsenal-section').then((mod) => ({ default: mod.ArsenalSection })),
+  {
+    loading: () => (
+      <div
+        id="arsenal"
+        className="mx-auto flex min-h-[40vh] max-w-6xl items-center justify-center px-6 py-24 font-mono text-xs uppercase tracking-widest text-muted-foreground"
+      >
+        Loading arsenal bay…
+      </div>
+    ),
+  }
+)
+
+const WebStackSection = dynamic(
+  () => import('./web-stack-section').then((mod) => ({ default: mod.WebStackSection })),
+  {
+    loading: () => (
+      <div className="mx-auto flex min-h-[32vh] max-w-6xl items-center justify-center px-6 py-16 font-mono text-xs uppercase tracking-widest text-muted-foreground">
+        Loading stack…
+      </div>
+    ),
+  }
+)
+
+function PortfolioContent() {
+  const { variant } = useSiteVariant()
+  const { constellationLabEnabled, crazyMode, crazySkyFocus, mobileSkyLabMode } =
+    useConstellations()
+  const crazyFocus = crazyMode && crazySkyFocus
+
+  useEffect(() => {
+    document.documentElement.dataset.crazySkyFocus = crazyFocus ? 'on' : 'off'
+    return () => {
+      delete document.documentElement.dataset.crazySkyFocus
+    }
+  }, [crazyFocus])
+
+  useEffect(() => {
+    document.documentElement.dataset.siteVariant = variant
+  }, [variant])
+
+  useEffect(() => {
+    document.documentElement.dataset.constellationLab = constellationLabEnabled ? 'on' : 'off'
+    return () => {
+      delete document.documentElement.dataset.constellationLab
+    }
+  }, [constellationLabEnabled])
+
+  useEffect(() => {
+    document.documentElement.dataset.mobileSkyLab = mobileSkyLabMode ? 'on' : 'off'
+    return () => {
+      delete document.documentElement.dataset.mobileSkyLab
+    }
+  }, [mobileSkyLabMode])
+
+  useEffect(() => {
+    if (!mobileSkyLabMode) return
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = prev
+    }
+  }, [mobileSkyLabMode])
+
+  return (
+    <>
+      <BackgroundFx />
+
+      <SiteVariantShell>
+        {!mobileSkyLabMode ? (
+          <main className="station-deck relative min-h-dvh text-foreground" data-portfolio-chrome>
+            <SiteNav />
+            <Hero />
+            <ProjectsSection />
+            <LazySection minHeight="min(72vh, 720px)">
+              <ArsenalSection />
+            </LazySection>
+            <LazySection minHeight="min(48vh, 560px)">
+              <WebStackSection />
+            </LazySection>
+            <LazySection minHeight="min(40vh, 480px)">
+              <ContactSection />
+            </LazySection>
+          </main>
+        ) : null}
+      </SiteVariantShell>
+
+      <ConstellationLabToggle />
+      {!mobileSkyLabMode ? <SkyDecorLayer /> : null}
+      {!mobileSkyLabMode ? <ConstellationPanel /> : null}
+    </>
+  )
+}
+
+export function PortfolioPage() {
+  return (
+    <ConstellationProvider>
+      <PortfolioContent />
+    </ConstellationProvider>
+  )
+}

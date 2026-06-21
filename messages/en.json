@@ -1,0 +1,25 @@
+{
+  "Nav": {
+    "engine": "Engine",
+    "arsenal": "Arsenal",
+    "stack": "Stack",
+    "contact": "Contact",
+    "hireMe": "Hire me",
+    "skyLab": "Sky Lab",
+    "skyLabOn": "Sky Lab on",
+    "openSkyLab": "Open Sky Lab",
+    "closeSkyLab": "Close Sky Lab",
+    "themes": "Themes",
+    "interactiveTools": "Interactive tools",
+    "menuOpen": "Open menu",
+    "menuClose": "Close menu"
+  },
+  "SkyLab": {
+    "hintNarrow": "Tap the sky to draw stars. Close Sky Lab from the corner button when done.",
+    "hintTouch": "Tap the sky to draw stars. Use Sky Lab in the top-left corner for the nav chart.",
+    "hintDesktop": "Click the sky to draw constellations. Sky Lab lives in the top-left corner.",
+    "manualDraw": "Manual draw · tap the sky",
+    "navChart": "Nav chart",
+    "gotIt": "Got it"
+  }
+}
