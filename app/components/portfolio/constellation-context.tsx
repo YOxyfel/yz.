@@ -52,6 +52,8 @@ type ConstellationContextValue = {
   crazyMode: boolean
   crazySkyFocus: boolean
   toggleCrazySkyFocus: () => void
+  cornerUiHidden: boolean
+  toggleCornerUiHidden: () => void
   listMode: 'sky' | 'archive'
   skyList: Constellation[]
   orbitDecors: OrbitDecor[]
@@ -122,6 +124,7 @@ export function ConstellationProvider({ children }: { children: ReactNode }) {
   const [manualMode, setManualMode] = useState(false)
   const [crazyMode, setCrazyMode] = useState(false)
   const [crazySkyFocus, setCrazySkyFocus] = useState(false)
+  const [cornerUiHidden, setCornerUiHidden] = useState(false)
   const [listMode, setListMode] = useState<'sky' | 'archive'>('sky')
   const [crazyDecors, setCrazyDecors] = useState<OrbitDecor[]>([])
   const [manualDecors, setManualDecors] = useState<OrbitDecor[]>([])
@@ -202,14 +205,24 @@ export function ConstellationProvider({ children }: { children: ReactNode }) {
     })
   }, [])
 
+  const toggleCornerUiHidden = useCallback(() => {
+    setCornerUiHidden((current) => {
+      const next = !current
+      document.documentElement.dataset.cornerUiHidden = next ? 'on' : 'off'
+      return next
+    })
+  }, [])
+
   const toggleConstellationLab = useCallback(() => {
     if (constellationLabEnabled) {
       restoreAmbientSky()
       setManualMode(false)
       setCrazyMode(false)
       setCrazySkyFocus(false)
+      setCornerUiHidden(false)
       setMobileSkyLabMode(false)
       document.documentElement.dataset.crazySkyFocus = 'off'
+      document.documentElement.dataset.cornerUiHidden = 'off'
       document.documentElement.dataset.mobileSkyLab = 'off'
       setConstellationLabEnabled(false)
       return
@@ -222,7 +235,9 @@ export function ConstellationProvider({ children }: { children: ReactNode }) {
       setMaxVisibleState(6)
       setCrazyMode(false)
       setCrazySkyFocus(false)
+      setCornerUiHidden(false)
       document.documentElement.dataset.crazySkyFocus = 'off'
+      document.documentElement.dataset.cornerUiHidden = 'off'
       setManualMode(true)
       setMobileSkyLabMode(true)
       document.documentElement.dataset.mobileSkyLab = 'on'
@@ -611,6 +626,7 @@ export function ConstellationProvider({ children }: { children: ReactNode }) {
       manualMode,
       crazyMode,
       crazySkyFocus,
+      cornerUiHidden,
       listMode,
       skyList,
       orbitDecors,
@@ -625,6 +641,7 @@ export function ConstellationProvider({ children }: { children: ReactNode }) {
       toggleManualMode,
       toggleCrazyMode,
       toggleCrazySkyFocus,
+      toggleCornerUiHidden,
       runAuto,
       revive,
     }),
@@ -634,6 +651,7 @@ export function ConstellationProvider({ children }: { children: ReactNode }) {
       constellations,
       crazyMode,
       crazySkyFocus,
+      cornerUiHidden,
       listMode,
       manualMode,
       mobileSkyLabMode,
@@ -652,6 +670,7 @@ export function ConstellationProvider({ children }: { children: ReactNode }) {
       toggleConstellationLab,
       toggleCrazyMode,
       toggleCrazySkyFocus,
+      toggleCornerUiHidden,
       toggleListMode,
       toggleManualMode,
     ]

@@ -21,7 +21,9 @@
     "manualDraw": "Ръчно рисуване · докосни небето",
     "manualFxOff": "Site FX изкл. · включи Site FX, за да рисуваш",
     "navChart": "Нав. карта",
-    "gotIt": "Разбрах"
+    "gotIt": "Разбрах",
+    "hideCornerUi": "Скрий UI",
+    "showCornerUi": "Покажи UI"
   },
   "SiteFx": {
     "eyebrow": "VFX за целия сайт",

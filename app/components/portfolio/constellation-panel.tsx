@@ -37,6 +37,7 @@ function NavChartBody({
   toggleCrazyMode,
   toggleCrazySkyFocus,
   crazySkyFocus,
+  toggleCornerUiHidden,
   revive,
   compact,
   mobileOnly,
@@ -62,6 +63,7 @@ function NavChartBody({
   toggleCrazyMode: () => void
   toggleCrazySkyFocus: () => void
   crazySkyFocus: boolean
+  toggleCornerUiHidden: () => void
   revive: (record: ConstellationRecord) => void
   compact?: boolean
   mobileOnly?: boolean
@@ -130,13 +132,26 @@ function NavChartBody({
           <StationLed active pulse />
           Nav chart
         </p>
-        <button
-          type="button"
-          onClick={toggleListMode}
-          className="station-chip !px-2.5 !py-1 !text-[10px]"
-        >
-          {listMode === 'sky' ? 'Archive' : 'On sky'}
-        </button>
+        <div className="flex items-center gap-1.5">
+          <button
+            type="button"
+            data-no-constellation
+            data-sky-lab-keep
+            onClick={toggleCornerUiHidden}
+            aria-label={t('hideCornerUi')}
+            className="station-chip !px-2 !py-1 !text-[10px]"
+          >
+            <EyeOff className="mr-1 inline h-3 w-3" aria-hidden />
+            {t('hideCornerUi')}
+          </button>
+          <button
+            type="button"
+            onClick={toggleListMode}
+            className="station-chip !px-2.5 !py-1 !text-[10px]"
+          >
+            {listMode === 'sky' ? 'Archive' : 'On sky'}
+          </button>
+        </div>
       </div>
 
       {fxHint ? (
@@ -333,6 +348,8 @@ export function ConstellationPanel() {
     toggleCrazyMode,
     toggleCrazySkyFocus,
     crazySkyFocus,
+    cornerUiHidden,
+    toggleCornerUiHidden,
     runAuto,
     revive,
   } = useConstellations()
@@ -381,6 +398,7 @@ export function ConstellationPanel() {
     toggleCrazyMode,
     toggleCrazySkyFocus,
     crazySkyFocus,
+    toggleCornerUiHidden,
     revive,
     compact: isNarrow,
     mobileOnly: isNarrow,
@@ -401,7 +419,7 @@ export function ConstellationPanel() {
     </aside>
   )
 
-  if (!mounted || !constellationLabEnabled || hidePanelOnTouch) return null
+  if (!mounted || !constellationLabEnabled || hidePanelOnTouch || cornerUiHidden) return null
 
   const skyViewButton =
     crazyMode && !isNarrow ? (

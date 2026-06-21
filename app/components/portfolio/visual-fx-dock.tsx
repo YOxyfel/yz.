@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useTranslations } from 'next-intl'
 import { useCompactNavLayout } from './device-profile'
+import { useConstellations } from './constellation-context'
 import { SiteFxControls } from './site-fx-controls'
 import { StationLed } from './station-console'
 import { useVisualFxPreferences } from './visual-fx-preferences'
@@ -20,6 +21,7 @@ export function VisualFxDock() {
   const [panelOpen, setPanelOpen] = useState(false)
   const compactNav = useCompactNavLayout()
   const { mode, screenFxLive } = useVisualFxPreferences()
+  const { cornerUiHidden } = useConstellations()
   const t = useTranslations('SiteFx')
 
   useEffect(() => {
@@ -35,7 +37,11 @@ export function VisualFxDock() {
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [panelOpen])
 
-  if (!mounted || compactNav) return null
+  useEffect(() => {
+    if (cornerUiHidden) setPanelOpen(false)
+  }, [cornerUiHidden])
+
+  if (!mounted || compactNav || cornerUiHidden) return null
 
   const ModeIcon = modeIcons[mode]
   const dockLabel = mode === 'off' ? t('dockOff') : screenFxLive ? t('dockOn') : t('dockPaused')

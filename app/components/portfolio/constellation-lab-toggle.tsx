@@ -1,6 +1,6 @@
 'use client'
 
-import { Sparkles } from 'lucide-react'
+import { Eye, EyeOff, Sparkles } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useTranslations } from 'next-intl'
@@ -14,7 +14,8 @@ export function ConstellationLabToggle() {
   const [showHint, setShowHint] = useState(false)
   const deviceProfile = useDeviceProfile()
   const compactNav = useCompactNavLayout()
-  const { constellationLabEnabled, mobileSkyLabMode, toggleConstellationLab } = useConstellations()
+  const { constellationLabEnabled, mobileSkyLabMode, toggleConstellationLab, cornerUiHidden, toggleCornerUiHidden } =
+    useConstellations()
   const t = useTranslations('SkyLab')
   const tNav = useTranslations('Nav')
   const touchViewport = isMobileSkyLabViewport(deviceProfile)
@@ -50,7 +51,41 @@ export function ConstellationLabToggle() {
     setShowHint(false)
   }
 
+  const hideCornerUi = () => {
+    dismissHint()
+    toggleCornerUiHidden()
+  }
+
   const hintCopy = t('hintDesktop')
+
+  if (cornerUiHidden && !mobileSkyLabMode) {
+    const restore = (
+      <div
+        data-no-constellation
+        data-sky-lab-keep
+        className="corner-ui-restore-stack pointer-events-none"
+      >
+        <button
+          type="button"
+          data-no-constellation
+          data-sky-lab-keep
+          aria-label={t('showCornerUi')}
+          onClick={toggleCornerUiHidden}
+          className="corner-dock corner-sky-lab-dock pointer-events-auto corner-dock-active"
+        >
+          <span className="corner-dock-glow" aria-hidden />
+          <span className="corner-dock-frame">
+            <StationLed active pulse />
+            <Eye className="corner-dock-icon h-4 w-4 shrink-0" aria-hidden />
+            <span className="corner-dock-label">{t('showCornerUi')}</span>
+          </span>
+        </button>
+      </div>
+    )
+
+    if (!mounted || compactNav) return null
+    return createPortal(restore, document.body)
+  }
 
   const button = (
     <div
@@ -105,6 +140,20 @@ export function ConstellationLabToggle() {
             {t('gotIt')}
           </button>
         </div>
+      ) : null}
+
+      {!constellationLabEnabled && !touchViewport ? (
+        <button
+          type="button"
+          data-no-constellation
+          data-sky-lab-keep
+          aria-label={t('hideCornerUi')}
+          onClick={hideCornerUi}
+          className="corner-chrome-hide-btn station-button station-button-ghost pointer-events-auto !rounded-full !px-3 !py-1.5 !text-[10px] !uppercase !tracking-[0.16em]"
+        >
+          <EyeOff className="h-3.5 w-3.5" aria-hidden />
+          {t('hideCornerUi')}
+        </button>
       ) : null}
     </div>
   )

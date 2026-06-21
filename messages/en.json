@@ -21,7 +21,9 @@
     "manualDraw": "Manual draw · tap the sky",
     "manualFxOff": "Site FX off · enable Site FX to draw",
     "navChart": "Nav chart",
-    "gotIt": "Got it"
+    "gotIt": "Got it",
+    "hideCornerUi": "Hide UI",
+    "showCornerUi": "Show UI"
   },
   "SiteFx": {
     "eyebrow": "Site visual FX",
