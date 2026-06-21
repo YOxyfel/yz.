@@ -10,24 +10,21 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import { MEDIA_COARSE_POINTER, MEDIA_NARROW, MEDIA_REDUCED_MOTION } from './breakpoints'
+import { MEDIA_COARSE_POINTER, TABLET_MAX_PX } from './breakpoints'
 
 export type VisualFxMode = 'full' | 'reduced' | 'off'
 
 const STORAGE_KEY = 'portfolio-visual-fx-mode'
 const STORAGE_EXPLICIT_KEY = 'portfolio-visual-fx-mode-explicit'
+const MEDIA_COMPACT = `(max-width: ${TABLET_MAX_PX}px)` as const
 
 function isCoarsePointerViewport() {
   return window.matchMedia(MEDIA_COARSE_POINTER).matches
 }
 
-function isNarrowViewport() {
-  return window.matchMedia(MEDIA_NARROW).matches
-}
-
-/** Phones / touch-first layouts — not tablet-only widths. */
+/** Compact nav widths and touch-first layouts — default site FX off. */
 function isMobileFxViewport() {
-  return isNarrowViewport() || isCoarsePointerViewport()
+  return window.matchMedia(MEDIA_COMPACT).matches || isCoarsePointerViewport()
 }
 
 function readExplicitFxChoice() {
@@ -40,20 +37,7 @@ function markExplicitFxChoice() {
 
 /** Default site FX mode when the user has not picked one explicitly. */
 function defaultFxModeForViewport(): VisualFxMode {
-  const narrow = isNarrowViewport()
-  const coarse = isCoarsePointerViewport()
-  const reducedMotion = window.matchMedia(MEDIA_REDUCED_MOTION).matches
-  const fxLite = document.documentElement.dataset.fxLite === 'on'
-  const perfTier = document.documentElement.dataset.perfTier
-
-  if (!isMobileFxViewport()) {
-    if (perfTier === 'mid' || perfTier === 'low') return 'reduced'
-    return 'full'
-  }
-
-  // Phone / touch: favor performance; full-off on the smallest or lite profiles.
-  if (reducedMotion || (narrow && coarse) || fxLite) return 'off'
-  return 'reduced'
+  return isMobileFxViewport() ? 'off' : 'full'
 }
 
 function resolveInitialFxMode(): VisualFxMode {
@@ -62,11 +46,6 @@ function resolveInitialFxMode(): VisualFxMode {
 
   if (explicit && (stored === 'full' || stored === 'reduced' || stored === 'off')) {
     return stored
-  }
-
-  if (stored === 'full' || stored === 'reduced' || stored === 'off') {
-    if (!isMobileFxViewport()) return stored
-    return defaultFxModeForViewport()
   }
 
   return defaultFxModeForViewport()
@@ -103,7 +82,10 @@ export function VisualFxPreferencesProvider({ children }: { children: ReactNode 
     if (typeof window === 'undefined') return 'full'
     return resolveInitialFxMode()
   })
-  const [screenFxLive, setScreenFxLive] = useState(true)
+  const [screenFxLive, setScreenFxLive] = useState(() => {
+    if (typeof window === 'undefined') return true
+    return resolveInitialFxMode() !== 'off'
+  })
   const [hydrated, setHydrated] = useState(false)
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
 
@@ -116,12 +98,12 @@ export function VisualFxPreferencesProvider({ children }: { children: ReactNode 
     syncMode()
     setHydrated(true)
 
-    const narrowMedia = window.matchMedia(MEDIA_NARROW)
+    const compactMedia = window.matchMedia(MEDIA_COMPACT)
     const coarseMedia = window.matchMedia(MEDIA_COARSE_POINTER)
-    narrowMedia.addEventListener('change', syncMode)
+    compactMedia.addEventListener('change', syncMode)
     coarseMedia.addEventListener('change', syncMode)
     return () => {
-      narrowMedia.removeEventListener('change', syncMode)
+      compactMedia.removeEventListener('change', syncMode)
       coarseMedia.removeEventListener('change', syncMode)
     }
   }, [])
