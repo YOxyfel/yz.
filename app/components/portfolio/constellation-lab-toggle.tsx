@@ -6,7 +6,6 @@ import { createPortal } from 'react-dom'
 import { useTranslations } from 'next-intl'
 import { useConstellations } from './constellation-context'
 import { isMobileSkyLabViewport, useDeviceProfile } from './device-profile'
-import { useVisualFxPreferences } from './visual-fx-preferences'
 import { FEATURE_HINT_KEYS, hasSeenHint, markHintSeen } from './feature-hints'
 import { StationLed } from './station-console'
 
@@ -14,8 +13,8 @@ export function ConstellationLabToggle() {
   const [mounted, setMounted] = useState(false)
   const [showHint, setShowHint] = useState(false)
   const deviceProfile = useDeviceProfile()
+  const { isDesktop } = deviceProfile
   const { constellationLabEnabled, mobileSkyLabMode, toggleConstellationLab } = useConstellations()
-  const { showScreenFx } = useVisualFxPreferences()
   const t = useTranslations('SkyLab')
   const tNav = useTranslations('Nav')
   const touchViewport = isMobileSkyLabViewport(deviceProfile)
@@ -23,12 +22,6 @@ export function ConstellationLabToggle() {
   useEffect(() => {
     setMounted(true)
   }, [])
-
-  useEffect(() => {
-    const skyLabDockHidden =
-      touchViewport && !showScreenFx && !constellationLabEnabled
-    document.documentElement.dataset.skyLabDockHidden = skyLabDockHidden ? 'on' : 'off'
-  }, [touchViewport, showScreenFx, constellationLabEnabled])
 
   useEffect(() => {
     if (constellationLabEnabled) {
@@ -105,7 +98,7 @@ export function ConstellationLabToggle() {
   )
 
   if (!mounted) return null
-  if (touchViewport && !showScreenFx && !constellationLabEnabled) return null
+  if (!isDesktop && !mobileSkyLabMode) return null
 
   return createPortal(button, document.body)
 }
