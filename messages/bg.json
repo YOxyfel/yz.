@@ -12,7 +12,9 @@
     "themes": "Теми",
     "interactiveTools": "Инструменти",
     "menuOpen": "Отвори меню",
-    "menuClose": "Затвори меню"
+    "menuClose": "Затвори меню",
+    "skyView": "Sky view",
+    "showUi": "Покажи UI"
   },
   "SkyLab": {
     "hintNarrow": "Sky Lab е включен. Докосни небето, за да рисуваш звезди. Затвори го от бутона в ъгла.",
@@ -21,9 +23,7 @@
     "manualDraw": "Ръчно рисуване · докосни небето",
     "manualFxOff": "Site FX изкл. · включи Site FX, за да рисуваш",
     "navChart": "Нав. карта",
-    "gotIt": "Разбрах",
-    "hideCornerUi": "Скрий UI",
-    "showCornerUi": "Покажи UI"
+    "gotIt": "Разбрах"
   },
   "SiteFx": {
     "eyebrow": "VFX за целия сайт",

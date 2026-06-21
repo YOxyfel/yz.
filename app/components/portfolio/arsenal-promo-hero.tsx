@@ -191,7 +191,7 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
   const playbackSnapshotRef = useRef<{ time: number; playing: boolean } | null>(null)
   const inView = useInView(rootRef, { once: false, margin: '-10%' })
   const reduceMotion = useReducedMotion()
-  const { crazySkyFocus } = useConstellations()
+  const { skyViewMode } = useConstellations()
   const deviceProfile = useDeviceProfile()
   const isMobileVideo = isMobileSkyLabViewport(deviceProfile)
 
@@ -309,9 +309,9 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
   }, [clearTimers, pauseVideo])
 
   useEffect(() => {
-    if (!crazySkyFocus || !expanded) return
+    if (!skyViewMode || !expanded) return
     collapseExpanded()
-  }, [crazySkyFocus, expanded, collapseExpanded])
+  }, [skyViewMode, expanded, collapseExpanded])
 
   const expandReel = useCallback(() => {
     if (isMobileVideo) {

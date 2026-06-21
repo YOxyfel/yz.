@@ -4,10 +4,9 @@ import dynamic from 'next/dynamic'
 import { useEffect } from 'react'
 import { BackgroundFx } from './background-fx'
 import { ConstellationProvider, useConstellations } from './constellation-context'
-import { ConstellationLabToggle } from './constellation-lab-toggle'
+import { CornerToolsDock } from './corner-tools-dock'
 import { useDeviceProfile } from './device-profile'
 import { resolveSkyLabFx } from './sky-lab-fx'
-import { VisualFxDock } from './visual-fx-dock'
 import { useVisualFxPreferences } from './visual-fx-preferences'
 import { Hero } from './hero'
 import { ProjectsSection } from './projects-section'
@@ -55,25 +54,16 @@ const WebStackSection = dynamic(
 
 function PortfolioContent() {
   const { variant } = useSiteVariant()
-  const { constellationLabEnabled, crazyMode, crazySkyFocus, mobileSkyLabMode } =
+  const { constellationLabEnabled, skyViewMode, mobileSkyLabMode } =
     useConstellations()
   const deviceProfile = useDeviceProfile()
   const { showScreenFx, isReduced } = useVisualFxPreferences()
   const { skyLabFxTier } = resolveSkyLabFx(showScreenFx, isReduced, deviceProfile.fxLite)
   const { isDesktop, prefersReducedMotion } = deviceProfile
-  const crazyFocus = crazyMode && crazySkyFocus
-
   useBlockScroll({
-    enabled: !mobileSkyLabMode && !crazyFocus && isDesktop,
+    enabled: !mobileSkyLabMode && !skyViewMode && isDesktop,
     reducedMotion: prefersReducedMotion,
   })
-
-  useEffect(() => {
-    document.documentElement.dataset.crazySkyFocus = crazyFocus ? 'on' : 'off'
-    return () => {
-      delete document.documentElement.dataset.crazySkyFocus
-    }
-  }, [crazyFocus])
 
   useEffect(() => {
     document.documentElement.dataset.siteVariant = variant
@@ -136,8 +126,7 @@ function PortfolioContent() {
         ) : null}
       </SiteVariantShell>
 
-      <ConstellationLabToggle />
-      {!mobileSkyLabMode ? <VisualFxDock /> : null}
+      <CornerToolsDock />
       <SkyDecorLayer />
       {!mobileSkyLabMode ? <ConstellationPanel /> : null}
     </>

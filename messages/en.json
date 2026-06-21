@@ -12,7 +12,9 @@
     "themes": "Themes",
     "interactiveTools": "Interactive tools",
     "menuOpen": "Open menu",
-    "menuClose": "Close menu"
+    "menuClose": "Close menu",
+    "skyView": "Sky view",
+    "showUi": "Show UI"
   },
   "SkyLab": {
     "hintNarrow": "Sky Lab is on. Tap the sky to draw stars. Close it from the corner button when done.",
@@ -21,9 +23,7 @@
     "manualDraw": "Manual draw · tap the sky",
     "manualFxOff": "Site FX off · enable Site FX to draw",
     "navChart": "Nav chart",
-    "gotIt": "Got it",
-    "hideCornerUi": "Hide UI",
-    "showCornerUi": "Show UI"
+    "gotIt": "Got it"
   },
   "SiteFx": {
     "eyebrow": "Site visual FX",

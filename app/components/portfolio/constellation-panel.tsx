@@ -1,6 +1,5 @@
 'use client'
 
-import { Eye, EyeOff } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useTranslations } from 'next-intl'
@@ -35,9 +34,6 @@ function NavChartBody({
   runAuto,
   toggleManualMode,
   toggleCrazyMode,
-  toggleCrazySkyFocus,
-  crazySkyFocus,
-  toggleCornerUiHidden,
   revive,
   compact,
   mobileOnly,
@@ -61,9 +57,6 @@ function NavChartBody({
   runAuto: () => void
   toggleManualMode: () => void
   toggleCrazyMode: () => void
-  toggleCrazySkyFocus: () => void
-  crazySkyFocus: boolean
-  toggleCornerUiHidden: () => void
   revive: (record: ConstellationRecord) => void
   compact?: boolean
   mobileOnly?: boolean
@@ -133,17 +126,6 @@ function NavChartBody({
           Nav chart
         </p>
         <div className="flex items-center gap-1.5">
-          <button
-            type="button"
-            data-no-constellation
-            data-sky-lab-keep
-            onClick={toggleCornerUiHidden}
-            aria-label={t('hideCornerUi')}
-            className="station-chip !px-2 !py-1 !text-[10px]"
-          >
-            <EyeOff className="mr-1 inline h-3 w-3" aria-hidden />
-            {t('hideCornerUi')}
-          </button>
           <button
             type="button"
             onClick={toggleListMode}
@@ -293,35 +275,6 @@ function NavChartBody({
                   : 'Nonstop wild spawns · up to 20 · 2.5× traffic'}
           </span>
         </button>
-
-        {crazyMode ? (
-          <button
-            type="button"
-            data-crazy-sky-keep
-            onClick={toggleCrazySkyFocus}
-            className={`station-button w-full !justify-start !px-3 !py-2 text-left ${
-              crazySkyFocus
-                ? 'station-button-secondary border-cyan/40 !bg-cyan/15 !text-cyan'
-                : 'station-button-secondary'
-            }`}
-          >
-            <span className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em]">
-              {crazySkyFocus ? (
-                <Eye className="h-3.5 w-3.5" aria-hidden />
-              ) : (
-                <EyeOff className="h-3.5 w-3.5" aria-hidden />
-              )}
-              {crazySkyFocus ? 'Show UI' : 'Sky view'}
-            </span>
-            <span className="mt-0.5 block text-[11px] text-muted-foreground">
-              {crazySkyFocus
-                ? 'Restore site sections'
-                : compact
-                  ? 'Hide site · keep sky + chart'
-                  : 'Hide everything except sky, ships, and nav chart'}
-            </span>
-          </button>
-        ) : null}
       </div>
     </StationPanel>
   )
@@ -346,10 +299,6 @@ export function ConstellationPanel() {
     toggleListMode,
     toggleManualMode,
     toggleCrazyMode,
-    toggleCrazySkyFocus,
-    crazySkyFocus,
-    cornerUiHidden,
-    toggleCornerUiHidden,
     runAuto,
     revive,
   } = useConstellations()
@@ -396,9 +345,6 @@ export function ConstellationPanel() {
     runAuto,
     toggleManualMode,
     toggleCrazyMode,
-    toggleCrazySkyFocus,
-    crazySkyFocus,
-    toggleCornerUiHidden,
     revive,
     compact: isNarrow,
     mobileOnly: isNarrow,
@@ -419,42 +365,13 @@ export function ConstellationPanel() {
     </aside>
   )
 
-  if (!mounted || !constellationLabEnabled || hidePanelOnTouch || cornerUiHidden) return null
-
-  const skyViewButton =
-    crazyMode && !isNarrow ? (
-      <button
-        type="button"
-        data-no-constellation
-        data-crazy-sky-keep
-        aria-label={crazySkyFocus ? 'Show portfolio UI' : 'Hide portfolio UI for sky view'}
-        aria-pressed={crazySkyFocus}
-        onPointerDown={(event) => event.stopPropagation()}
-        onClick={(event) => {
-          event.stopPropagation()
-          toggleCrazySkyFocus()
-        }}
-        className={`crazy-sky-focus-toggle pointer-events-auto fixed left-1/2 z-[80] inline-flex -translate-x-1/2 items-center gap-2 rounded-full border px-4 py-2.5 font-mono text-[10px] uppercase tracking-[0.18em] transition-colors ${
-          crazySkyFocus
-            ? 'border-cyan/55 bg-cyan/15 text-cyan'
-            : 'border-white/15 bg-[oklch(0.1_0.012_270/0.94)] text-foreground hover:border-cyan/35'
-        }`}
-      >
-        {crazySkyFocus ? (
-          <Eye className="h-3.5 w-3.5" aria-hidden />
-        ) : (
-          <EyeOff className="h-3.5 w-3.5" aria-hidden />
-        )}
-        <span>{crazySkyFocus ? 'Show UI' : 'Sky view'}</span>
-      </button>
-    ) : null
+  if (!mounted || !constellationLabEnabled || hidePanelOnTouch) return null
 
   const navLayoutKey = isNarrow ? 'narrow' : 'wide'
 
   return createPortal(
     <div key={navLayoutKey} data-crazy-sky-keep>
       {panel}
-      {skyViewButton}
     </div>,
     document.body
   )

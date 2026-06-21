@@ -217,7 +217,7 @@ export function SiteVisualFxControls({
   )
 }
 
-/** @deprecated Use SiteVisualFxControls or VisualFxDock */
+/** @deprecated Use SiteFxControls or CornerToolsDock */
 export function VisualFxControls(props: {
   screenFxActive: boolean
   onToggleScreenFx: () => void

@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Menu, Sparkles, X } from 'lucide-react'
+import { Menu, Sparkles, X, Eye, EyeOff } from 'lucide-react'
 import { useEffect, useState, type MouseEvent } from 'react'
 import { createPortal } from 'react-dom'
 import { useTranslations } from 'next-intl'
@@ -10,7 +10,6 @@ import { isBlockScrollPair, requestBlockNavScroll } from './block-scroll-nav'
 import { useConstellations } from './constellation-context'
 import { SiteFxControls } from './site-fx-controls'
 import { StationButton, StationLed } from './station-console'
-import { useVisualFxPreferences } from './visual-fx-preferences'
 
 const links = [
   { href: '#engine', key: 'engine' as const },
@@ -32,8 +31,8 @@ export function SiteNav() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
   const compactNav = useCompactNavLayout()
-  const { constellationLabEnabled, toggleConstellationLab } = useConstellations()
-  const { showScreenFx } = useVisualFxPreferences()
+  const { constellationLabEnabled, toggleConstellationLab, skyViewMode, toggleSkyViewMode } =
+    useConstellations()
   const t = useTranslations('Nav')
 
   useEffect(() => {
@@ -116,29 +115,51 @@ export function SiteNav() {
                 <div className="site-nav-mobile-tools mt-6 border-t border-[var(--station-bezel)]/35 pt-5">
                   <SiteFxControls embedded />
 
-                  {showScreenFx || constellationLabEnabled ? (
-                    <button
-                      type="button"
-                      data-no-constellation
-                      data-sky-lab-keep
-                      aria-pressed={constellationLabEnabled}
-                      onClick={() => {
-                        toggleConstellationLab()
-                        setMenuOpen(false)
-                      }}
-                      className={`site-nav-mobile-tool-btn mt-4 w-full ${
-                        constellationLabEnabled ? 'site-nav-mobile-tool-btn-active' : ''
-                      }`}
-                    >
-                      <span className="flex items-center justify-center gap-2">
-                        <StationLed active pulse={constellationLabEnabled} />
-                        <Sparkles className="h-4 w-4 shrink-0 text-cyan" aria-hidden />
-                        <span>
-                          {constellationLabEnabled ? t('skyLabOn') : t('skyLab')}
-                        </span>
+                  <button
+                    type="button"
+                    data-no-constellation
+                    data-sky-lab-keep
+                    aria-pressed={constellationLabEnabled}
+                    onClick={() => {
+                      toggleConstellationLab()
+                      setMenuOpen(false)
+                    }}
+                    className={`site-nav-mobile-tool-btn mt-4 w-full ${
+                      constellationLabEnabled ? 'site-nav-mobile-tool-btn-active' : ''
+                    }`}
+                  >
+                    <span className="flex items-center justify-center gap-2">
+                      <StationLed active pulse={constellationLabEnabled} />
+                      <Sparkles className="h-4 w-4 shrink-0 text-cyan" aria-hidden />
+                      <span>
+                        {constellationLabEnabled ? t('skyLabOn') : t('skyLab')}
                       </span>
-                    </button>
-                  ) : null}
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    data-no-constellation
+                    data-sky-lab-keep
+                    aria-pressed={skyViewMode}
+                    onClick={() => {
+                      toggleSkyViewMode()
+                      setMenuOpen(false)
+                    }}
+                    className={`site-nav-mobile-tool-btn mt-3 w-full ${
+                      skyViewMode ? 'site-nav-mobile-tool-btn-active' : ''
+                    }`}
+                  >
+                    <span className="flex items-center justify-center gap-2">
+                      <StationLed active={skyViewMode} pulse={skyViewMode} />
+                      {skyViewMode ? (
+                        <Eye className="h-4 w-4 shrink-0 text-cyan" aria-hidden />
+                      ) : (
+                        <EyeOff className="h-4 w-4 shrink-0 text-cyan" aria-hidden />
+                      )}
+                      <span>{skyViewMode ? t('showUi') : t('skyView')}</span>
+                    </span>
+                  </button>
                 </div>
               </nav>
             </div>

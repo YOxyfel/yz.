@@ -2136,21 +2136,15 @@
   pointer-events: none !important;
 }
 
-html[data-constellation-lab='on'] .corner-sky-lab-stack {
+html[data-constellation-lab='on'] .corner-tools-dock {
   top: max(0.75rem, env(safe-area-inset-top, 0px));
   left: max(0.75rem, env(safe-area-inset-left, 0px));
   z-index: 80;
 }
 
-html[data-constellation-lab='on'] .corner-vfx-dock-stack {
-  top: calc(max(0.75rem, env(safe-area-inset-top, 0px)) + 3.35rem);
-  left: max(0.75rem, env(safe-area-inset-left, 0px));
-  z-index: 80;
-}
-
-/* Nav chart — fixed below Sky Lab + Site FX corner docks (no shift when FX panel opens). */
+/* Nav chart — fixed below corner tools dock row. */
 .sky-lab-nav-chart {
-  top: calc(max(0.75rem, env(safe-area-inset-top, 0px)) + 6.85rem);
+  top: calc(max(0.75rem, env(safe-area-inset-top, 0px)) + 3.5rem);
   left: max(0.75rem, env(safe-area-inset-left, 0px));
   width: min(16rem, calc(100vw - max(0.75rem, env(safe-area-inset-left, 0px)) * 2));
   max-height: calc(100dvh - max(0.75rem, env(safe-area-inset-top, 0px)) - 7.5rem);
@@ -2163,7 +2157,7 @@ html[data-constellation-lab='on'] .corner-vfx-dock-stack {
   width: min(16rem, calc(100vw - max(0.75rem, env(safe-area-inset-left, 0px)) * 2));
 }
 
-.corner-vfx-dock-stack-open {
+.corner-tools-dock-open {
   z-index: 82;
 }
 
@@ -2185,8 +2179,7 @@ html[data-mobile-sky-lab='on'] [data-crazy-sky-keep] {
   pointer-events: none !important;
 }
 
-html[data-mobile-sky-lab='on'] .corner-station-dock-stack,
-html[data-mobile-sky-lab='on'] .corner-vfx-dock-stack,
+html[data-mobile-sky-lab='on'] .corner-tools-dock:not(.corner-tools-dock-minimal),
 html[data-mobile-sky-lab='on'] .site-nav-header,
 html[data-mobile-sky-lab='on'] .feature-hint-card,
 html[data-mobile-sky-lab='on'] .sky-lab-mobile-status,
@@ -2196,7 +2189,7 @@ html[data-mobile-sky-lab='on'] .bg-grid {
   pointer-events: none !important;
 }
 
-html[data-mobile-sky-lab='on'] .corner-sky-lab-stack {
+html[data-mobile-sky-lab='on'] .corner-tools-dock-minimal {
   top: max(0.75rem, env(safe-area-inset-top, 0px));
   left: max(0.75rem, env(safe-area-inset-left, 0px));
   z-index: 100;
@@ -2232,13 +2225,8 @@ html[data-mobile-sky-lab='on'] .constellation-label {
 }
 
 @media (min-width: 1024px) {
-  html:not([data-constellation-lab='on']) .corner-vfx-dock-stack {
+  html:not([data-constellation-lab='on']) .corner-tools-dock:not(.corner-tools-dock-minimal) {
     top: calc(max(0.75rem, env(safe-area-inset-top, 0px)) + 4.75rem);
-    left: max(0.75rem, env(safe-area-inset-left, 0px));
-  }
-
-  html:not([data-constellation-lab='on']) .corner-sky-lab-stack {
-    top: calc(max(0.75rem, env(safe-area-inset-top, 0px)) + 4.75rem + 3.35rem);
     left: max(0.75rem, env(safe-area-inset-left, 0px));
   }
 }
@@ -2374,10 +2362,9 @@ html[data-tablet='on'] .site-nav-mobile-trigger {
   color: oklch(0.84 0.16 200);
 }
 
-/* Mobile/tablet: corner FX + Sky Lab docks live in the hamburger menu only. */
+/* Mobile/tablet: corner tools live in the hamburger menu only. */
 @media (max-width: 1023px) {
-  .corner-vfx-dock-stack,
-  html:not([data-mobile-sky-lab='on']) .corner-sky-lab-stack {
+  .corner-tools-dock:not(.corner-tools-dock-minimal) {
     display: none !important;
     visibility: hidden !important;
     pointer-events: none !important;
@@ -2593,7 +2580,7 @@ html[data-tablet='on'] .site-nav-mobile-trigger {
   box-shadow: 0 0 16px -6px oklch(0.78 0.16 200 / 0.35);
 }
 
-.crazy-sky-focus-toggle {
+.sky-view-restore-toggle {
   bottom: max(1rem, env(safe-area-inset-bottom, 0px));
   backdrop-filter: blur(8px);
   box-shadow: 0 8px 24px -8px oklch(0 0 0 / 0.8);
@@ -2607,38 +2594,12 @@ html[data-crazy-sky-focus='on'] [data-portfolio-chrome],
   pointer-events: none !important;
 }
 
-html[data-corner-ui-hidden='on'] .corner-vfx-dock-stack,
-html[data-corner-ui-hidden='on'] .corner-sky-lab-stack:not(.corner-ui-restore-stack),
-html[data-corner-ui-hidden='on'] .sky-lab-nav-chart,
-html[data-corner-ui-hidden='on'] .sky-lab-hint-card {
+html[data-crazy-sky-focus='on'] .corner-tools-dock,
+html[data-crazy-sky-focus='on'] .sky-lab-nav-chart {
   display: none !important;
   visibility: hidden !important;
   opacity: 0 !important;
   pointer-events: none !important;
-}
-
-.corner-ui-restore-stack {
-  position: fixed;
-  z-index: 90;
-  top: max(0.75rem, env(safe-area-inset-top, 0px));
-  left: max(0.75rem, env(safe-area-inset-left, 0px));
-}
-
-@media (min-width: 1024px) {
-  html:not([data-constellation-lab='on']) .corner-ui-restore-stack {
-    top: calc(max(0.75rem, env(safe-area-inset-top, 0px)) + 4.75rem);
-    left: max(0.75rem, env(safe-area-inset-left, 0px));
-  }
-}
-
-.corner-chrome-hide-btn {
-  border-color: oklch(0.38 0.03 248 / 0.5);
-  color: oklch(0.72 0.06 200 / 0.92);
-}
-
-.corner-chrome-hide-btn:hover {
-  border-color: oklch(0.55 0.08 200 / 0.55);
-  color: oklch(0.9 0.08 200);
 }
 
 .sky-decor-stack-front {
@@ -2650,14 +2611,27 @@ html[data-corner-ui-hidden='on'] .sky-lab-hint-card {
   pointer-events: auto;
 }
 
-.corner-sky-lab-stack {
+.corner-tools-dock {
   position: fixed;
+  top: max(1rem, env(safe-area-inset-top, 0px));
   left: max(1rem, env(safe-area-inset-left, 0px));
   z-index: 55;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 0.55rem;
+  max-width: min(100%, calc(100vw - 2rem));
+}
+
+.corner-tools-dock-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.corner-tools-dock-minimal {
   max-width: min(22rem, calc(100vw - 2rem));
 }
 
@@ -2669,18 +2643,6 @@ html[data-corner-ui-hidden='on'] .sky-lab-hint-card {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 0.55rem;
-  max-width: min(22rem, calc(100vw - 2rem));
-}
-
-.corner-vfx-dock-stack {
-  position: fixed;
-  z-index: 55;
-  top: calc(max(1rem, env(safe-area-inset-top, 0px)) + 3.35rem);
-  left: max(1rem, env(safe-area-inset-left, 0px));
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
   gap: 0.55rem;
   max-width: min(22rem, calc(100vw - 2rem));
 }
@@ -2815,7 +2777,7 @@ html[data-fx-lite='on'] .corner-dock-icon {
     0 12px 36px -10px oklch(0 0 0 / 0.9);
 }
 
-.corner-sky-lab-stack-active .corner-sky-lab-dock .corner-dock-glow {
+.corner-tools-dock-lab-active .corner-sky-lab-dock .corner-dock-glow {
   background: radial-gradient(circle, oklch(0.78 0.18 200 / 0.45), transparent 70%);
 }
 
@@ -2907,7 +2869,7 @@ html[data-fx-lite='on'] .corner-dock-icon {
 }
 
 @media (min-width: 768px) {
-  html:not([data-constellation-lab='on']) .corner-sky-lab-stack {
+  html:not([data-constellation-lab='on']) .corner-tools-dock:not(.corner-tools-dock-minimal) {
     top: max(1rem, env(safe-area-inset-top, 0px));
   }
 }
@@ -2955,18 +2917,22 @@ html[data-fx-lite='on'] .corner-dock-icon {
   max-width: 22rem;
 }
 
-.corner-sky-lab-stack-hint {
+.corner-tools-dock-hint {
   z-index: 84;
 }
 
-html[data-sky-lab-hint='on'] .corner-sky-lab-stack {
+html[data-sky-lab-hint='on'] .corner-tools-dock {
   flex-direction: row;
   align-items: flex-start;
   gap: 0.75rem;
   max-width: min(34rem, calc(100vw - max(0.75rem, env(safe-area-inset-left, 0px)) * 2));
 }
 
-html[data-sky-lab-hint='on'] .corner-sky-lab-stack .corner-sky-lab-dock {
+html[data-sky-lab-hint='on'] .corner-tools-dock-row {
+  flex-shrink: 0;
+}
+
+html[data-sky-lab-hint='on'] .corner-tools-dock .corner-sky-lab-dock {
   flex-shrink: 0;
 }
 
@@ -3678,7 +3644,7 @@ html[data-fx-lite='on'] .mobile-solid-backdrop {
   -webkit-backdrop-filter: none !important;
 }
 
-html[data-fx-lite='on'] .corner-sky-lab-stack {
+html[data-fx-lite='on'] .corner-tools-dock {
   left: max(0.75rem, env(safe-area-inset-left, 0px));
 }
 
