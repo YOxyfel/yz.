@@ -1,5 +1,36 @@
 # Release history
 
+## V1.1.1 (`v1.1.1`)
+
+**Saved:** mobile nav, Sky Lab, and FX polish after V1.1.
+
+| | |
+|---|---|
+| **Git tag** | `v1.1.1` |
+| **Production URL** | https://v0-yanez.vercel.app |
+| **Vercel deployment** | `dpl_9GNmH6iznCDi9PXcNtfNU2ZetySM` |
+
+### What this version includes
+
+- Mobile Sky Lab: FX-gated toggle, constellation names, planets, and starships
+- Site FX dock moves into Sky Lab slot when Sky Lab is hidden on mobile
+- Panel flip disabled when Site FX is off; block scroll limited to desktop
+- Mobile nav hamburger drawer (fixed overflow and empty menu on open)
+
+### Revert to V1.1.1
+
+```powershell
+cd D:\999.Personal\Website\website
+git checkout v1.1.1 -- .
+git clean -fd -e .env.local -e node_modules -e .next -e .vercel
+npm install
+npm run build
+```
+
+Or hard reset: `git reset --hard v1.1.1`
+
+---
+
 ## V1.1 (`v1.1`)
 
 **Saved:** optimization and polish pass after V1.0.
