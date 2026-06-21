@@ -1,9 +1,7 @@
 'use client'
 
-import { AnimatePresence, motion } from 'framer-motion'
+import { motion } from 'framer-motion'
 import {
-  ChevronLeft,
-  ChevronRight,
   Download,
   Eye,
   EyeOff,
@@ -36,7 +34,7 @@ import {
   type AudioTrack,
   type CatalogId,
 } from './audio-tracks'
-import { Reveal } from './reveal'
+import { CatalogStrip, LabShell, LabTransition } from './arsenal-lab-shell'
 
 const sourceIcons: Record<AudioSourceType, typeof Mic> = {
   found: Download,
@@ -141,7 +139,7 @@ function TrackVisual({
       : 0
 
   return (
-    <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-white/10 bg-black/60 sm:aspect-auto sm:min-h-[320px]">
+    <div className="station-screen relative aspect-[4/3] w-full sm:aspect-auto sm:min-h-[320px]">
       <div
         className={`absolute inset-0 opacity-80 ${
           track.theme === 'cultivation'
@@ -285,11 +283,11 @@ function TrackVisual({
       </div>
 
       <div className="absolute inset-x-0 top-0 flex items-center justify-between p-4">
-        <span className="rounded-full border border-white/10 bg-black/50 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground backdrop-blur-md">
+        <span className="station-chip !px-3 !py-1 !text-[10px] tracking-[0.25em] text-muted-foreground">
           {track.index}
         </span>
         {track.layerLabel ? (
-          <span className="rounded-full border border-white/10 bg-black/50 px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-muted-foreground backdrop-blur-md">
+          <span className="station-chip !px-3 !py-1 !text-[10px] tracking-widest text-muted-foreground">
             {track.layerLabel}
           </span>
         ) : null}
@@ -328,13 +326,9 @@ function TrackConsole({
   const progress = duration > 0 ? currentTime / duration : 0
 
   return (
-    <motion.article
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -12 }}
-      transition={{ duration: 0.35 }}
-      className={`card-glare relative overflow-hidden rounded-3xl border bg-card/30 p-5 backdrop-blur-xl transition-all duration-500 sm:p-7 ${
-        isPlaying ? `ring-1 ${accentRing[track.accent]}` : 'border-white/10'
+    <article
+      className={`relative overflow-hidden rounded-2xl border border-[var(--station-bezel)]/35 bg-[var(--station-hull-dark)]/60 p-5 shadow-[inset_0_1px_0_oklch(0.5_0.04_245/0.15)] transition-all duration-500 sm:p-7 ${
+        isPlaying ? `ring-1 ${accentRing[track.accent]}` : ''
       }`}
     >
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:gap-8">
@@ -349,7 +343,7 @@ function TrackConsole({
         <div className="flex flex-col">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
-              <p className={`font-mono text-xs uppercase tracking-[0.28em] ${accentText[track.accent]}`}>
+              <p className={`station-readout-label ${accentText[track.accent]}`}>
                 {track.subtitle}
               </p>
               <h3 className="font-heading mt-2 text-2xl font-bold tracking-tight sm:text-3xl">
@@ -362,7 +356,7 @@ function TrackConsole({
                   type="button"
                   onClick={onRestart}
                   aria-label={`Restart ${track.title}`}
-                  className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/5 text-muted-foreground transition-all hover:border-amber-400/40 hover:text-amber-200"
+                  className="station-button station-button-secondary !h-11 !w-11 !p-0 text-muted-foreground hover:!border-amber-400/40 hover:!text-amber-200"
                 >
                   <RotateCcw className="h-5 w-5" />
                 </button>
@@ -371,10 +365,10 @@ function TrackConsole({
                 type="button"
                 onClick={isPlaying ? onPause : onPlay}
                 aria-label={isPlaying ? `Pause ${track.title}` : `Play ${track.title}`}
-                className={`flex h-14 w-14 items-center justify-center rounded-full border transition-all hover:scale-105 ${
+                className={`station-button !h-14 !w-14 !rounded-full !p-0 transition-all hover:scale-105 ${
                   isPlaying || isActive
-                    ? `${accentText[track.accent]} border-current bg-current/10 shadow-[0_0_30px_-6px_currentColor]`
-                    : 'border-white/15 bg-white/5 text-foreground hover:border-white/30'
+                    ? `station-button-primary ${accentText[track.accent]} !border-current !shadow-[0_0_30px_-6px_currentColor]`
+                    : 'station-button-secondary text-foreground'
                 }`}
               >
                 {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="ml-0.5 h-6 w-6" />}
@@ -400,8 +394,8 @@ function TrackConsole({
             })}
           </div>
 
-          <div className="mt-6 rounded-2xl border border-white/10 bg-black/35 p-4">
-            <p className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+          <div className="mt-6 rounded-xl border border-[var(--station-bezel)]/30 bg-[var(--station-hull-dark)]/50 p-4">
+            <p className="station-readout-label flex items-center gap-2 text-muted-foreground">
               <GitMerge className="h-3.5 w-3.5 text-cyan" />
               Reaper Pipeline
             </p>
@@ -446,64 +440,7 @@ function TrackConsole({
           </div>
         </div>
       </div>
-    </motion.article>
-  )
-}
-
-function CatalogNavigator({
-  selectedId,
-  onSelect,
-  onPrev,
-  onNext,
-}: {
-  selectedId: CatalogId
-  onSelect: (id: CatalogId) => void
-  onPrev: () => void
-  onNext: () => void
-}) {
-  const index = catalogOrder.indexOf(selectedId)
-
-  return (
-    <div className="mt-10 space-y-4">
-      <div className="flex items-center justify-between gap-4">
-        <button
-          type="button"
-          onClick={onPrev}
-          aria-label="Previous sound"
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-foreground transition-colors hover:border-cyan/40 hover:text-cyan"
-        >
-          <ChevronLeft className="h-5 w-5" />
-        </button>
-        <p className="font-mono text-xs uppercase tracking-[0.3em] text-muted-foreground">
-          {String(index + 1).padStart(2, '0')} / {String(catalogOrder.length).padStart(2, '0')}
-        </p>
-        <button
-          type="button"
-          onClick={onNext}
-          aria-label="Next sound"
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-foreground transition-colors hover:border-cyan/40 hover:text-cyan"
-        >
-          <ChevronRight className="h-5 w-5" />
-        </button>
-      </div>
-
-      <div className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {catalogOrder.map((id) => (
-          <button
-            key={id}
-            type="button"
-            onClick={() => onSelect(id)}
-            className={`shrink-0 rounded-full border px-4 py-2 font-mono text-[11px] uppercase tracking-wider transition-all ${
-              id === selectedId
-                ? 'border-cyan/40 bg-cyan/15 text-cyan shadow-[0_0_20px_-6px_var(--cyan)]'
-                : 'border-white/10 bg-white/[0.03] text-muted-foreground hover:border-white/25 hover:text-foreground'
-            }`}
-          >
-            {catalogLabels[id]}
-          </button>
-        ))}
-      </div>
-    </div>
+    </article>
   )
 }
 
@@ -519,8 +456,8 @@ function WoodSliceStack({
   const layers = getTracksForCatalog('wood-slice')
 
   return (
-    <div className="mt-6 overflow-hidden rounded-3xl border border-amber-400/20 bg-gradient-to-br from-amber-500/10 via-black/40 to-background/60 p-6">
-      <p className="font-mono text-xs uppercase tracking-[0.28em] text-amber-300">
+    <div className="mt-6 overflow-hidden rounded-xl border border-[var(--station-bezel)]/35 border-amber-400/25 bg-[var(--station-hull-dark)]/60 p-6">
+      <p className="station-readout-label text-amber-300">
         Combined Weapon Stack
       </p>
       <p className="mt-2 text-sm text-muted-foreground">
@@ -532,7 +469,7 @@ function WoodSliceStack({
             key={layer.id}
             type="button"
             onClick={() => onPlayLayer(layer)}
-            className="rounded-full border border-amber-400/30 bg-amber-400/10 px-4 py-2 font-mono text-xs uppercase tracking-wider text-amber-200 hover:bg-amber-400/20"
+            className="station-chip !border-amber-400/30 !text-amber-200 hover:!border-amber-400/50"
           >
             Play {layer.layerLabel}
           </button>
@@ -540,14 +477,14 @@ function WoodSliceStack({
         <button
           type="button"
           onClick={onPlayCombined}
-          className="rounded-full bg-amber-400 px-4 py-2 font-mono text-xs font-semibold uppercase tracking-wider text-black hover:scale-[1.03]"
+          className="station-button station-button-primary !border-amber-400/60 !from-amber-300 !to-amber-500 !text-black hover:scale-[1.03]"
         >
           Play Combined
         </button>
         <button
           type="button"
           onClick={pause}
-          className="rounded-full border border-white/15 px-4 py-2 font-mono text-xs uppercase tracking-wider text-muted-foreground"
+          className="station-button station-button-secondary text-muted-foreground"
         >
           Stop
         </button>
@@ -768,12 +705,17 @@ function AudioArchitectureInner({ embedded = false }: { embedded?: boolean }) {
     else void audioRef.current?.play()
   }, [activeId, displayedTrack, playCombinedWoodSlice, playTrack, playing, seek])
 
+  const catalogItems = useMemo(
+    () => catalogOrder.map((id) => ({ id, title: catalogLabels[id] })),
+    []
+  )
+
   const stopAll = useCallback(() => {
     pause()
   }, [pause])
 
   return (
-    <div className={embedded ? 'relative' : 'relative mt-20'}>
+    <div className="relative">
       <AudioScreenFx
         theme={activeTrack?.theme ?? null}
         playing={playing}
@@ -788,7 +730,7 @@ function AudioArchitectureInner({ embedded = false }: { embedded?: boolean }) {
 
       {playing && mode !== 'off' ? (
         <div
-          className={`pointer-events-auto fixed left-1/2 z-[60] flex -translate-x-1/2 gap-2 rounded-full border border-white/15 bg-black/80 p-1.5 shadow-xl backdrop-blur-md ${
+          className={`pointer-events-auto fixed left-1/2 z-[60] flex -translate-x-1/2 gap-2 rounded-full border border-[var(--station-bezel)]/45 bg-[var(--station-hull-dark)]/90 p-1.5 shadow-xl backdrop-blur-md ${
             mobileAudioStop
               ? 'bottom-[max(1rem,env(safe-area-inset-bottom))]'
               : 'bottom-6'
@@ -797,7 +739,7 @@ function AudioArchitectureInner({ embedded = false }: { embedded?: boolean }) {
           <button
             type="button"
             onClick={toggleScreenFxLive}
-            className="inline-flex items-center gap-1.5 rounded-full px-3 py-2 font-mono text-[10px] uppercase tracking-wider text-foreground hover:bg-white/10"
+            className="station-button station-button-ghost !rounded-full !px-3 !py-2 !text-[10px] !uppercase !tracking-wider"
           >
             {screenFxLive ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
             FX {screenFxLive ? 'Off' : 'On'}
@@ -805,7 +747,7 @@ function AudioArchitectureInner({ embedded = false }: { embedded?: boolean }) {
           <button
             type="button"
             onClick={restartTrack}
-            className="inline-flex items-center gap-1.5 rounded-full px-3 py-2 font-mono text-[10px] uppercase tracking-wider text-foreground hover:bg-white/10"
+            className="station-button station-button-ghost !rounded-full !px-3 !py-2 !text-[10px] !uppercase !tracking-wider"
           >
             <RotateCcw className="h-3.5 w-3.5" />
             Restart
@@ -813,7 +755,7 @@ function AudioArchitectureInner({ embedded = false }: { embedded?: boolean }) {
           <button
             type="button"
             onClick={stopAll}
-            className="inline-flex items-center gap-1.5 rounded-full px-3 py-2 font-mono text-[10px] uppercase tracking-wider text-rose-200 hover:bg-rose-950/40"
+            className="station-button station-button-ghost !rounded-full !border-rose-400/25 !px-3 !py-2 !text-[10px] !uppercase !tracking-wider !text-rose-200 hover:!border-rose-400/50 hover:!bg-rose-950/40"
           >
             <Pause className="h-3.5 w-3.5" />
             Stop
@@ -821,8 +763,13 @@ function AudioArchitectureInner({ embedded = false }: { embedded?: boolean }) {
         </div>
       ) : null}
 
-      {embedded ? (
-        <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-card/50 via-background/40 to-card/30 p-4 sm:p-6">
+      <LabShell
+        embedded={embedded}
+        eyebrow="Audio Architecture · Reaper DAW"
+        title="Sound Design Lab"
+        description="Raw material — found online, recorded by hand, or AI-generated (OST only) — then layered, overlapped, mixed, and developed in Reaper. Select a cue below to inspect the pipeline and hear it."
+        icon={Sparkles}
+        controls={
           <AudioFxControls
             playing={playing}
             hasActiveTrack={Boolean(activeId)}
@@ -831,50 +778,19 @@ function AudioArchitectureInner({ embedded = false }: { embedded?: boolean }) {
             onRestart={restartTrack}
             onStopAll={stopAll}
           />
-        </div>
-      ) : (
-        <Reveal>
-          <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-card/50 via-background/40 to-card/30 p-6 sm:p-10">
-            <div className="relative max-w-3xl">
-              <p className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.3em] text-cyan">
-                <Sparkles className="h-3.5 w-3.5" />
-                Audio Architecture · Reaper DAW
-              </p>
-              <h3 className="font-heading mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
-                Sound Design Lab
-              </h3>
-              <p className="mt-4 text-pretty leading-relaxed text-muted-foreground">
-                Raw material — found online, recorded by hand, or AI-generated (OST only) —
-                then layered, overlapped, mixed, and developed in Reaper. Select a cue below
-                to inspect the pipeline and hear it.
-              </p>
-            </div>
-
-            <AudioFxControls
-              playing={playing}
-              hasActiveTrack={Boolean(activeId)}
-              screenFxActive={screenFxLive}
-              onToggleScreenFx={toggleScreenFxLive}
-              onRestart={restartTrack}
-              onStopAll={stopAll}
-            />
-          </div>
-        </Reveal>
-      )}
-
-      <CatalogNavigator
-        selectedId={selectedCatalogId}
-        onSelect={selectCatalog}
-        onPrev={goPrev}
-        onNext={goNext}
-      />
-
-      <div
-        className={`relative min-h-[480px] ${embedded ? 'mt-4 rounded-3xl border border-white/10 bg-gradient-to-br from-card/50 via-background/40 to-card/30 p-4 sm:p-6' : 'mt-6'}`}
+        }
       >
-        <AnimatePresence mode="wait">
-          {displayedTrack ? (
-            <div key={selectedCatalogId + woodSliceLayer}>
+        <CatalogStrip
+          items={catalogItems}
+          selectedId={selectedCatalogId}
+          onSelect={(id) => selectCatalog(id as CatalogId)}
+          onPrev={goPrev}
+          onNext={goNext}
+        />
+
+        {displayedTrack ? (
+          <LabTransition itemKey={`${selectedCatalogId}-${woodSliceLayer}`}>
+            <div className="relative min-h-[480px]">
               <TrackConsole
                 track={displayedTrack}
                 isActive={activeId === displayedTrack.id}
@@ -901,10 +817,10 @@ function AudioArchitectureInner({ embedded = false }: { embedded?: boolean }) {
                           setWoodSliceLayer(index)
                           setActiveId(null)
                         }}
-                        className={`rounded-full border px-4 py-2 font-mono text-xs uppercase tracking-wider ${
+                        className={`station-chip transition-all ${
                           woodSliceLayer === index
-                            ? 'border-amber-400/40 bg-amber-400/15 text-amber-200'
-                            : 'border-white/10 text-muted-foreground hover:border-white/25'
+                            ? 'station-chip-active !border-amber-400/40 !text-amber-200'
+                            : ''
                         }`}
                       >
                         {layer.layerLabel}
@@ -919,9 +835,9 @@ function AudioArchitectureInner({ embedded = false }: { embedded?: boolean }) {
                 </>
               ) : null}
             </div>
-          ) : null}
-        </AnimatePresence>
-      </div>
+          </LabTransition>
+        ) : null}
+      </LabShell>
     </div>
   )
 }
