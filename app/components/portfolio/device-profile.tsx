@@ -217,6 +217,29 @@ export function useDeviceProfile() {
   return useContext(DeviceProfileContext)
 }
 
+function subscribeCompactNav(onStoreChange: () => void) {
+  const media = window.matchMedia(`(max-width: ${TABLET_MAX_PX}px)`)
+  media.addEventListener('change', onStoreChange)
+  return () => media.removeEventListener('change', onStoreChange)
+}
+
+function getCompactNavSnapshot() {
+  return window.matchMedia(`(max-width: ${TABLET_MAX_PX}px)`).matches
+}
+
+function getServerCompactNavSnapshot() {
+  return false
+}
+
+/** True at viewport widths that use the mobile hamburger nav (≤1023px). */
+export function useCompactNavLayout() {
+  return useSyncExternalStore(
+    subscribeCompactNav,
+    getCompactNavSnapshot,
+    getServerCompactNavSnapshot
+  )
+}
+
 /** Synchronous runtime check — use when toggling Sky Lab (do not rely on React profile alone). */
 export function detectMobileSkyLabViewport(): boolean {
   if (typeof window === 'undefined') return false

@@ -2225,9 +2225,11 @@ html[data-mobile-sky-lab='on'] .constellation-label {
   white-space: nowrap;
 }
 
-html:not([data-constellation-lab='on']) .corner-sky-lab-stack {
-  top: calc(max(0.75rem, env(safe-area-inset-top, 0px)) + 4.75rem);
-  left: max(0.75rem, env(safe-area-inset-left, 0px));
+@media (min-width: 1024px) {
+  html:not([data-constellation-lab='on']) .corner-sky-lab-stack {
+    top: calc(max(0.75rem, env(safe-area-inset-top, 0px)) + 4.75rem);
+    left: max(0.75rem, env(safe-area-inset-left, 0px));
+  }
 }
 
 .sky-lab-mobile-status {
@@ -2361,13 +2363,14 @@ html[data-tablet='on'] .site-nav-mobile-trigger {
   color: oklch(0.84 0.16 200);
 }
 
-html[data-narrow='on']:not([data-mobile-sky-lab='on']) .corner-sky-lab-stack,
-html[data-tablet='on']:not([data-mobile-sky-lab='on']) .corner-sky-lab-stack,
-html[data-narrow='on'] .corner-vfx-dock-stack,
-html[data-tablet='on'] .corner-vfx-dock-stack {
-  display: none !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
+/* Mobile/tablet: corner FX + Sky Lab docks live in the hamburger menu only. */
+@media (max-width: 1023px) {
+  .corner-vfx-dock-stack,
+  html:not([data-mobile-sky-lab='on']) .corner-sky-lab-stack {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
 }
 
 .mobile-sky-lab-bar {
@@ -2855,21 +2858,6 @@ html[data-fx-lite='on'] .corner-dock-icon {
   50% {
     opacity: 1;
     transform: scale(1.06);
-  }
-}
-
-@media (max-width: 767px) {
-  html:not([data-constellation-lab='on']) .corner-sky-lab-stack {
-    top: calc(max(0.75rem, env(safe-area-inset-top, 0px)) + 4.75rem);
-  }
-
-  html:not([data-constellation-lab='on']) .corner-vfx-dock-stack {
-    top: calc(max(0.75rem, env(safe-area-inset-top, 0px)) + 4.75rem + 3.35rem);
-    left: max(0.75rem, env(safe-area-inset-left, 0px));
-  }
-
-  html:not([data-constellation-lab='on'])[data-sky-lab-dock-hidden='on'] .corner-vfx-dock-stack {
-    top: calc(max(0.75rem, env(safe-area-inset-top, 0px)) + 4.75rem);
   }
 }
 

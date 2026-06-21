@@ -2,10 +2,10 @@
 
 import { motion } from 'framer-motion'
 import { Menu, Sparkles, X } from 'lucide-react'
-import { useEffect, useState, useSyncExternalStore, type MouseEvent } from 'react'
+import { useEffect, useState, type MouseEvent } from 'react'
 import { createPortal } from 'react-dom'
 import { useTranslations } from 'next-intl'
-import { TABLET_MAX_PX } from './breakpoints'
+import { useCompactNavLayout } from './device-profile'
 import { isBlockScrollPair, requestBlockNavScroll } from './block-scroll-nav'
 import { useConstellations } from './constellation-context'
 import { SiteFxControls } from './site-fx-controls'
@@ -27,29 +27,11 @@ function onNavAnchorClick(event: MouseEvent<HTMLAnchorElement>, href: string) {
   requestBlockNavScroll(href)
 }
 
-function subscribeCompactNav(onStoreChange: () => void) {
-  const media = window.matchMedia(`(max-width: ${TABLET_MAX_PX}px)`)
-  media.addEventListener('change', onStoreChange)
-  return () => media.removeEventListener('change', onStoreChange)
-}
-
-function getCompactNavSnapshot() {
-  return window.matchMedia(`(max-width: ${TABLET_MAX_PX}px)`).matches
-}
-
-function getServerCompactNavSnapshot() {
-  return false
-}
-
 export function SiteNav() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
-  const compactNav = useSyncExternalStore(
-    subscribeCompactNav,
-    getCompactNavSnapshot,
-    getServerCompactNavSnapshot
-  )
+  const compactNav = useCompactNavLayout()
   const { constellationLabEnabled, toggleConstellationLab } = useConstellations()
   const { showScreenFx } = useVisualFxPreferences()
   const t = useTranslations('Nav')

@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useTranslations } from 'next-intl'
 import { useConstellations } from './constellation-context'
-import { isMobileSkyLabViewport, useDeviceProfile } from './device-profile'
+import { isMobileSkyLabViewport, useCompactNavLayout, useDeviceProfile } from './device-profile'
 import { FEATURE_HINT_KEYS, hasSeenHint, markHintSeen } from './feature-hints'
 import { StationLed } from './station-console'
 
@@ -13,7 +13,7 @@ export function ConstellationLabToggle() {
   const [mounted, setMounted] = useState(false)
   const [showHint, setShowHint] = useState(false)
   const deviceProfile = useDeviceProfile()
-  const { isDesktop } = deviceProfile
+  const compactNav = useCompactNavLayout()
   const { constellationLabEnabled, mobileSkyLabMode, toggleConstellationLab } = useConstellations()
   const t = useTranslations('SkyLab')
   const tNav = useTranslations('Nav')
@@ -98,7 +98,7 @@ export function ConstellationLabToggle() {
   )
 
   if (!mounted) return null
-  if (!isDesktop && !mobileSkyLabMode) return null
+  if (compactNav && !mobileSkyLabMode) return null
 
   return createPortal(button, document.body)
 }

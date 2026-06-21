@@ -1,10 +1,10 @@
 'use client'
 
-import { Eye, Shield, Sparkles, ZapOff } from 'lucide-react'
+import { Shield, Sparkles, ZapOff } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useTranslations } from 'next-intl'
-import { useDeviceProfile } from './device-profile'
+import { useCompactNavLayout } from './device-profile'
 import { SiteFxControls } from './site-fx-controls'
 import { StationLed } from './station-console'
 import { useVisualFxPreferences } from './visual-fx-preferences'
@@ -18,7 +18,7 @@ const modeIcons = {
 export function VisualFxDock() {
   const [mounted, setMounted] = useState(false)
   const [panelOpen, setPanelOpen] = useState(false)
-  const { isDesktop } = useDeviceProfile()
+  const compactNav = useCompactNavLayout()
   const { mode, screenFxLive } = useVisualFxPreferences()
   const t = useTranslations('SiteFx')
 
@@ -35,7 +35,7 @@ export function VisualFxDock() {
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [panelOpen])
 
-  if (!mounted || !isDesktop) return null
+  if (!mounted || compactNav) return null
 
   const ModeIcon = modeIcons[mode]
   const dockLabel = mode === 'off' ? t('dockOff') : screenFxLive ? t('dockOn') : t('dockPaused')
