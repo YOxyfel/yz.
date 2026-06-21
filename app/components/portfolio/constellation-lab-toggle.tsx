@@ -33,6 +33,18 @@ export function ConstellationLabToggle() {
     setShowHint(true)
   }, [constellationLabEnabled, touchViewport])
 
+  useEffect(() => {
+    const active = showHint && !constellationLabEnabled && !touchViewport
+    if (active) {
+      document.documentElement.dataset.skyLabHint = 'on'
+    } else {
+      delete document.documentElement.dataset.skyLabHint
+    }
+    return () => {
+      delete document.documentElement.dataset.skyLabHint
+    }
+  }, [constellationLabEnabled, showHint, touchViewport])
+
   const dismissHint = () => {
     markHintSeen(FEATURE_HINT_KEYS.skyLab)
     setShowHint(false)

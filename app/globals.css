@@ -2232,8 +2232,13 @@ html[data-mobile-sky-lab='on'] .constellation-label {
 }
 
 @media (min-width: 1024px) {
-  html:not([data-constellation-lab='on']) .corner-sky-lab-stack {
+  html:not([data-constellation-lab='on']) .corner-vfx-dock-stack {
     top: calc(max(0.75rem, env(safe-area-inset-top, 0px)) + 4.75rem);
+    left: max(0.75rem, env(safe-area-inset-left, 0px));
+  }
+
+  html:not([data-constellation-lab='on']) .corner-sky-lab-stack {
+    top: calc(max(0.75rem, env(safe-area-inset-top, 0px)) + 4.75rem + 3.35rem);
     left: max(0.75rem, env(safe-area-inset-left, 0px));
   }
 }
@@ -2914,6 +2919,27 @@ html[data-fx-lite='on'] .corner-dock-icon {
   z-index: 55;
   width: 100%;
   max-width: 22rem;
+}
+
+.corner-sky-lab-stack-hint {
+  z-index: 84;
+}
+
+html[data-sky-lab-hint='on'] .corner-sky-lab-stack {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 0.75rem;
+  max-width: min(34rem, calc(100vw - max(0.75rem, env(safe-area-inset-left, 0px)) * 2));
+}
+
+html[data-sky-lab-hint='on'] .corner-sky-lab-stack .corner-sky-lab-dock {
+  flex-shrink: 0;
+}
+
+html[data-sky-lab-hint='on'] .sky-lab-hint-card {
+  flex: 1;
+  min-width: min(16rem, calc(100vw - 9rem));
+  max-width: none;
 }
 
 .site-variant-hint-card {
