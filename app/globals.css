@@ -214,18 +214,6 @@
     }
   }
 
-  @media (max-width: 767px), (pointer: coarse) {
-    html:has([data-block-scroll-root]) {
-      scroll-behavior: smooth;
-      scroll-snap-type: y proximity;
-    }
-
-    html:has([data-block-scroll-root]) [data-scroll-block] {
-      scroll-snap-align: start;
-      scroll-margin-top: 4.75rem;
-    }
-  }
-
   .station-section {
     position: relative;
     padding: 6rem 1.5rem;

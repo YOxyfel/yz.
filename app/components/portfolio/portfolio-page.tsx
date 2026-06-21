@@ -60,11 +60,11 @@ function PortfolioContent() {
   const deviceProfile = useDeviceProfile()
   const { showScreenFx, isReduced } = useVisualFxPreferences()
   const { skyLabFxTier } = resolveSkyLabFx(showScreenFx, isReduced, deviceProfile.fxLite)
-  const { isCoarsePointer, prefersReducedMotion } = deviceProfile
+  const { isDesktop, prefersReducedMotion } = deviceProfile
   const crazyFocus = crazyMode && crazySkyFocus
 
   useBlockScroll({
-    enabled: !mobileSkyLabMode && !crazyFocus && !isCoarsePointer,
+    enabled: !mobileSkyLabMode && !crazyFocus && isDesktop,
     reducedMotion: prefersReducedMotion,
   })
 

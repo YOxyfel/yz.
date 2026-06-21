@@ -11,6 +11,7 @@ import {
   type ReactNode,
 } from 'react'
 import { useDeviceProfile } from './device-profile'
+import { useVisualFxPreferences } from './visual-fx-preferences'
 
 export const SITE_VARIANTS = ['minimal', 'station', 'futuristic'] as const
 export type SiteVariant = (typeof SITE_VARIANTS)[number]
@@ -37,6 +38,7 @@ function normalizeVariant(value: string | null): SiteVariant {
 
 export function SiteVariantProvider({ children }: { children: ReactNode }) {
   const { isCoarsePointer, isDesktop } = useDeviceProfile()
+  const { showCardFx } = useVisualFxPreferences()
   const [variant, setVariantState] = useState<SiteVariant>('station')
   const [transitionDirection, setTransitionDirection] = useState(0)
   const [isTransitioning, setIsTransitioning] = useState(false)
@@ -146,9 +148,10 @@ export function SiteVariantProvider({ children }: { children: ReactNode }) {
       isTransitioning,
       scrollProgress,
       setVariant,
-      panelUsesFlip: variant === 'station' && isDesktop && !isCoarsePointer,
+      panelUsesFlip:
+        variant === 'station' && isDesktop && !isCoarsePointer && showCardFx,
     }),
-    [isCoarsePointer, isDesktop, isTransitioning, scrollProgress, setVariant, transitionDirection, variant]
+    [isCoarsePointer, isDesktop, isTransitioning, scrollProgress, setVariant, showCardFx, transitionDirection, variant]
   )
 
   return (
