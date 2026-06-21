@@ -51,7 +51,7 @@ export function SkyDecorLayer() {
   const showNebula = !skyLabLite
 
   const visualBackLayer =
-    !isCoarsePointer && backDecors.length > 0 ? (
+    backDecors.length > 0 ? (
       <div
         className={`sky-decor-stack sky-decor-stack-back pointer-events-none fixed inset-0 z-[6] ${
           skyLabLite ? 'sky-decor-stack-reduced' : ''

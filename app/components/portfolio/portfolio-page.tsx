@@ -138,7 +138,7 @@ function PortfolioContent() {
 
       <ConstellationLabToggle />
       {!mobileSkyLabMode ? <VisualFxDock /> : null}
-      {!mobileSkyLabMode ? <SkyDecorLayer /> : null}
+      <SkyDecorLayer />
       {!mobileSkyLabMode ? <ConstellationPanel /> : null}
     </>
   )

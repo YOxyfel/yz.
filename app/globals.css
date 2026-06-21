@@ -2196,10 +2196,7 @@ html[data-mobile-sky-lab='on'] .corner-vfx-dock-stack,
 html[data-mobile-sky-lab='on'] .site-nav-header,
 html[data-mobile-sky-lab='on'] .feature-hint-card,
 html[data-mobile-sky-lab='on'] .sky-lab-mobile-status,
-html[data-mobile-sky-lab='on'] .bg-grid,
-html[data-mobile-sky-lab='on'] .starship-traffic-layer,
-html[data-mobile-sky-lab='on'] .sky-decor-stack,
-html[data-mobile-sky-lab='on'] .nebula-burst-layer {
+html[data-mobile-sky-lab='on'] .bg-grid {
   display: none !important;
   visibility: hidden !important;
   pointer-events: none !important;
@@ -2229,6 +2226,15 @@ html[data-mobile-sky-lab='on'] .sky-lab-minimal-toggle .corner-dock-frame {
 
 html[data-mobile-sky-lab='on'] .sky-lab-minimal-toggle .corner-dock-icon {
   color: oklch(0.84 0.16 200);
+}
+
+html[data-mobile-sky-lab='on'] .constellation-label {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  max-width: min(52vw, 11rem);
+  overflow: visible;
+  text-overflow: clip;
+  white-space: nowrap;
 }
 
 html:not([data-constellation-lab='on']) .corner-sky-lab-stack {

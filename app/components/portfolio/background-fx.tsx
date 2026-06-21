@@ -49,7 +49,8 @@ export function BackgroundFx() {
     showHeavyFx && enableHeavyBackgroundFx && pageVisible
   )
   const showHighTierExtras = showHeavyFx && enableHeavyBackgroundFx && heavyExtrasReady
-  const showStarship =
+  const showMobileSkyLabStarships = mobileSkyLab && skyLabOpen && showScreenFx && pageVisible && !isReduced
+  const showAmbientStarships =
     showScreenFx &&
     pageVisible &&
     !isReduced &&
@@ -57,6 +58,7 @@ export function BackgroundFx() {
     !skyLabOpen &&
     performanceTier !== 'low' &&
     scrollIdle
+  const showStarship = showMobileSkyLabStarships || showAmbientStarships
   const showClickConstellations =
     showScreenFx &&
     (skyLabOpen || mobileSkyLab || (showHeavyFx && !fxLite))
@@ -100,10 +102,18 @@ export function BackgroundFx() {
         }`}
       />
 
-      {showStarship ? <StarshipTraffic enabled liteMode={performanceTier === 'mid'} /> : null}
+      {showStarship ? (
+        <StarshipTraffic
+          enabled
+          liteMode={performanceTier !== 'high' || mobileSkyLab}
+        />
+      ) : null}
 
       {showClickConstellations ? (
-        <ClickConstellations lite={constellationLite} hideLabels={skyLabLite && skyLabOpen} />
+        <ClickConstellations
+          lite={constellationLite}
+          hideLabels={skyLabLite && skyLabOpen && !mobileSkyLab}
+        />
       ) : null}
     </div>
   )

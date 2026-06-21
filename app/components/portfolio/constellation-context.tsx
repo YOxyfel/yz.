@@ -390,7 +390,7 @@ export function ConstellationProvider({ children }: { children: ReactNode }) {
           appendArchive(result.archive)
         }
 
-        if (manualMode && !crazyMode && !mobileSkyLabMode && !skyLabLite) {
+        if (manualMode && !crazyMode && !skyLabLite) {
           if (result.spawnedConstellation) {
             planetLuckMeterRef.current += 1
           }
