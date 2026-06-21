@@ -1267,7 +1267,7 @@
   width: 3.35rem;
   height: 4.35rem;
   transform-origin: center center;
-  will-change: transform, left, top, opacity;
+  will-change: transform, opacity;
 }
 
 .starship-flight-slow {

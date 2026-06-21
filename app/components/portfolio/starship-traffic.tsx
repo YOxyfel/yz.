@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { allSegmentStars, type Constellation, type Star } from './constellation-logic'
 import { useConstellations } from './constellation-context'
 import type { OrbitDecor } from './orbit-decor-logic'
+import { usePageVisible } from './use-page-visible'
 
 const SHIP_VARIANTS = ['scout', 'freighter', 'interceptor', 'cruiser'] as const
 const CRAZY_SHIP_MULTIPLIER = 2.5
@@ -60,6 +61,10 @@ export type StarshipFlight = {
   startY: number
   endX: number
   endY: number
+  startPxX: number
+  startPxY: number
+  endPxX: number
+  endPxY: number
   duration: number
   minScale: number
   maxScale: number
@@ -395,6 +400,10 @@ function buildStarshipFlight(
     startY: start.y,
     endX: end.x,
     endY: end.y,
+    startPxX: startPx.x,
+    startPxY: startPx.y,
+    endPxX: endPx.x,
+    endPxY: endPx.y,
     duration,
     minScale,
     maxScale,
@@ -579,18 +588,22 @@ function StarshipEntity({
       className={`starship-flight ${isWarp ? 'starship-flight-warp' : 'starship-flight-slow'} ${
         flight.fromPlanetId ? 'starship-flight-planet-launch' : ''
       } ${flight.toPlanetId ? 'starship-flight-planet-arrival' : ''}`}
-      style={{ rotate: flight.rotation }}
+      style={{
+        rotate: flight.rotation,
+        left: 0,
+        top: 0,
+        translateX: '-50%',
+        translateY: '-50%',
+      }}
       initial={{
-        left: `${flight.startX}%`,
-        top: `${flight.startY}%`,
-        x: '-50%',
-        y: '-50%',
+        x: flight.startPxX,
+        y: flight.startPxY,
         scale: flight.minScale,
         opacity: 0,
       }}
       animate={{
-        left: `${flight.endX}%`,
-        top: `${flight.endY}%`,
+        x: flight.endPxX,
+        y: flight.endPxY,
         scale: [flight.minScale, flight.maxScale, flight.minScale],
         opacity: isWarp ? [0, 1, 1, 0] : [0, 0.92, 0.92, 0],
       }}
@@ -621,11 +634,15 @@ function StarshipEntity({
 export function StarshipTraffic({
   enabled = true,
   liteMode = false,
+  pauseSpawning = false,
 }: {
   enabled?: boolean
   liteMode?: boolean
+  pauseSpawning?: boolean
 }) {
   const reducedMotion = useReducedMotion()
+  const pageVisible = usePageVisible()
+  const spawnPaused = pauseSpawning || !pageVisible
   const { constellations, orbitDecors, crazyMode } = useConstellations()
   const [ships, setShips] = useState<StarshipFlight[]>([])
   const shipsRef = useRef(ships)
@@ -795,10 +812,18 @@ export function StarshipTraffic({
         }
       )
     }
-  }, [constellationGroups, crazyMode, hasPlanets, liteMode, maxActive, orbitDecors, scheduleFlight])
+  }, [constellationGroups, crazyMode, hasPlanets, maxActive, orbitDecors, scheduleFlight])
 
   useEffect(() => {
-    if (!enabled || reducedMotion) return
+    if (!enabled || reducedMotion || spawnPaused) {
+      if (timeoutRef.current !== null) {
+        window.clearTimeout(timeoutRef.current)
+        timeoutRef.current = null
+      }
+      staggerRefs.current.forEach((timer) => window.clearTimeout(timer))
+      staggerRefs.current = []
+      return
+    }
 
     const scheduleNext = () => {
       const delayScale = liteMode ? 1.55 : 1
@@ -823,7 +848,7 @@ export function StarshipTraffic({
       staggerRefs.current.forEach((timer) => window.clearTimeout(timer))
       staggerRefs.current = []
     }
-  }, [crazyMode, enabled, liteMode, reducedMotion, spawnWave])
+  }, [crazyMode, enabled, liteMode, reducedMotion, spawnPaused, spawnWave])
 
   if (!enabled || reducedMotion) return null
 

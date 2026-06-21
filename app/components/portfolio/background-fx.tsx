@@ -106,6 +106,7 @@ export function BackgroundFx() {
         <StarshipTraffic
           enabled
           liteMode={performanceTier !== 'high' || mobileSkyLab}
+          pauseSpawning={!pageVisible || (!scrollIdle && !showMobileSkyLabStarships)}
         />
       ) : null}
 

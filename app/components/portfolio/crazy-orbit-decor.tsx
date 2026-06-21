@@ -10,7 +10,7 @@ import {
   scaleSelectedDecor,
   useOrbitDecorInteraction,
 } from './orbit-decor-interaction'
-import { useSkyScrollFade, skyVisualFilter } from './sky-scroll-fade'
+import { useSkyScrollFade } from './sky-scroll-fade'
 
 export type OrbitDecorRenderMode = 'full' | 'visual' | 'hitbox'
 
@@ -370,7 +370,7 @@ function OrbitDecorEntity({
           className="orbit-decor-visual absolute inset-0 flex items-center justify-center"
           style={{
             opacity: skyVisual.opacity,
-            filter: skyVisualFilter(skyVisual, glow),
+            filter: glow || undefined,
           }}
         >
           <div

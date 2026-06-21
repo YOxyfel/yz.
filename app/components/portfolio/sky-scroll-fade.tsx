@@ -11,12 +11,21 @@ import {
 } from 'react'
 
 const TOP_OPACITY = 1
-const BOTTOM_OPACITY = 0.3
+const BOTTOM_OPACITY = 0.28
 const TOP_BRIGHTNESS = 1.2
 
 export type SkyVisualStyle = {
   opacity: number
   brightness: number
+}
+
+/** Opacity-only scroll fade — folds brightness into opacity to avoid filter repaints. */
+export function getSkyLayerOpacity(y: number, viewportHeight: number) {
+  const vh = viewportHeight || (typeof window !== 'undefined' ? window.innerHeight : 1) || 1
+  const t = Math.min(1, Math.max(0, y / vh))
+  const opacity = TOP_OPACITY - t * (TOP_OPACITY - BOTTOM_OPACITY)
+  const brightness = TOP_BRIGHTNESS - t * (TOP_BRIGHTNESS - 1)
+  return Math.min(1, opacity * (0.78 + brightness * 0.22))
 }
 
 type SkyScrollFadeValue = {
@@ -43,7 +52,7 @@ export function SkyScrollFadeProvider({ children }: { children: ReactNode }) {
       const vh = viewportHeight || window.innerHeight || 1
       const t = Math.min(1, Math.max(0, y / vh))
       return {
-        opacity: TOP_OPACITY - t * (TOP_OPACITY - BOTTOM_OPACITY),
+        opacity: getSkyLayerOpacity(y, vh),
         brightness: TOP_BRIGHTNESS - t * (TOP_BRIGHTNESS - 1),
       }
     },
@@ -63,7 +72,7 @@ function fallbackSkyVisual(y: number): SkyVisualStyle {
   const vh = typeof window !== 'undefined' ? window.innerHeight || 1 : 1
   const t = Math.min(1, Math.max(0, y / vh))
   return {
-    opacity: TOP_OPACITY - t * (TOP_OPACITY - BOTTOM_OPACITY),
+    opacity: getSkyLayerOpacity(y, vh),
     brightness: TOP_BRIGHTNESS - t * (TOP_BRIGHTNESS - 1),
   }
 }
@@ -86,8 +95,7 @@ export function constellationCenterY(
   return stars.reduce((sum, star) => sum + star.y, 0) / stars.length
 }
 
+/** Prefer getSkyLayerOpacity / style.opacity — avoids brightness filter repaints. */
 export function skyVisualFilter(visual: SkyVisualStyle, extra = '') {
-  const parts = [`brightness(${visual.brightness})`]
-  if (extra) parts.push(extra)
-  return parts.join(' ')
+  return extra || undefined
 }

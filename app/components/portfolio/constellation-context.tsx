@@ -79,6 +79,25 @@ const ConstellationContext = createContext<ConstellationContextValue | null>(nul
 
 const MERGE_DURATION = 1.35
 
+function computeSkyLoadBudget(visibleConstellations: number, decorCount: number) {
+  return visibleConstellations + decorCount * 2
+}
+
+function crazySpawnDelayMs(load: number, skyLabLite: boolean) {
+  const base = skyLabLite ? 1500 : 850
+  if (load >= 36) return Math.round(base * 2.25)
+  if (load >= 26) return Math.round(base * 1.55)
+  if (load >= 18) return Math.round(base * 1.2)
+  return base
+}
+
+function shouldSkipCrazySpawn(load: number) {
+  if (load >= 40) return true
+  if (load >= 30) return Math.random() < 0.55
+  if (load >= 22) return Math.random() < 0.25
+  return false
+}
+
 export function ConstellationProvider({ children }: { children: ReactNode }) {
   const deviceProfile = useDeviceProfile()
   const { fxLite, maxSkyConstellations } = deviceProfile
@@ -445,11 +464,29 @@ export function ConstellationProvider({ children }: { children: ReactNode }) {
     }
   }, [handlePointerDown])
 
+  const skyLoadRef = useRef({ visible: 0, decors: 0 })
+
+  useEffect(() => {
+    skyLoadRef.current = {
+      visible: constellations.filter((item) => !item.hidden).length,
+      decors: crazyDecors.length + manualDecors.length,
+    }
+  }, [constellations, crazyDecors, manualDecors])
+
   useEffect(() => {
     if (!skyLabFxEnabled || !constellationLabEnabled || !crazyMode || !scrollIdle || !pageVisible)
       return
 
+    let cancelled = false
+    let timer: number | null = null
+
     const tick = () => {
+      const load = computeSkyLoadBudget(
+        skyLoadRef.current.visible,
+        skyLoadRef.current.decors
+      )
+      if (shouldSkipCrazySpawn(load)) return
+
       const viewport = {
         width: window.innerWidth,
         height: window.innerHeight,
@@ -459,17 +496,36 @@ export function ConstellationProvider({ children }: { children: ReactNode }) {
         const result = runCrazySpawn(current, idsRef.current, viewport)
         if (!result) return current
         appendArchive([result.archiveEntry])
+        skyLoadRef.current.visible = result.constellations.filter((item) => !item.hidden).length
         return result.constellations
       })
     }
 
+    const scheduleNext = () => {
+      if (cancelled) return
+      const load = computeSkyLoadBudget(
+        skyLoadRef.current.visible,
+        skyLoadRef.current.decors
+      )
+      timer = window.setTimeout(() => {
+        tick()
+        scheduleNext()
+      }, crazySpawnDelayMs(load, skyLabLite))
+    }
+
     tick()
-    const interval = window.setInterval(tick, skyLabLite ? 1500 : 850)
-    return () => window.clearInterval(interval)
+    scheduleNext()
+
+    return () => {
+      cancelled = true
+      if (timer !== null) window.clearTimeout(timer)
+    }
   }, [
     appendArchive,
     constellationLabEnabled,
     crazyMode,
+    crazyDecors.length,
+    manualDecors.length,
     pageVisible,
     scrollIdle,
     skyLabFxEnabled,

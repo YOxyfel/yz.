@@ -68,7 +68,7 @@ export function SkyDecorLayer() {
         className="sky-decor-stack sky-decor-stack-front pointer-events-none fixed inset-0 z-[38]"
       >
         {isCoarsePointer && orbitDecors.length > 0 ? (
-          <OrbitDecorLayer decors={orbitDecors} renderMode="full" />
+          <OrbitDecorLayer decors={orbitDecors} renderMode="hitbox" />
         ) : (
           <>
             {backHitboxDecors.length > 0 ? (
