@@ -2822,6 +2822,10 @@ html[data-fx-lite='on'] .corner-dock-icon {
     top: calc(max(0.75rem, env(safe-area-inset-top, 0px)) + 4.75rem + 3.35rem);
     left: max(0.75rem, env(safe-area-inset-left, 0px));
   }
+
+  html:not([data-constellation-lab='on'])[data-sky-lab-dock-hidden='on'] .corner-vfx-dock-stack {
+    top: calc(max(0.75rem, env(safe-area-inset-top, 0px)) + 4.75rem);
+  }
 }
 
 @media (min-width: 768px) {

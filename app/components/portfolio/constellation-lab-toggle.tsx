@@ -25,6 +25,12 @@ export function ConstellationLabToggle() {
   }, [])
 
   useEffect(() => {
+    const skyLabDockHidden =
+      touchViewport && !showScreenFx && !constellationLabEnabled
+    document.documentElement.dataset.skyLabDockHidden = skyLabDockHidden ? 'on' : 'off'
+  }, [touchViewport, showScreenFx, constellationLabEnabled])
+
+  useEffect(() => {
     if (constellationLabEnabled) {
       setShowHint(false)
       return
