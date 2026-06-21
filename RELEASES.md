@@ -8,6 +8,7 @@
 |---|---|
 | **Git tag** | `v1.1` |
 | **Production URL** | https://v0-yanez.vercel.app |
+| **Vercel deployment** | `dpl_FfKNx9413YaBvC6YbUMCLPHDDRR6` |
 
 ### What this version includes
 
