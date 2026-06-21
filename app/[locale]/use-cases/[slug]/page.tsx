@@ -6,6 +6,7 @@ import { PortfolioProviders } from '../../../components/portfolio/portfolio-prov
 import { PortfolioShell } from '../../../components/portfolio/portfolio-shell'
 import { UseCaseDetail } from '../../../components/portfolio/use-case-detail'
 import { getUseCase, useCaseSlugs } from '../../../components/portfolio/use-cases-data'
+import { buildPageMetadata } from '../../../../lib/page-metadata'
 
 type Props = {
   params: Promise<{ locale: string; slug: string }>
@@ -24,10 +25,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const t = await getTranslations({ locale, namespace: 'Metadata' })
 
-  return {
+  return buildPageMetadata({
+    locale,
+    path: `/use-cases/${slug}`,
     title: `${useCase.title} — ${t('title')}`,
     description: useCase.tagline,
-  }
+  })
 }
 
 export default async function UseCasePage({ params }: Props) {

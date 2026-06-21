@@ -10,21 +10,17 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import { MEDIA_COARSE_POINTER, TABLET_MAX_PX } from './breakpoints'
+import { MOBILE_MAX_PX } from './breakpoints'
 
 export type VisualFxMode = 'full' | 'reduced' | 'off'
 
 const STORAGE_KEY = 'portfolio-visual-fx-mode'
 const STORAGE_EXPLICIT_KEY = 'portfolio-visual-fx-mode-explicit'
-const MEDIA_COMPACT = `(max-width: ${TABLET_MAX_PX}px)` as const
+const MEDIA_MOBILE = `(max-width: ${MOBILE_MAX_PX}px)` as const
 
-function isCoarsePointerViewport() {
-  return window.matchMedia(MEDIA_COARSE_POINTER).matches
-}
-
-/** Compact nav widths and touch-first layouts — default site FX off. */
+/** Phone-width viewports — default site FX off unless the user picks otherwise. */
 function isMobileFxViewport() {
-  return window.matchMedia(MEDIA_COMPACT).matches || isCoarsePointerViewport()
+  return window.matchMedia(MEDIA_MOBILE).matches
 }
 
 function readExplicitFxChoice() {
@@ -92,19 +88,18 @@ export function VisualFxPreferencesProvider({ children }: { children: ReactNode 
   useEffect(() => {
     const syncMode = () => {
       if (readExplicitFxChoice()) return
-      setModeState(defaultFxModeForViewport())
+      const next = defaultFxModeForViewport()
+      setModeState(next)
+      setScreenFxLive(next !== 'off')
     }
 
     syncMode()
     setHydrated(true)
 
-    const compactMedia = window.matchMedia(MEDIA_COMPACT)
-    const coarseMedia = window.matchMedia(MEDIA_COARSE_POINTER)
-    compactMedia.addEventListener('change', syncMode)
-    coarseMedia.addEventListener('change', syncMode)
+    const mobileMedia = window.matchMedia(MEDIA_MOBILE)
+    mobileMedia.addEventListener('change', syncMode)
     return () => {
-      compactMedia.removeEventListener('change', syncMode)
-      coarseMedia.removeEventListener('change', syncMode)
+      mobileMedia.removeEventListener('change', syncMode)
     }
   }, [])
 

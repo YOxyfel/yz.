@@ -56,7 +56,7 @@
       },
       {
         "title": "Case studies",
-        "body": "Honest breakdown of Wang Cultivator—the UE5 cultivation RPG I am building now as live systems proof.",
+        "body": "Signal log write-up coming soon—honest project depth without placeholder systems copy.",
         "cta": "Read signal log"
       }
     ]
@@ -168,35 +168,23 @@
   },
   "CaseStudy": {
     "eyebrow": "03 — Signal Log",
-    "title": "Case study in active development",
-    "description": "Honest depth from the game I am building now—the same systems discipline I bring to studio and indie partnerships.",
-    "status": "In development",
+    "title": "Case study coming soon",
+    "description": "A full signal log for my in-development UE5 title is on the way—no fabricated metrics or placeholder systems copy in the meantime.",
+    "status": "Coming soon",
     "projectName": "Wang Cultivator",
-    "projectSubtitle": "Action RPG · cultivation systems · UE5.4",
-    "summary": "A wuxia-inspired action RPG where I own the gameplay architecture end-to-end: cultivation progression, combat loop, GAS integration, and spiritual-energy VFX hooks—currently in full production as a solo developer.",
-    "sections": [
-      {
-        "title": "Challenge",
-        "body": "Build a deep cultivation progression model and real-time combat loop that stay data-driven and extensible—without Blueprint sprawl or rewrites every time a new realm tier ships."
-      },
-      {
-        "title": "Approach",
-        "body": "C++ foundations for stats, breakthrough logic, and GAS abilities; designer-facing data assets for tiers and curves; Niagara feedback bound to gameplay tags and replicated state."
-      },
-      {
-        "title": "Progress",
-        "body": "Core combat input buffering, spiritual-energy resource model, and realm advancement pipeline are in place and iterating in vertical slices—not a vertical-slice demo bolted onto throwaway code."
-      }
-    ],
-    "outcomesTitle": "Systems in production",
+    "projectSubtitle": "UE5 action RPG · in development",
+    "summary": "Write-up in progress. This page will get an honest breakdown when there is real material to show—not AI-filled placeholder specs.",
+    "sections": [],
+    "comingSoonTitle": "Signal log in progress",
+    "comingSoonBody": "Challenge, approach, and progress notes will post here after the next development milestone—not before.",
+    "outcomesTitle": "What's next",
     "outcomes": [
-      "Custom GAS wrapper with Blueprint-safe ability authoring",
-      "Data-driven cultivation tiers with networked stat replication",
-      "Frame-tuned combat with cancel windows and input buffering",
-      "Niagara VFX driven by gameplay tags and resource state"
+      "Honest challenge and approach notes",
+      "Progress updates from actual milestones",
+      "Footage or screenshots when they are ready"
     ],
-    "honesty": "This is my own title—not a client engagement—so there are no shipped third-party metrics yet. It is the live proof of how I architect, iterate, and ship gameplay systems under real milestone pressure.",
-    "cta": "View project modules"
+    "honesty": "Until then, explore the project cards on the bridge deck or contact me to talk scope directly.",
+    "cta": "View projects"
   },
   "UseCases": {
     "eyebrow": "04 — Deployment Briefs",
@@ -209,12 +197,19 @@
     "approachTitle": "How I work",
     "outcomesTitle": "What you leave with",
     "detailCta": "Start a conversation",
-    "detailCtaBody": "No shipped client titles yet—I am in active development on my own cultivation RPG—but I bring the same systems discipline to contract and co-dev work. Tell me your milestone and I will map a scoped path."
+    "detailCtaBody": "No shipped client titles yet—project write-ups are coming soon—but I bring the same systems discipline to contract and co-dev work. Tell me your milestone and I will map a scoped path."
   },
   "Projects": {
     "eyebrow": "01 — Core Engine Bay",
     "title": "Game Projects",
-    "description": "In-development gameplay work—modular UE5 systems architecture, designer-ready surfaces, and player-facing polish."
+    "description": "In-development titles on the bridge deck—full specs and media land here when there is real material to share.",
+    "defaultCardCta": "Details coming soon",
+    "comingSoonLabel": "Coming soon",
+    "comingSoonTitle": "Write-up in progress",
+    "comingSoonBody": "Full specs, footage, and technical notes are on the way—no placeholder filler until then.",
+    "comingSoonChecklistTitle": "Planned for this module",
+    "highlightsTitle": "Engineering highlights",
+    "codeSampleTitle": "Code sample"
   },
   "Contact": {
     "eyebrow": "07 — Comms channel open",
@@ -253,7 +248,7 @@
       }
     ],
     "nowTitle": "Current focus",
-    "nowBody": "I am in full production on Wang Cultivator, a UE5 cultivation action RPG where I own combat, progression, GAS, and VFX integration end-to-end. That active development is the live benchmark for how I work with partners.",
+    "nowBody": "I am building Wang Cultivator, a UE5 action RPG in active development. A full case study and project breakdown are coming soon—in the meantime I bring the same systems discipline to contract and co-dev work.",
     "caseStudiesCta": "Read case study",
     "servicesCta": "View services",
     "cta": "Get in touch",
@@ -261,7 +256,7 @@
     "eeatTitle": "Experience & trust signals",
     "eeatBody": "Honest EEAT markers—no inflated awards or fake client logos. This is what you can verify today.",
     "eeatItems": [
-      "Solo UE5 gameplay engineer with end-to-end ownership on Wang Cultivator (combat, GAS, progression, VFX integration)",
+      "Solo UE5 gameplay engineer with an in-development title (Wang Cultivator)—case study and specs coming soon",
       "Milestone-scoped partnerships with direct engineer communication—no agency hand-offs",
       "Open GitHub portfolio and live case study depth instead of borrowed web-client logos",
       "Transparent pricing tiers and FAQ—scope before commitment"
@@ -270,7 +265,7 @@
     "takeaways": [
       "Focused on UE5 gameplay systems for studios and indie teams—not generalist web or agency work",
       "Modular, designer-ready architecture is the default from day one",
-      "Honest about status: cultivation RPG in active dev, first partner testimonials welcome"
+      "Honest about status: in-development title, project write-ups coming soon, first partner testimonials welcome"
     ]
   },
   "ServicesPage": {
@@ -315,7 +310,7 @@
     "eyebrow": "Signal archive",
     "title": "Case studies",
     "description": "Detailed breakdowns of how I approach real gameplay problems—with honest status labels, not inflated client metrics.",
-    "moreBody": "More client case studies will be added as engagements ship. Until then, Wang Cultivator is the live reference for systems depth, modular architecture, and milestone discipline.",
+    "moreBody": "More client case studies will be added as engagements ship. My own title's signal log is in progress—coming soon, without placeholder copy.",
     "ctaBody": "Want the same systems discipline on your milestone? Send constraints and I will map an honest scope.",
     "projectsCta": "View project modules",
     "servicesCta": "Explore services"
@@ -415,8 +410,8 @@
     "videoTitle": "Showreel & devlogs",
     "videoBody": "Gameplay and pipeline clips are in production—video proof of systems work in motion, not just documentation.",
     "videoSoonLabel": "Coming soon",
-    "caseStudyNote": "Until partners and video land here, Wang Cultivator is the live systems reference—",
-    "caseStudyLink": "read the case study"
+    "caseStudyNote": "Case study write-up in progress—",
+    "caseStudyLink": "check back soon"
   },
   "Faq": {
     "eyebrow": "06 — Mission FAQ",
@@ -441,7 +436,7 @@
       },
       {
         "question": "Can you show shipped client results?",
-        "answer": "Not third-party shipped titles yet. Wang Cultivator is my live in-development reference for systems depth, modular architecture, and milestone discipline—the case study is honest about that status."
+        "answer": "Not third-party shipped titles yet. My in-development UE5 title has a case study on the way—honest depth when there is real material to show, not placeholder specs."
       },
       {
         "question": "How quickly can you start?",
@@ -476,9 +471,10 @@
     ],
     "posts": [
       {
-        "title": "Wang Cultivator case study",
-        "body": "Honest in-development breakdown—challenge, approach, progress, and systems shipped so far.",
-        "href": "/case-studies"
+        "title": "Case study (coming soon)",
+        "body": "Signal log for my in-development UE5 title—honest breakdown when the write-up is ready.",
+        "href": "/case-studies",
+        "video": true
       },
       {
         "title": "Services & solutions",
@@ -501,6 +497,34 @@
     "manualFxOff": "Site FX off · enable Site FX to draw",
     "navChart": "Nav chart",
     "gotIt": "Got it"
+  },
+  "LeadCapture": {
+    "newsletterEyebrow": "Newsletter",
+    "newsletterTitle": "UE5 systems briefings",
+    "newsletterDescription": "Occasional notes on gameplay architecture, production workflows, and honest case study updates—no spam funnels.",
+    "newsletterCta": "Join the briefing list",
+    "newsletterSubject": "Newsletter signup — yanezhekov.dev",
+    "newsletterBody": "Please add me to UE5 systems briefings.\n\nEmail: {email}",
+    "demoEyebrow": "Scope review",
+    "demoTitle": "Request a project scope review",
+    "demoDescription": "Share your milestone, engine version, and constraints—I reply with an honest fit check and start window.",
+    "demoCta": "Send scope request",
+    "demoSubject": "Scope review request — yanezhekov.dev",
+    "demoBody": "Scope review request\n\nEmail: {email}\n\nProject notes:\n{note}",
+    "demoNoteLabel": "Project notes",
+    "demoNotePlaceholder": "Milestone, team size, UE version, target dates…",
+    "demoFootnote": "Prefer fixed packages?",
+    "demoPricingLink": "See pricing tiers",
+    "emailLabel": "Email address",
+    "emailPlaceholder": "you@studio.com"
+  },
+  "ExitIntent": {
+    "eyebrow": "Before you leave orbit",
+    "title": "Grab a briefing or open comms",
+    "body": "Download curated resources for UE5 teams—or send your milestone constraints and get an honest scope reply.",
+    "resourcesCta": "Browse resources",
+    "contactCta": "Open contact",
+    "dismiss": "Dismiss"
   },
   "SiteFx": {
     "eyebrow": "Site visual FX",

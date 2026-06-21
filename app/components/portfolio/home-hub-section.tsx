@@ -15,7 +15,7 @@ export function HomeHubSection() {
   const cards = t.raw('cards') as Array<{ title: string; body: string; cta: string }>
 
   return (
-    <StationSection id="explore" tone="nav" className="perf-deferred-section">
+    <StationSection id="explore" tone="nav">
       <SectionHeading
         tone="nav"
         eyebrow={t('eyebrow')}

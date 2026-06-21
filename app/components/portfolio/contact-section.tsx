@@ -1,6 +1,7 @@
 import { ArrowUpRight, Mail } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { Reveal } from './reveal'
+import { LeadCapturePanel } from './lead-capture-panel'
 import {
   StationButton,
   StationChip,
@@ -146,6 +147,8 @@ export function ContactSection() {
             )
           })}
         </div>
+
+        <LeadCapturePanel className="mt-16 text-left" />
 
       </div>
     </StationSection>

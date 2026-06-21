@@ -20,6 +20,7 @@ import { TestimonialsSection } from './testimonials-section'
 import { SiteVariantShell } from './site-variant-shell'
 import { useSiteVariant } from './site-variant-context'
 import { LazySection } from './lazy-section'
+import { StationDeckShell } from './station-deck-shell'
 
 const SkyDecorLayer = dynamic(
   () => import('./sky-decor-layer').then((mod) => ({ default: mod.SkyDecorLayer })),
@@ -104,10 +105,7 @@ function PortfolioContent() {
 
       <SiteVariantShell>
         {!mobileSkyLabMode ? (
-          <main
-            className="station-deck relative min-h-dvh text-foreground"
-            data-portfolio-chrome
-          >
+          <StationDeckShell>
             <SiteNav />
             <Hero />
             <HomeHubSection />
@@ -125,7 +123,7 @@ function PortfolioContent() {
               <ContactSection />
             </LazySection>
             <SiteFooter />
-          </main>
+          </StationDeckShell>
         ) : null}
       </SiteVariantShell>
 

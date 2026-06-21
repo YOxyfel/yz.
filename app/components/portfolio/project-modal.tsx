@@ -2,9 +2,10 @@
 
 import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
-import { Play, X } from 'lucide-react'
+import { Clock, Play, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { useTranslations } from 'next-intl'
 import type { Project } from './projects-data'
 import { StationChip, StationPanel } from './station-console'
 
@@ -14,6 +15,7 @@ type ProjectModalProps = {
 }
 
 export function ProjectModal({ project, onClose }: ProjectModalProps) {
+  const t = useTranslations('Projects')
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -81,14 +83,20 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
                   className="relative z-[1] object-cover"
                 />
                 <div className="station-screen-vignette" aria-hidden />
-                <button
-                  aria-label="Play showreel"
-                  className="absolute inset-0 z-[4] flex items-center justify-center"
-                >
-                  <span className="station-button station-button-primary !h-16 !w-16 !rounded-full !p-0">
-                    <Play className="ml-1 h-6 w-6 fill-current" />
-                  </span>
-                </button>
+                {project.comingSoon ? (
+                  <div className="absolute inset-0 z-[4] flex items-center justify-center bg-background/45">
+                    <StationChip className="station-chip-active !text-[10px]">{t('comingSoonLabel')}</StationChip>
+                  </div>
+                ) : (
+                  <button
+                    aria-label="Play showreel"
+                    className="absolute inset-0 z-[4] flex items-center justify-center"
+                  >
+                    <span className="station-button station-button-primary !h-16 !w-16 !rounded-full !p-0">
+                      <Play className="ml-1 h-6 w-6 fill-current" />
+                    </span>
+                  </button>
+                )}
               </div>
 
               <div className="p-6 sm:p-8">
@@ -114,8 +122,24 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
                   {project.summary}
                 </p>
 
+                {project.comingSoon ? (
+                  <StationPanel variant="module" iso={false} className="mt-8">
+                    <div className="flex items-start gap-3">
+                      <Clock className="mt-0.5 h-5 w-5 shrink-0 text-cyan/80" aria-hidden />
+                      <div>
+                        <p className="font-heading text-sm font-semibold uppercase tracking-wider text-foreground">
+                          {t('comingSoonTitle')}
+                        </p>
+                        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                          {project.modalNote ?? t('comingSoonBody')}
+                        </p>
+                      </div>
+                    </div>
+                  </StationPanel>
+                ) : null}
+
                 <h3 className="font-heading mt-8 text-sm font-semibold uppercase tracking-wider text-foreground">
-                  Engineering Highlights
+                  {project.comingSoon ? t('comingSoonChecklistTitle') : t('highlightsTitle')}
                 </h3>
                 <ul className="mt-4 grid gap-3 sm:grid-cols-2">
                   {project.features.map((feature) => (
@@ -129,19 +153,23 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
                   ))}
                 </ul>
 
-                <h3 className="font-heading mt-8 text-sm font-semibold uppercase tracking-wider text-foreground">
-                  Code Sample
-                </h3>
-                <div className="project-modal-code mt-4 overflow-hidden rounded-[0.35rem] border border-black/55 bg-[linear-gradient(180deg,var(--station-screen),oklch(0.12_0.022_258))]">
-                  <div className="flex items-center gap-1.5 border-b border-[var(--station-bezel)]/40 px-4 py-3">
-                    <span className="h-3 w-3 rounded-full bg-[#ff5f56]" />
-                    <span className="h-3 w-3 rounded-full bg-[#ffbd2e]" />
-                    <span className="h-3 w-3 rounded-full bg-[#27c93f]" />
-                  </div>
-                  <pre className="overflow-x-auto p-4 text-[12.5px] leading-relaxed">
-                    <code className="font-mono text-cyan/90">{project.code}</code>
-                  </pre>
-                </div>
+                {!project.comingSoon && project.code ? (
+                  <>
+                    <h3 className="font-heading mt-8 text-sm font-semibold uppercase tracking-wider text-foreground">
+                      {t('codeSampleTitle')}
+                    </h3>
+                    <div className="project-modal-code mt-4 overflow-hidden rounded-[0.35rem] border border-black/55 bg-[linear-gradient(180deg,var(--station-screen),oklch(0.12_0.022_258))]">
+                      <div className="flex items-center gap-1.5 border-b border-[var(--station-bezel)]/40 px-4 py-3">
+                        <span className="h-3 w-3 rounded-full bg-[#ff5f56]" />
+                        <span className="h-3 w-3 rounded-full bg-[#ffbd2e]" />
+                        <span className="h-3 w-3 rounded-full bg-[#27c93f]" />
+                      </div>
+                      <pre className="overflow-x-auto p-4 text-[12.5px] leading-relaxed">
+                        <code className="font-mono text-cyan/90">{project.code}</code>
+                      </pre>
+                    </div>
+                  </>
+                ) : null}
 
                 <div className="mt-8 flex flex-wrap gap-2">
                   {project.tech.map((tag) => (

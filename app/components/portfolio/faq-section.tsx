@@ -13,7 +13,7 @@ export function FaqSection() {
   const schema = buildFaqSchema(items)
 
   return (
-    <StationSection id="faq" tone="faq" className="perf-deferred-section">
+    <StationSection id="faq" tone="faq">
       <JsonLd data={schema} />
       <SectionHeading
         tone="faq"

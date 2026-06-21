@@ -4,6 +4,7 @@ import { CaseStudiesPageContent } from '../../components/portfolio/case-studies-
 import { PortfolioProviders } from '../../components/portfolio/portfolio-providers'
 import { PortfolioShell } from '../../components/portfolio/portfolio-shell'
 import { routing, type AppLocale } from '../../../i18n/routing'
+import { buildPageMetadata } from '../../../lib/page-metadata'
 
 type Props = { params: Promise<{ locale: string }> }
 
@@ -15,10 +16,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'CaseStudiesPage' })
   const meta = await getTranslations({ locale, namespace: 'Metadata' })
-  return {
+  return buildPageMetadata({
+    locale,
+    path: '/case-studies',
     title: `${t('title')} — ${meta('title')}`,
     description: t('description'),
-  }
+  })
 }
 
 export default async function CaseStudiesPage({ params }: Props) {

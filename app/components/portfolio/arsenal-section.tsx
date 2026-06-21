@@ -58,6 +58,7 @@ export function ArsenalSection() {
     <StationSection id="arsenal" tone="arsenal">
       <StationConsoleFrame>
         <SectionHeading
+          tone="arsenal"
           eyebrow="04 — Arsenal Bay"
           title="The Arsenal"
           description="Beyond code, I bridge disciplines — building the art, effects, and audio that make systems feel alive. Pick one lab at a time."

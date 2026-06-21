@@ -20,7 +20,7 @@ export const artPieces: ArtPiece[] = [
     title: 'Wang Cultivator MC',
     role: 'Protagonist',
     description:
-      'The main character of the cultivation game — Wang Cultivator. Four orthographic POVs for rigging, costume lock, and in-engine silhouette reads.',
+      'Protagonist character sheet for Wang Cultivator—gallery notes and lore breakdown coming soon.',
     theme: 'xianxia',
     folder: 'Wang Lin',
     views: multiviewPaths('Wang Lin'),
@@ -32,7 +32,7 @@ export const artPieces: ArtPiece[] = [
     title: 'Wang Cultivator Villain',
     role: 'Antagonist',
     description:
-      'The villain of Wang Cultivator — sharp regalia, predatory poise, and a presence that bends qi around him.',
+      'Antagonist character sheet for Wang Cultivator—full character notes on the way.',
     theme: 'xianxia',
     folder: 'Situ Nan',
     views: multiviewPaths('Situ Nan'),
@@ -44,7 +44,7 @@ export const artPieces: ArtPiece[] = [
     title: 'Wang Cultivator Maiden',
     role: 'Lead maiden',
     description:
-      'The lead maiden of Wang Cultivator — ethereal robes, jade accents, and a calm center in the storm of cultivation.',
+      'Lead maiden character sheet for Wang Cultivator—profile write-up coming soon.',
     theme: 'xianxia',
     folder: 'Li Muwan',
     views: multiviewPaths('Li Muwan'),

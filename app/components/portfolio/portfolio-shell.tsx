@@ -6,20 +6,18 @@ import { CornerToolsDock } from './corner-tools-dock'
 import { SiteFooter } from './site-footer'
 import { SiteNav } from './site-nav'
 import { SiteVariantShell } from './site-variant-shell'
+import { StationDeckShell } from './station-deck-shell'
 
 export function PortfolioShell({ children }: { children: React.ReactNode }) {
   return (
     <ConstellationProvider>
       <BackgroundFx />
       <SiteVariantShell>
-        <main
-          className="station-deck relative min-h-dvh text-foreground"
-          data-portfolio-chrome
-        >
+        <StationDeckShell>
           <SiteNav />
           {children}
           <SiteFooter />
-        </main>
+        </StationDeckShell>
       </SiteVariantShell>
       <CornerToolsDock />
     </ConstellationProvider>

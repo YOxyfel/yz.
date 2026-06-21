@@ -6,6 +6,7 @@ import { audienceSlugs, getAudiencePage } from '../../../components/portfolio/au
 import { PortfolioProviders } from '../../../components/portfolio/portfolio-providers'
 import { PortfolioShell } from '../../../components/portfolio/portfolio-shell'
 import { routing, type AppLocale } from '../../../../i18n/routing'
+import { buildPageMetadata } from '../../../../lib/page-metadata'
 
 type Props = { params: Promise<{ locale: string; audience: string }> }
 
@@ -21,10 +22,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!page) return {}
 
   const meta = await getTranslations({ locale, namespace: 'Metadata' })
-  return {
+  return buildPageMetadata({
+    locale,
+    path: `/for/${audience}`,
     title: `${page.title} — ${meta('title')}`,
     description: page.tagline,
-  }
+  })
 }
 
 export default async function ForAudiencePage({ params }: Props) {

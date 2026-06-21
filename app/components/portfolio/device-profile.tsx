@@ -9,7 +9,7 @@ import {
   useSyncExternalStore,
   type ReactNode,
 } from 'react'
-import { DEVICE_PROFILE_QUERIES, MEDIA_COARSE_POINTER, TABLET_MAX_PX } from './breakpoints'
+import { DEVICE_PROFILE_QUERIES, MEDIA_COARSE_POINTER, MOBILE_MAX_PX, TABLET_MAX_PX } from './breakpoints'
 import { PerformanceAdaptiveMonitor } from './performance-adaptive'
 import {
   getAdaptiveTier,
@@ -218,20 +218,20 @@ export function useDeviceProfile() {
 }
 
 function subscribeCompactNav(onStoreChange: () => void) {
-  const media = window.matchMedia(`(max-width: ${TABLET_MAX_PX}px)`)
+  const media = window.matchMedia(`(max-width: ${MOBILE_MAX_PX}px)`)
   media.addEventListener('change', onStoreChange)
   return () => media.removeEventListener('change', onStoreChange)
 }
 
 function getCompactNavSnapshot() {
-  return window.matchMedia(`(max-width: ${TABLET_MAX_PX}px)`).matches
+  return window.matchMedia(`(max-width: ${MOBILE_MAX_PX}px)`).matches
 }
 
 function getServerCompactNavSnapshot() {
   return false
 }
 
-/** True at viewport widths that use the mobile hamburger nav (≤1023px). */
+/** True at viewport widths that use the mobile hamburger nav (≤767px). */
 export function useCompactNavLayout() {
   return useSyncExternalStore(
     subscribeCompactNav,

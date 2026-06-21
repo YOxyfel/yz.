@@ -33,35 +33,48 @@ export function CaseStudiesPageContent() {
           </p>
           <p className="mt-5 max-w-3xl text-pretty leading-relaxed text-muted-foreground">{tCase('summary')}</p>
 
-          <div className="mt-8 grid gap-4 lg:grid-cols-3">
-            {sections.map((section, index) => (
-              <div
-                key={section.title}
-                className="rounded-lg border border-[var(--station-bezel)]/35 bg-[var(--station-hull-dark)]/50 p-4"
-              >
-                <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-cyan">
-                  {String(index + 1).padStart(2, '0')}
-                </p>
-                <h3 className="font-heading mt-2 text-lg font-bold tracking-tight">{section.title}</h3>
-                <p className="mt-2 text-pretty text-sm leading-relaxed text-muted-foreground">{section.body}</p>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-8">
-            <p className="station-readout-label mb-3">{tCase('outcomesTitle')}</p>
-            <ul className="grid gap-2 sm:grid-cols-2">
-              {outcomes.map((outcome) => (
-                <li
-                  key={outcome}
-                  className="flex gap-2 text-pretty text-sm leading-relaxed text-muted-foreground"
+          {sections.length > 0 ? (
+            <div className="mt-8 grid gap-4 lg:grid-cols-3">
+              {sections.map((section, index) => (
+                <div
+                  key={section.title}
+                  className="rounded-lg border border-[var(--station-bezel)]/35 bg-[var(--station-hull-dark)]/50 p-4"
                 >
-                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-cyan" aria-hidden />
-                  {outcome}
-                </li>
+                  <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-cyan">
+                    {String(index + 1).padStart(2, '0')}
+                  </p>
+                  <h3 className="font-heading mt-2 text-lg font-bold tracking-tight">{section.title}</h3>
+                  <p className="mt-2 text-pretty text-sm leading-relaxed text-muted-foreground">{section.body}</p>
+                </div>
               ))}
-            </ul>
-          </div>
+            </div>
+          ) : (
+            <StationPanel variant="module" iso={false} className="mt-8">
+              <p className="font-heading text-sm font-semibold uppercase tracking-wider text-foreground">
+                {tCase('comingSoonTitle')}
+              </p>
+              <p className="mt-2 text-pretty text-sm leading-relaxed text-muted-foreground">
+                {tCase('comingSoonBody')}
+              </p>
+            </StationPanel>
+          )}
+
+          {outcomes.length > 0 ? (
+            <div className="mt-8">
+              <p className="station-readout-label mb-3">{tCase('outcomesTitle')}</p>
+              <ul className="grid gap-2 sm:grid-cols-2">
+                {outcomes.map((outcome) => (
+                  <li
+                    key={outcome}
+                    className="flex gap-2 text-pretty text-sm leading-relaxed text-muted-foreground"
+                  >
+                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-cyan" aria-hidden />
+                    {outcome}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
 
           <p className="mt-6 text-pretty text-sm leading-relaxed text-muted-foreground">{tCase('honesty')}</p>
         </div>

@@ -1,7 +1,8 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata } from 'next'
 import { Space_Grotesk, JetBrains_Mono } from 'next/font/google'
-import { DEVICE_BOOTSTRAP_SCRIPT } from './components/portfolio/breakpoints'
+import { AnalyticsScripts } from './components/portfolio/analytics-scripts'
+import { DEVICE_BOOTSTRAP_SCRIPT, HOME_SCROLL_BOOTSTRAP_SCRIPT } from './components/portfolio/breakpoints'
 import './globals.css'
 
 const spaceGrotesk = Space_Grotesk({
@@ -44,9 +45,11 @@ export default function RootLayout({
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: DEVICE_BOOTSTRAP_SCRIPT }} />
+        <script dangerouslySetInnerHTML={{ __html: HOME_SCROLL_BOOTSTRAP_SCRIPT }} />
       </head>
       <body className="font-sans antialiased">
         {children}
+        <AnalyticsScripts />
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>

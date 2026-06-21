@@ -4,9 +4,10 @@ import { ArrowUpRight } from 'lucide-react'
 import Link from 'next/link'
 import { useLocale, useTranslations } from 'next-intl'
 import { audiencePages } from './audience-pages-data'
-import { buildArticleSchema } from '../../../lib/structured-data'
+import { buildArticleSchema, buildVideoSchema } from '../../../lib/structured-data'
 import { JsonLd } from './json-ld'
 import { KeyTakeaways } from './key-takeaways'
+import { LeadCapturePanel } from './lead-capture-panel'
 import { SitePageHero, SitePageLayout } from './site-page-layout'
 import { githubShowcase } from './web-projects-data'
 import { useCases } from './use-cases-data'
@@ -16,7 +17,14 @@ export function ResourcesPageContent() {
   const t = useTranslations('ResourcesPage')
   const tSite = useTranslations('SitePages')
   const locale = useLocale()
-  const posts = t.raw('posts') as Array<{ title: string; body: string; href: string; external?: boolean }>
+  const posts = t.raw('posts') as Array<{
+    title: string
+    body: string
+    href: string
+    external?: boolean
+    video?: boolean
+    thumbnailUrl?: string
+  }>
   const takeaways = t.raw('takeaways') as string[]
 
   const articleSchemas = posts
@@ -30,6 +38,20 @@ export function ResourcesPageContent() {
       })
     )
 
+  const videoSchemas = posts
+    .filter((post) => post.video && !post.external)
+    .map((post) =>
+      buildVideoSchema({
+        locale,
+        title: post.title,
+        description: post.body,
+        path: post.href,
+        thumbnailUrl: post.thumbnailUrl,
+      })
+    )
+
+  const structuredData = [...articleSchemas, ...videoSchemas]
+
   return (
     <SitePageLayout
       breadcrumbs={[
@@ -37,7 +59,7 @@ export function ResourcesPageContent() {
         { name: t('title'), path: '/resources' },
       ]}
     >
-      {articleSchemas.length > 0 ? <JsonLd data={articleSchemas} /> : null}
+      {structuredData.length > 0 ? <JsonLd data={structuredData} /> : null}
       <SitePageHero eyebrow={t('eyebrow')} title={t('title')} description={t('description')} />
 
       <StationPanel variant="module" backLabel="POSTS" className="mb-8">
@@ -65,6 +87,8 @@ export function ResourcesPageContent() {
           ))}
         </div>
       </StationPanel>
+
+      <LeadCapturePanel className="mb-8" />
 
       <div className="mb-8 grid gap-6 lg:grid-cols-2">
         <StationPanel variant="module" backLabel="BRIEFS" className="h-full">

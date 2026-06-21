@@ -242,7 +242,7 @@ function ArtShowcaseLabInner({ embedded = false }: { embedded?: boolean }) {
       embedded={embedded}
       eyebrow="Concept art · AI-assisted pipeline"
       title="Cultivation Gallery"
-      description="Character sheets for Wang Cultivator — four POVs per cast member, interactive parallax, ambient qi VFX, and a carousel that gives each hero equal room to breathe."
+      description="Character sheets and gallery notes for Wang Cultivator—full write-up coming soon."
       icon={Sparkles}
       controls={<LabFxControls labName="art" />}
     >

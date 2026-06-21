@@ -4,6 +4,7 @@ import { PortfolioProviders } from '../../components/portfolio/portfolio-provide
 import { PortfolioShell } from '../../components/portfolio/portfolio-shell'
 import { ServicesPageContent } from '../../components/portfolio/services-page-content'
 import { routing, type AppLocale } from '../../../i18n/routing'
+import { buildPageMetadata } from '../../../lib/page-metadata'
 
 type Props = { params: Promise<{ locale: string }> }
 
@@ -15,10 +16,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'ServicesPage' })
   const meta = await getTranslations({ locale, namespace: 'Metadata' })
-  return {
+  return buildPageMetadata({
+    locale,
+    path: '/services',
     title: `${t('title')} — ${meta('title')}`,
     description: t('description'),
-  }
+  })
 }
 
 export default async function ServicesPage({ params }: Props) {

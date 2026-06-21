@@ -71,12 +71,15 @@ export function buildArticleSchema({
   title,
   description,
   path,
+  datePublished,
 }: {
   locale: string
   title: string
   description: string
   path: string
+  datePublished?: string
 }) {
+  const url = `${getSiteUrl()}/${locale}${path}`
   return {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -86,7 +89,45 @@ export function buildArticleSchema({
       '@type': 'Person',
       name: 'Yane Zhekov',
     },
-    url: `${getSiteUrl()}/${locale}${path}`,
+    publisher: {
+      '@type': 'Person',
+      name: 'Yane Zhekov',
+    },
+    url,
+    mainEntityOfPage: url,
+    inLanguage: locale === 'bg' ? 'bg-BG' : 'en-US',
+    ...(datePublished ? { datePublished } : {}),
+  }
+}
+
+export function buildVideoSchema({
+  locale,
+  title,
+  description,
+  path,
+  thumbnailUrl,
+  uploadDate,
+}: {
+  locale: string
+  title: string
+  description: string
+  path: string
+  thumbnailUrl?: string
+  uploadDate?: string
+}) {
+  const url = `${getSiteUrl()}/${locale}${path}`
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'VideoObject',
+    name: title,
+    description,
+    url,
+    uploadDate: uploadDate ?? '2026-01-01',
+    ...(thumbnailUrl ? { thumbnailUrl } : {}),
+    publisher: {
+      '@type': 'Person',
+      name: 'Yane Zhekov',
+    },
     inLanguage: locale === 'bg' ? 'bg-BG' : 'en-US',
   }
 }

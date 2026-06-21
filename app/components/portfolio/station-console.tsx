@@ -368,10 +368,14 @@ export function StationSection({
       {tone ? (
         <>
           <div className="station-sector-backdrop" aria-hidden />
-          <div className="station-sector-rail" aria-hidden />
+          <div className="station-section-inner">
+            <div className="station-sector-rail" aria-hidden />
+            {children}
+          </div>
         </>
-      ) : null}
-      <div className="station-section-inner">{children}</div>
+      ) : (
+        <div className="station-section-inner">{children}</div>
+      )}
     </section>
   )
 }

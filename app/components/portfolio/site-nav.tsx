@@ -89,7 +89,7 @@ export function SiteNav() {
   }, [menuOpen])
 
   const mobileMenu =
-    menuOpen && mounted
+    compactNav && menuOpen && mounted
       ? createPortal(
           <div
             className="site-nav-mobile-menu pointer-events-auto"
@@ -185,7 +185,7 @@ export function SiteNav() {
 
   const navBar = (
     <nav
-      className={`station-nav-bar flex w-full min-w-0 max-w-4xl items-center justify-between gap-2 px-3 py-2.5 transition-all duration-300 sm:px-5 ${
+      className={`station-nav-bar flex w-full min-w-0 items-center justify-between gap-2 px-3 py-2.5 transition-all duration-300 sm:px-5 ${
         scrolled ? 'opacity-100' : 'opacity-95'
       }`}
     >
@@ -197,7 +197,11 @@ export function SiteNav() {
         YZ<span className="text-cyan">.</span>
       </a>
 
-      <ul className="site-nav-desktop-links hidden min-w-0 xl:flex items-center gap-0.5">
+      <ul
+        className={`site-nav-desktop-links min-w-0 items-center gap-0.5 ${
+          compactNav ? 'hidden' : 'flex'
+        }`}
+      >
         {allLinks.map((link) => (
           <li key={link.key}>
             <a href={navHref(link.href)} className="station-nav-link">
@@ -211,20 +215,24 @@ export function SiteNav() {
         <StationButton
           href={navHref('#contact')}
           variant="ghost"
-          className="site-nav-desktop-hire hidden !px-3.5 !py-1.5 !text-[10px] !uppercase !tracking-[0.18em] text-cyan xl:inline-flex"
+          className={`site-nav-desktop-hire !px-3.5 !py-1.5 !text-[10px] !uppercase !tracking-[0.18em] text-cyan ${
+            compactNav ? 'hidden' : 'inline-flex'
+          }`}
         >
           {t('hireMe')}
         </StationButton>
 
-        <button
-          type="button"
-          className="site-nav-mobile-trigger station-button station-button-secondary !h-10 !w-10 !p-0 xl:hidden"
-          aria-label={menuOpen ? t('menuClose') : t('menuOpen')}
-          aria-expanded={menuOpen}
-          onClick={() => setMenuOpen((open) => !open)}
-        >
-          {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-        </button>
+        {compactNav ? (
+          <button
+            type="button"
+            className="site-nav-mobile-trigger station-button station-button-secondary !h-10 !w-10 !p-0"
+            aria-label={menuOpen ? t('menuClose') : t('menuOpen')}
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((open) => !open)}
+          >
+            {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+          </button>
+        ) : null}
       </div>
     </nav>
   )
@@ -237,7 +245,7 @@ export function SiteNav() {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
     >
-      {navBar}
+      <div className="site-nav-header-inner">{navBar}</div>
     </motion.header>
   )
 
