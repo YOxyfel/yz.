@@ -22,11 +22,25 @@ Ask in Cursor: **"revert to V1.0"**
 
 Or run locally (discards uncommitted work):
 
-```bash
+```powershell
+cd D:\999.Personal\Website\website
 git checkout v1.0 -- .
 git clean -fd -e .env.local -e node_modules -e .next -e .vercel
 npm install
 npm run build
+```
+
+If PowerShell says `git` is not recognized, run this **in the same terminal** (no restart needed):
+
+```powershell
+. .\scripts\refresh-path.ps1
+```
+
+Or use the project wrapper from the repo root:
+
+```powershell
+.\git.cmd status
+.\git.cmd tag
 ```
 
 To restore the entire tree exactly (hard reset):
