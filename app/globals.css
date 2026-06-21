@@ -206,23 +206,10 @@
     position: relative;
   }
 
-  html[data-block-scroll='on'] {
-    scroll-behavior: smooth;
-  }
-
-  html[data-block-scroll='on'] [data-scroll-block] {
-    scroll-margin-top: 5.5rem;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    html[data-block-scroll='on'] {
-      scroll-behavior: auto;
-    }
-  }
-
   .station-section {
     position: relative;
     padding: 6rem 1.5rem;
+    scroll-margin-top: 5.5rem;
   }
 
   @media (min-width: 640px) {
@@ -237,6 +224,343 @@
     margin-inline: auto;
     max-width: 72rem;
     overflow: visible;
+  }
+
+  .station-sector-backdrop {
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    opacity: 1;
+  }
+
+  .station-sector-rail {
+    pointer-events: none;
+    position: absolute;
+    top: 5.5rem;
+    bottom: 3rem;
+    left: max(0.75rem, env(safe-area-inset-left, 0px));
+    width: 2px;
+    border-radius: 999px;
+    opacity: 0.55;
+  }
+
+  @media (min-width: 1024px) {
+    .station-sector-rail {
+      left: calc((100% - 72rem) / 2 - 1.25rem);
+    }
+  }
+
+  .station-section--bridge .station-sector-backdrop {
+    background:
+      radial-gradient(ellipse 80% 55% at 50% 20%, oklch(0.55 0.1 200 / 0.14), transparent 70%),
+      linear-gradient(180deg, oklch(0.12 0.02 270 / 0.35), transparent 55%);
+  }
+
+  .station-section--bridge .station-sector-rail {
+    background: linear-gradient(180deg, transparent, var(--cyan), transparent);
+    box-shadow: 0 0 18px oklch(0.55 0.1 200 / 0.45);
+  }
+
+  .station-section--nav {
+    padding-top: 5rem;
+    padding-bottom: 5rem;
+  }
+
+  .station-section--nav .station-sector-backdrop {
+    background:
+      linear-gradient(135deg, oklch(0.55 0.08 200 / 0.07) 0%, transparent 45%),
+      repeating-linear-gradient(
+        -12deg,
+        oklch(1 0 0 / 0.015) 0 1px,
+        transparent 1px 28px
+      );
+  }
+
+  .station-section--nav .station-sector-rail {
+    background: linear-gradient(180deg, transparent, oklch(0.55 0.1 200 / 0.85), transparent);
+  }
+
+  .station-section--engine .station-sector-backdrop {
+    background:
+      radial-gradient(ellipse 70% 50% at 15% 40%, oklch(0.72 0.14 55 / 0.11), transparent 65%),
+      radial-gradient(ellipse 50% 40% at 90% 70%, oklch(0.55 0.1 200 / 0.06), transparent 60%);
+  }
+
+  .station-section--engine .station-sector-rail {
+    background: linear-gradient(180deg, transparent, oklch(0.72 0.14 55 / 0.9), transparent);
+    box-shadow: 0 0 16px oklch(0.72 0.14 55 / 0.35);
+  }
+
+  .station-section--engine .station-sector-heading {
+    border-color: oklch(0.72 0.14 55 / 0.25);
+  }
+
+  .station-section--signal .station-sector-backdrop {
+    background:
+      radial-gradient(circle at 85% 25%, oklch(0.58 0.12 290 / 0.12), transparent 45%),
+      linear-gradient(180deg, transparent, oklch(0.58 0.12 290 / 0.04) 50%, transparent);
+  }
+
+  .station-section--signal .station-sector-rail {
+    background: linear-gradient(180deg, transparent, var(--violet), transparent);
+  }
+
+  .station-section--partner .station-sector-backdrop {
+    background:
+      radial-gradient(ellipse 60% 45% at 50% 100%, oklch(0.62 0.12 350 / 0.1), transparent 70%),
+      linear-gradient(0deg, oklch(0.62 0.12 350 / 0.03), transparent 40%);
+  }
+
+  .station-section--partner .station-sector-rail {
+    background: linear-gradient(180deg, transparent, oklch(0.62 0.12 350 / 0.85), transparent);
+  }
+
+  .station-section--arsenal {
+    padding-inline: clamp(1rem, 3vw, 2rem);
+  }
+
+  .station-section--arsenal .station-sector-backdrop {
+    background:
+      radial-gradient(ellipse 90% 60% at 50% 0%, oklch(0.65 0.16 35 / 0.1), transparent 60%),
+      repeating-linear-gradient(
+        90deg,
+        oklch(1 0 0 / 0.02) 0 1px,
+        transparent 1px 48px
+      );
+    mask-image: linear-gradient(180deg, black, black 85%, transparent);
+  }
+
+  .station-section--arsenal .station-sector-rail {
+    background: linear-gradient(180deg, transparent, oklch(0.65 0.16 35 / 0.95), transparent);
+  }
+
+  .station-section--stack .station-sector-backdrop {
+    background:
+      radial-gradient(ellipse 55% 45% at 20% 80%, oklch(0.62 0.1 180 / 0.1), transparent 60%),
+      linear-gradient(180deg, transparent, oklch(0.62 0.1 180 / 0.05));
+  }
+
+  .station-section--stack .station-sector-rail {
+    background: linear-gradient(180deg, transparent, oklch(0.62 0.1 180 / 0.85), transparent);
+  }
+
+  .station-section--faq .station-sector-backdrop {
+    background:
+      radial-gradient(circle at 10% 20%, oklch(0.55 0.1 230 / 0.1), transparent 42%),
+      linear-gradient(180deg, oklch(0.55 0.1 230 / 0.03), transparent 55%);
+  }
+
+  .station-section--faq .station-sector-rail {
+    background: linear-gradient(180deg, transparent, oklch(0.55 0.1 230 / 0.9), transparent);
+  }
+
+  .station-section--comms .station-sector-backdrop {
+    background:
+      radial-gradient(ellipse 80% 55% at 50% 100%, oklch(0.58 0.12 290 / 0.14), transparent 65%),
+      linear-gradient(0deg, oklch(0.58 0.12 290 / 0.06), transparent 45%);
+  }
+
+  .station-section--comms .station-sector-rail {
+    background: linear-gradient(180deg, transparent, oklch(0.58 0.12 290 / 0.95), transparent);
+  }
+
+  .station-section--page .station-sector-backdrop {
+    background: linear-gradient(180deg, oklch(0.55 0.1 200 / 0.04), transparent 35%);
+  }
+
+  .station-section--page .station-sector-rail {
+    background: linear-gradient(180deg, transparent, oklch(0.55 0.1 200 / 0.5), transparent);
+  }
+
+  .station-sector-heading[data-section-tone='engine'] {
+    box-shadow: inset 0 0 0 1px oklch(0.72 0.14 55 / 0.18);
+  }
+
+  .station-sector-heading[data-section-tone='signal'] {
+    box-shadow: inset 0 0 0 1px oklch(0.58 0.12 290 / 0.2);
+  }
+
+  .station-sector-heading[data-section-tone='faq'] {
+    box-shadow: inset 0 0 0 1px oklch(0.55 0.1 230 / 0.22);
+  }
+
+  .station-faq-list {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .station-faq-details summary {
+    list-style: none;
+  }
+
+  .station-faq-details summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .station-faq-summary {
+    display: flex;
+    cursor: pointer;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    text-align: left;
+  }
+
+  .station-faq-chevron {
+    transition: transform 0.25s ease;
+  }
+
+  .station-faq-details[open] .station-faq-chevron {
+    transform: rotate(180deg);
+  }
+
+  .station-takeaways {
+    border-style: solid;
+    border-color: oklch(0.55 0.1 200 / 0.22);
+    background: linear-gradient(135deg, oklch(0.55 0.1 200 / 0.06), transparent 55%);
+  }
+
+  .site-breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem 0.5rem;
+    margin-bottom: 1.5rem;
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+
+  .site-breadcrumb a:hover {
+    color: var(--cyan);
+  }
+
+  .site-breadcrumb-sep {
+    opacity: 0.35;
+  }
+
+  .site-footer {
+    position: relative;
+    border-top: 1px solid oklch(1 0 0 / 0.08);
+    padding: 3rem 1.5rem 2rem;
+    scroll-margin-top: 5.5rem;
+  }
+
+  .site-footer-inner {
+    display: grid;
+    gap: 2rem;
+    margin-inline: auto;
+    max-width: 72rem;
+  }
+
+  @media (min-width: 768px) {
+    .site-footer-inner {
+      grid-template-columns: minmax(0, 1.4fr) repeat(2, minmax(0, 1fr));
+      gap: 2.5rem;
+    }
+  }
+
+  .site-footer-nav-title {
+    margin-bottom: 0.75rem;
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+
+  .site-footer-nav ul {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .site-footer-link {
+    font-size: 0.875rem;
+    color: var(--muted-foreground);
+    transition: color 0.2s ease;
+  }
+
+  .site-footer-link:hover {
+    color: var(--cyan);
+  }
+
+  .site-footer-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid oklch(1 0 0 / 0.06);
+    margin-inline: auto;
+    max-width: 72rem;
+  }
+
+  @media (min-width: 640px) {
+    .site-footer-bottom {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  .partner-logo-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  @media (min-width: 640px) {
+    .partner-logo-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  .partner-logo-link {
+    display: inline-flex;
+    min-height: 3rem;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    border: 1px solid oklch(1 0 0 / 0.1);
+    border-radius: 0.5rem;
+    background: oklch(0.12 0.01 270 / 0.45);
+    padding: 0.75rem 1rem;
+    font-family: var(--font-heading, inherit);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--foreground);
+    transition:
+      border-color 0.2s ease,
+      color 0.2s ease,
+      background 0.2s ease;
+  }
+
+  .partner-logo-link:hover {
+    border-color: oklch(0.55 0.1 200 / 0.45);
+    color: var(--cyan);
+    background: oklch(0.55 0.1 200 / 0.08);
+  }
+
+  .partner-logo-label {
+    text-align: center;
+    text-wrap: balance;
+  }
+
+  .testimonial-placeholder {
+    border-style: dashed;
+    opacity: 0.92;
   }
 
   .station-console-frame {

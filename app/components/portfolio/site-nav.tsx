@@ -1,29 +1,42 @@
 'use client'
 
+import { useLocale } from 'next-intl'
+import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Menu, Sparkles, X, Eye, EyeOff } from 'lucide-react'
-import { useEffect, useState, type MouseEvent } from 'react'
+import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useTranslations } from 'next-intl'
 import { useCompactNavLayout } from './device-profile'
-import { isBlockScrollPair, requestBlockNavScroll } from './block-scroll-nav'
 import { useConstellations } from './constellation-context'
 import { SiteFxControls } from './site-fx-controls'
 import { StationButton, StationLed } from './station-console'
 
-const links = [
-  { href: '#engine', key: 'engine' as const },
-  { href: '#arsenal', key: 'arsenal' as const },
-  { href: '#stack', key: 'stack' as const },
-  { href: '#contact', key: 'contact' as const },
-]
+const pageLinks = [
+  { href: '/about', key: 'about' as const },
+  { href: '/services', key: 'services' as const },
+  { href: '/pricing', key: 'pricing' as const },
+  { href: '/case-studies', key: 'caseStudies' as const },
+  { href: '/resources', key: 'resources' as const },
+] as const
 
-function onNavAnchorClick(event: MouseEvent<HTMLAnchorElement>, href: string) {
-  if (!document.documentElement.dataset.blockScroll) return
-  const targetId = href.replace(/^#/, '')
-  if (!isBlockScrollPair(targetId)) return
-  event.preventDefault()
-  requestBlockNavScroll(href)
+const homeLinks = [
+  { href: '#engine', key: 'work' as const },
+  { href: '#faq', key: 'faq' as const },
+  { href: '#contact', key: 'contact' as const },
+] as const
+
+function useNavHref() {
+  const locale = useLocale()
+  const pathname = usePathname()
+
+  return (href: string) => {
+    if (href.startsWith('#')) {
+      const onHome = pathname === '/' || pathname === `/${locale}`
+      return onHome ? href : `/${locale}${href}`
+    }
+    return `/${locale}${href}`
+  }
 }
 
 export function SiteNav() {
@@ -34,6 +47,11 @@ export function SiteNav() {
   const { constellationLabEnabled, toggleConstellationLab, skyViewMode, toggleSkyViewMode } =
     useConstellations()
   const t = useTranslations('Nav')
+  const locale = useLocale()
+  const navHref = useNavHref()
+  const home = `/${locale}`
+
+  const allLinks = [...pageLinks, ...homeLinks]
 
   useEffect(() => {
     setMounted(true)
@@ -95,20 +113,17 @@ export function SiteNav() {
                 <X className="h-4 w-4" />
               </button>
               <nav className="flex flex-col items-stretch gap-2 px-6 pb-8 pt-16">
-                {links.map((link) => (
+                {allLinks.map((link) => (
                   <a
-                    key={link.href}
-                    href={link.href}
+                    key={link.key}
+                    href={navHref(link.href)}
                     className="site-nav-mobile-link"
-                    onClick={(event) => {
-                      onNavAnchorClick(event, link.href)
-                      setMenuOpen(false)
-                    }}
+                    onClick={() => setMenuOpen(false)}
                   >
                     {t(link.key)}
                   </a>
                 ))}
-                <StationButton className="mt-4 w-full justify-center" href="#contact">
+                <StationButton className="mt-4 w-full justify-center" href={navHref('#contact')}>
                   {t('hireMe')}
                 </StationButton>
 
@@ -178,27 +193,22 @@ export function SiteNav() {
         transition={{ duration: 0.6, ease: 'easeOut' }}
       >
         <nav
-          className={`station-nav-bar flex w-full min-w-0 max-w-3xl items-center justify-between gap-2 px-3 py-2.5 transition-all duration-300 sm:px-5 ${
+          className={`station-nav-bar flex w-full min-w-0 max-w-4xl items-center justify-between gap-2 px-3 py-2.5 transition-all duration-300 sm:px-5 ${
             scrolled ? 'opacity-100' : 'opacity-95'
           }`}
         >
           <a
-            href="#top"
+            href={home}
             className="flex shrink-0 items-center gap-2 font-heading text-sm font-bold tracking-widest"
-            onClick={(event) => onNavAnchorClick(event, '#top')}
           >
             <StationLed active pulse />
             YZ<span className="text-cyan">.</span>
           </a>
 
-          <ul className="site-nav-desktop-links hidden min-w-0 lg:flex items-center gap-0.5">
-            {links.map((link) => (
-              <li key={link.href}>
-                <a
-                  href={link.href}
-                  className="station-nav-link"
-                  onClick={(event) => onNavAnchorClick(event, link.href)}
-                >
+          <ul className="site-nav-desktop-links hidden min-w-0 xl:flex items-center gap-0.5">
+            {allLinks.map((link) => (
+              <li key={link.key}>
+                <a href={navHref(link.href)} className="station-nav-link">
                   {t(link.key)}
                 </a>
               </li>
@@ -207,16 +217,16 @@ export function SiteNav() {
 
           <div className="flex shrink-0 items-center gap-2">
             <StationButton
-              href="#contact"
+              href={navHref('#contact')}
               variant="ghost"
-              className="site-nav-desktop-hire hidden !px-3.5 !py-1.5 !text-[10px] !uppercase !tracking-[0.18em] text-cyan lg:inline-flex"
+              className="site-nav-desktop-hire hidden !px-3.5 !py-1.5 !text-[10px] !uppercase !tracking-[0.18em] text-cyan xl:inline-flex"
             >
               {t('hireMe')}
             </StationButton>
 
             <button
               type="button"
-              className="site-nav-mobile-trigger station-button station-button-secondary !h-10 !w-10 !p-0 lg:hidden"
+              className="site-nav-mobile-trigger station-button station-button-secondary !h-10 !w-10 !p-0 xl:hidden"
               aria-label={menuOpen ? t('menuClose') : t('menuOpen')}
               aria-expanded={menuOpen}
               onClick={() => setMenuOpen((open) => !open)}

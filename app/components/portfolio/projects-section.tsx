@@ -3,21 +3,25 @@
 import Image from 'next/image'
 import { ArrowUpRight } from 'lucide-react'
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
+import { PageCtaPanel } from './page-cta-panel'
 import { ProjectModal } from './project-modal'
 import { projects } from './projects-data'
 import { SectionHeading } from './section-heading'
 import { StationChip, StationPanel, StationScreen, StationSection } from './station-console'
 
 export function ProjectsSection() {
+  const t = useTranslations('Projects')
   const [selectedProject, setSelectedProject] =
     useState<(typeof projects)[number] | null>(null)
 
   return (
-    <StationSection id="engine" scrollBlock className="perf-deferred-section">
+    <StationSection id="engine" tone="engine" className="perf-deferred-section">
       <SectionHeading
-        eyebrow="01 — Core Engine Bay"
-        title="Game Projects"
-        description="Shipped titles where I owned the technical architecture — from gameplay systems to engine-level tooling."
+        tone="engine"
+        eyebrow={t('eyebrow')}
+        title={t('title')}
+        description={t('description')}
       />
 
       <div className="mt-14 grid gap-8 lg:grid-cols-2">
@@ -66,6 +70,8 @@ export function ProjectsSection() {
           </div>
         ))}
       </div>
+
+      <PageCtaPanel className="mt-12" backLabel="SCOPE" />
 
       <ProjectModal
         project={selectedProject}

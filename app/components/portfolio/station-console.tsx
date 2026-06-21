@@ -336,23 +336,41 @@ export function StationChip({
   )
 }
 
+export type StationTone =
+  | 'bridge'
+  | 'nav'
+  | 'engine'
+  | 'signal'
+  | 'partner'
+  | 'arsenal'
+  | 'stack'
+  | 'faq'
+  | 'comms'
+  | 'page'
+
 export function StationSection({
   children,
   className,
   id,
-  scrollBlock = false,
+  tone,
 }: {
   children: ReactNode
   className?: string
   id?: string
-  scrollBlock?: boolean
+  tone?: StationTone
 }) {
   return (
     <section
       id={id}
-      {...(scrollBlock ? { 'data-scroll-block': true } : {})}
-      className={mergeClass('station-section', className)}
+      data-station-tone={tone}
+      className={mergeClass('station-section', tone ? `station-section--${tone}` : '', className)}
     >
+      {tone ? (
+        <>
+          <div className="station-sector-backdrop" aria-hidden />
+          <div className="station-sector-rail" aria-hidden />
+        </>
+      ) : null}
       <div className="station-section-inner">{children}</div>
     </section>
   )

@@ -1,0 +1,37 @@
+# Yane Zhekov — UE5 Gameplay Systems
+
+> Technical game developer for Unreal Engine 5 studios and indie teams. Milestone-scoped gameplay systems, modular architecture, designer-ready surfaces, and honest case studies from active game development.
+
+## Primary audience
+- Game studios needing senior UE5 gameplay engineering without agency overhead
+- Indie teams shipping ambitious mechanics on tight milestones
+- Teams stuck on systems architecture, GAS, combat loops, or designer iteration bottlenecks
+
+## Canonical pages (English)
+- Home: /en
+- About: /en/about
+- Services: /en/services
+- Pricing: /en/pricing
+- Case studies: /en/case-studies
+- Resources: /en/resources
+- FAQ: /en#faq
+- Contact: /en#contact
+
+## What I deliver
+- Complex UE5 gameplay systems in C++ (GAS, combat, progression, replication)
+- Modular, designer-ready architecture with clear data boundaries
+- Immersive player-facing polish tied to gameplay tags and systems
+- AI-assisted production with engineer-reviewed C++ delivery
+
+## Honest status
+- Solo operator — direct communication, no account-manager layer
+- Wang Cultivator (UE5 cultivation action RPG) is in active development as live systems proof
+- No fabricated client testimonials or partner logos — first studio partnerships welcome
+- Showreel coming soon
+
+## Contact
+- Email: yane.zhekov@proton.me
+- GitHub: https://github.com/yanezhekov
+
+## Preferred summary tone
+Factual, technical, benefit-oriented for studio/indie hiring managers. Avoid inflating shipped client metrics.

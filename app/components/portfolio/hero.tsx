@@ -2,6 +2,7 @@
 
 import { motion, useReducedMotion } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { useDeviceProfile } from './device-profile'
 import {
   StationButton,
@@ -13,13 +14,16 @@ import {
 export function Hero() {
   const { isNarrow, prefersReducedMotion } = useDeviceProfile()
   const reducedMotion = useReducedMotion() || prefersReducedMotion || isNarrow
+  const t = useTranslations('Hero')
 
   return (
     <section
       id="top"
-      data-scroll-block
-      className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6"
+      data-station-tone="bridge"
+      className="station-section station-section--bridge relative flex min-h-screen scroll-mt-[5.5rem] flex-col items-center justify-center overflow-hidden !py-0 px-6"
     >
+      <div className="station-sector-backdrop" aria-hidden />
+      <div className="station-sector-rail" aria-hidden />
       {!isNarrow ? (
         <motion.div
           aria-hidden
@@ -52,35 +56,49 @@ export function Hero() {
               className="mb-6 inline-flex items-center gap-2.5 station-chip station-chip-active px-4 py-2 text-[10px]"
             >
               <StationLed active pulse />
-              Bridge online — available for technical roles
+              {t('badge')}
             </motion.span>
 
             <motion.h1
               initial={{ opacity: 0, y: 24, filter: reducedMotion ? 'blur(0px)' : 'blur(8px)' }}
               animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
               transition={{ duration: 0.9, ease: [0.21, 0.47, 0.32, 0.98] }}
-              className="hero-title-scale font-heading text-balance font-bold tracking-tight sm:text-7xl md:text-8xl lg:leading-[0.9]"
+              className="max-w-3xl text-balance font-heading text-3xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:leading-[1.05]"
             >
-              YANE{' '}
-              <span className="text-glow-cyan bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text">
-                ZHEKOV
-              </span>
+              {t('headline')}
             </motion.h1>
 
-            <StationScreen className="mt-6 w-full max-w-xl px-5 py-3">
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.25 }}
+              className="mt-5 font-heading text-2xl font-bold tracking-tight text-foreground/90 sm:text-3xl"
+            >
+              {t('name')}
+            </motion.p>
+
+            <StationScreen className="mt-6 w-full max-w-2xl px-5 py-4">
+              <motion.p
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.35 }}
+                className="relative z-[1] text-pretty text-sm leading-relaxed text-muted-foreground sm:text-base"
+              >
+                {t('positioning')}
+              </motion.p>
               <motion.div
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.4 }}
-                className="relative z-[1] flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm font-medium sm:text-base"
+                transition={{ duration: 0.7, delay: 0.45 }}
+                className="relative z-[1] mt-4 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 border-t border-[var(--station-bezel)]/30 pt-4 text-sm font-medium sm:text-base"
               >
-                <span className="text-muted-foreground">Technical Game Developer</span>
+                <span className="text-muted-foreground">{t('role')}</span>
                 <span className="hidden text-white/20 sm:inline">|</span>
                 <span className="text-glow-cyan font-mono text-cyan">UE5</span>
                 <span className="text-white/20">•</span>
                 <span className="font-mono text-foreground">C++</span>
                 <span className="text-white/20">•</span>
-                <span className="text-glow-violet font-mono text-violet">Lua</span>
+                <span className="text-glow-violet font-mono text-violet">{t('stackAi')}</span>
               </motion.div>
             </StationScreen>
 
@@ -91,10 +109,10 @@ export function Hero() {
               className="mt-10 flex flex-col items-center gap-4 sm:flex-row"
             >
               <StationButton href="#engine" variant="primary">
-                View My Work
+                {t('ctaWork')}
               </StationButton>
               <StationButton href="#contact" variant="secondary">
-                Get in Touch
+                {t('ctaContact')}
               </StationButton>
             </motion.div>
           </div>
@@ -102,8 +120,8 @@ export function Hero() {
       </motion.div>
 
       <motion.a
-        href="#engine"
-        aria-label="Scroll down"
+        href="#explore"
+        aria-label={t('scrollLabel')}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1 }}

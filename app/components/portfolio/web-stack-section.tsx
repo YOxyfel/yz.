@@ -243,10 +243,11 @@ export function WebStackSection() {
   const items = [...stack, ...stack]
 
   return (
-    <StationSection id="stack">
+    <StationSection id="stack" tone="stack">
       <SectionHeading
+        tone="stack"
         align="center"
-        eyebrow="03 — Comms Array"
+        eyebrow="05 — Web Stack Bay"
         title="The Full Stack Flex"
         description="When I'm not in the engine, I ship fast, polished web experiences — from client WordPress builds to custom frontends."
       />

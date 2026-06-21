@@ -1,10 +1,12 @@
 import { StationLed, StationPanel } from './station-console'
+import type { StationTone } from './station-console'
 
 type SectionHeadingProps = {
   eyebrow: string
   title: string
   description?: string
   align?: 'left' | 'center'
+  tone?: StationTone
 }
 
 export function SectionHeading({
@@ -12,6 +14,7 @@ export function SectionHeading({
   title,
   description,
   align = 'left',
+  tone,
 }: SectionHeadingProps) {
   return (
     <div
@@ -24,7 +27,8 @@ export function SectionHeading({
       <StationPanel
         variant="module"
         backLabel="SECTOR-LABEL"
-        className={align === 'center' ? 'mx-auto inline-block text-center' : 'inline-block'}
+        data-section-tone={tone}
+        className={`station-sector-heading ${align === 'center' ? 'mx-auto inline-block text-center' : 'inline-block'}`}
       >
         <p
           className={`station-readout-label flex items-center gap-2 ${align === 'center' ? 'justify-center' : ''}`}

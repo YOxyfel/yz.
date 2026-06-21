@@ -3,6 +3,8 @@ import { getMessages, setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import { routing, type AppLocale } from '../../i18n/routing'
 import { SetHtmlLang } from '../components/portfolio/set-html-lang'
+import { JsonLd } from '../components/portfolio/json-ld'
+import { buildPersonSchema, buildWebSiteSchema } from '../../lib/structured-data'
 
 type Props = {
   children: React.ReactNode
@@ -26,6 +28,7 @@ export default async function LocaleLayout({ children, params }: Props) {
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
       <SetHtmlLang locale={locale} />
+      <JsonLd data={[buildPersonSchema(locale), buildWebSiteSchema(locale)]} />
       {children}
     </NextIntlClientProvider>
   )

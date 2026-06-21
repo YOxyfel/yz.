@@ -1,4 +1,5 @@
 import { ArrowUpRight, Mail } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { Reveal } from './reveal'
 import {
   StationButton,
@@ -53,15 +54,17 @@ const links = [
   },
   {
     label: 'Showreel',
-    value: 'YouTube',
-    href: 'https://youtube.com',
+    valueKey: 'showreelSoon' as const,
     icon: YouTubeIcon,
+    comingSoon: true,
   },
-]
+] as const
 
 export function ContactSection() {
+  const t = useTranslations('Contact')
+
   return (
-    <StationSection id="contact" className="border-t border-[var(--station-bezel)]/30 !pb-24">
+    <StationSection id="contact" tone="comms" className="!pb-24">
       <div
         aria-hidden
         className="bg-fx-blur-blob pointer-events-none absolute left-1/2 top-0 -z-10 h-64 w-[36rem] -translate-x-1/2 rounded-full bg-cyan/10 blur-[140px] max-md:hidden"
@@ -73,17 +76,16 @@ export function ContactSection() {
             <StationLed active pulse tone="violet" />
             <span>
               <span className="station-bracket">[</span>
-              Comms channel open
+              {t('eyebrow')}
               <span className="station-bracket">]</span>
             </span>
           </p>
           <h2 className="font-heading mt-4 text-balance text-4xl font-bold tracking-tight sm:text-6xl">
-            Let&apos;s build something{' '}
-            <span className="text-glow-violet text-violet">unforgettable</span>.
+            {t('title')}{' '}
+            <span className="text-glow-violet text-violet">{t('titleAccent')}</span>.
           </h2>
           <p className="mx-auto mt-6 max-w-xl text-pretty leading-relaxed text-muted-foreground">
-            Whether it&apos;s gameplay systems in Unreal Engine, performance-critical C++,
-            or scripting tools for your team, I&apos;m always up for an ambitious challenge.
+            {t('body')}
           </p>
         </StationPanel>
 
@@ -101,6 +103,36 @@ export function ContactSection() {
         <div className="contact-card-grid mt-16">
           {links.map((link, index) => {
             const Icon = link.icon
+            const value = 'valueKey' in link ? t(link.valueKey) : link.value
+            const card = (
+              <StationPanel
+                variant="module"
+                interactive={'comingSoon' in link ? false : true}
+                fill
+                flipDelay={0.08 * index}
+                backLabel={`LNK-${String(index + 1).padStart(2, '0')}`}
+                className={`contact-card-panel h-full ${'comingSoon' in link ? 'opacity-75' : ''}`}
+              >
+                <div className="contact-card-body">
+                  <span className="contact-card-icon" aria-hidden>
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <StationChip>{link.label}</StationChip>
+                  <span className="contact-card-value">{value}</span>
+                </div>
+              </StationPanel>
+            )
+
+            if ('comingSoon' in link && link.comingSoon) {
+              return (
+                <div key={link.label} className="contact-card-link cursor-default">
+                  {card}
+                </div>
+              )
+            }
+
+            if (!('href' in link)) return null
+
             return (
               <a
                 key={link.label}
@@ -109,30 +141,12 @@ export function ContactSection() {
                 rel={link.href.startsWith('http') ? 'noreferrer' : undefined}
                 className="contact-card-link group"
               >
-                <StationPanel
-                  variant="module"
-                  interactive
-                  fill
-                  flipDelay={0.08 * index}
-                  backLabel={`LNK-${String(index + 1).padStart(2, '0')}`}
-                  className="contact-card-panel h-full"
-                >
-                  <div className="contact-card-body">
-                    <span className="contact-card-icon" aria-hidden>
-                      <Icon className="h-5 w-5" />
-                    </span>
-                    <StationChip>{link.label}</StationChip>
-                    <span className="contact-card-value">{link.value}</span>
-                  </div>
-                </StationPanel>
+                {card}
               </a>
             )
           })}
         </div>
 
-        <p className="mt-16 font-mono text-xs text-muted-foreground">
-          © {new Date().getFullYear()} Yane Zhekov — Station built with Next.js & Framer Motion
-        </p>
       </div>
     </StationSection>
   )

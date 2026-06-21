@@ -19,10 +19,9 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Yane Zhekov — Technical Game Developer',
+  title: 'Yane Zhekov — UE5 Gameplay Systems for Studios & Indies',
   description:
-    'Portfolio of Yane Zhekov, Technical Game Developer specializing in Unreal Engine 5, C++, and Lua. Building immersive game systems, VFX, and tools.',
-  generator: 'v0.app',
+    'Technical game developer for Unreal Engine 5 studios and indie teams. UE5 gameplay systems, modular architecture, AI-assisted production, and honest case studies from active game development.',
 }
 
 export const viewport = {

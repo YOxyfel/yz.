@@ -1,9 +1,20 @@
 {
+  "Metadata": {
+    "title": "Yane Zhekov — UE5 Gameplay Systems for Studios & Indies",
+    "description": "Technical game developer for Unreal Engine 5 studios and indie teams. UE5 gameplay systems, modular architecture, AI-assisted production, and honest case studies from active game development."
+  },
   "Nav": {
+    "about": "About",
+    "services": "Services",
+    "pricing": "Pricing",
+    "caseStudies": "Case Studies",
+    "resources": "Resources",
+    "work": "Work",
+    "faq": "FAQ",
+    "contact": "Contact",
     "engine": "Engine",
     "arsenal": "Arsenal",
     "stack": "Stack",
-    "contact": "Contact",
     "hireMe": "Hire me",
     "skyLab": "Sky Lab",
     "skyLabOn": "Sky Lab on",
@@ -15,6 +26,472 @@
     "menuClose": "Close menu",
     "skyView": "Sky view",
     "showUi": "Show UI"
+  },
+  "Hero": {
+    "badge": "Bridge online — open to studio & indie partnerships",
+    "headline": "Build immersive UE5 systems your team can iterate on—not fight.",
+    "name": "Yane Zhekov",
+    "role": "Technical Game Developer",
+    "stackAi": "AI-assisted production",
+    "positioning": "UE5 gameplay systems for studios and indie teams—modular architecture, designer-ready surfaces, and milestone-scoped partnerships.",
+    "ctaWork": "View My Work",
+    "ctaContact": "Get in Touch",
+    "scrollLabel": "Scroll to explore"
+  },
+  "HomeHub": {
+    "eyebrow": "00 — Station map",
+    "title": "Explore the full briefing",
+    "description": "The homepage is the bridge deck—deeper write-ups live on dedicated pages so nothing is repeated twice.",
+    "cardLabels": ["Dossier", "Solutions", "Signal log"],
+    "cards": [
+      {
+        "title": "About",
+        "body": "Bio, mission, values, and what sets this station apart from agencies and generalist freelancers.",
+        "cta": "Open dossier"
+      },
+      {
+        "title": "Services & solutions",
+        "body": "Problems I solve, deployment briefs, and audience landing pages for studios and indie teams.",
+        "cta": "View solutions"
+      },
+      {
+        "title": "Case studies",
+        "body": "Honest breakdown of Wang Cultivator—the UE5 cultivation RPG I am building now as live systems proof.",
+        "cta": "Read signal log"
+      }
+    ]
+  },
+  "Positioning": {
+    "eyebrow": "00 — Mission Brief",
+    "title": "Problems I solve on your crew",
+    "description": "Every engagement is scoped to your milestone, team, and pipeline—not a canned kit.",
+    "summary": "I work as a single technical partner: no agency overhead, direct communication, and systems shaped to how your team actually ships. Whether you need a gameplay slice proven out or architecture your team can extend in-editor, the work is tailored to your project.",
+    "problemLabels": ["Systems", "Architecture", "Player"],
+    "problems": [
+      {
+        "title": "Complex gameplay systems",
+        "body": "Gameplay Ability System, combat loops, progression, and networked logic in C++—with Blueprint surfaces your team can extend without reopening architecture every sprint."
+      },
+      {
+        "title": "Modular, designer-ready architecture",
+        "body": "Everything I design aims to be reusable, composable, and approachable in-editor—clear data boundaries and iteration-safe APIs so designers and teammates can tune content without fighting the stack."
+      },
+      {
+        "title": "Immersive player experiences",
+        "body": "Combat feel, progression beats, and VFX tied to gameplay tags—feedback that sells your fantasy in playtests, not just in documentation."
+      }
+    ],
+    "painPointsTitle": "Sound familiar?",
+    "painPoints": [
+      "Milestones slip because gameplay architecture wasn't built to scale with content.",
+      "Designers wait on engineer time for every tuning pass and curve change.",
+      "Combat or progression reads well in docs but feels flat in playtests.",
+      "The team needs senior gameplay engineering now—not after six months of hiring."
+    ]
+  },
+  "Differentiation": {
+    "eyebrow": "01 — Differentiation Array",
+    "title": "What sets this station apart",
+    "description": "Not a generalist shop or an agency layer—focused UE5 gameplay engineering with a production mindset shaped by my own title in development.",
+    "missionLabel": "Mission",
+    "missionTitle": "Systems your crew can own",
+    "missionBody": "Deliver UE5 gameplay architecture that studios and indie teams can extend, tune in-editor, and feel in playtests—scoped to your milestone, not a template dump.",
+    "visionLabel": "Vision",
+    "visionTitle": "Ambitious games without brittle stacks",
+    "visionBody": "Help teams ship complex mechanics and immersive player moments without drowning in one-off code, communication overhead, or architecture that fights every new feature.",
+    "differentiatorsTitle": "Distinctive approach",
+    "differentiators": [
+      {
+        "title": "Deep UE5 gameplay engineering",
+        "body": "C++, Gameplay Ability System, and networked logic—not surface-level Blueprint work. Built for the mechanics your milestone actually needs."
+      },
+      {
+        "title": "AI-accelerated production",
+        "body": "AI assists exploration, boilerplate, and iteration across the pipeline—always reviewed and hardened in UE5-native C++ before it touches your project."
+      },
+      {
+        "title": "Modular by default",
+        "body": "Reusable, composable, designer-ready architecture is the baseline—not a refactor you pay for later when scope grows."
+      },
+      {
+        "title": "Direct solo partnership",
+        "body": "You work with the engineer building the systems. No account managers, no hand-offs, no agency markup on every sprint."
+      }
+    ],
+    "matrixRowLabel": "Factor",
+    "valueMatrix": {
+      "title": "Why teams choose this lane",
+      "headers": ["Working with me", "Typical agency", "Generalist freelancer"],
+      "rows": [
+        {
+          "label": "Who builds your systems",
+          "values": [
+            "Same UE5 gameplay engineer from scoping to handoff",
+            "Rotating team; gameplay depth varies",
+            "Skill set may not match UE5 systems work"
+          ]
+        },
+        {
+          "label": "Communication",
+          "values": [
+            "Direct, milestone-focused updates",
+            "Layers of PM and account contact",
+            "Depends on availability and context switching"
+          ]
+        },
+        {
+          "label": "Architecture fit",
+          "values": [
+            "Modular, designer-ready systems for your pipeline",
+            "Often optimized for billable hours",
+            "May optimize for speed over long-term reuse"
+          ]
+        },
+        {
+          "label": "Cost efficiency",
+          "values": [
+            "Scoped milestone work—pay for outcomes",
+            "Retainers and overhead built into rates",
+            "Cheaper hourly rate can mean more rework"
+          ]
+        },
+        {
+          "label": "Player-facing quality",
+          "values": [
+            "Combat feel and immersion tied to system design",
+            "Feature delivery without gameplay specialization",
+            "Varies widely by project mix"
+          ]
+        }
+      ]
+    }
+  },
+  "CaseStudy": {
+    "eyebrow": "03 — Signal Log",
+    "title": "Case study in active development",
+    "description": "Honest depth from the game I am building now—the same systems discipline I bring to studio and indie partnerships.",
+    "status": "In development",
+    "projectName": "Wang Cultivator",
+    "projectSubtitle": "Action RPG · cultivation systems · UE5.4",
+    "summary": "A wuxia-inspired action RPG where I own the gameplay architecture end-to-end: cultivation progression, combat loop, GAS integration, and spiritual-energy VFX hooks—currently in full production as a solo developer.",
+    "sections": [
+      {
+        "title": "Challenge",
+        "body": "Build a deep cultivation progression model and real-time combat loop that stay data-driven and extensible—without Blueprint sprawl or rewrites every time a new realm tier ships."
+      },
+      {
+        "title": "Approach",
+        "body": "C++ foundations for stats, breakthrough logic, and GAS abilities; designer-facing data assets for tiers and curves; Niagara feedback bound to gameplay tags and replicated state."
+      },
+      {
+        "title": "Progress",
+        "body": "Core combat input buffering, spiritual-energy resource model, and realm advancement pipeline are in place and iterating in vertical slices—not a vertical-slice demo bolted onto throwaway code."
+      }
+    ],
+    "outcomesTitle": "Systems in production",
+    "outcomes": [
+      "Custom GAS wrapper with Blueprint-safe ability authoring",
+      "Data-driven cultivation tiers with networked stat replication",
+      "Frame-tuned combat with cancel windows and input buffering",
+      "Niagara VFX driven by gameplay tags and resource state"
+    ],
+    "honesty": "This is my own title—not a client engagement—so there are no shipped third-party metrics yet. It is the live proof of how I architect, iterate, and ship gameplay systems under real milestone pressure.",
+    "cta": "View project modules"
+  },
+  "UseCases": {
+    "eyebrow": "04 — Deployment Briefs",
+    "title": "Use cases for your milestone",
+    "description": "Focused briefs for the work studios and indie teams hire me for—each scoped to a real production problem, not a generic service menu.",
+    "readBrief": "Open brief",
+    "backToBriefs": "Back to services",
+    "detailEyebrow": "Use case brief",
+    "challengesTitle": "When teams call in",
+    "approachTitle": "How I work",
+    "outcomesTitle": "What you leave with",
+    "detailCta": "Start a conversation",
+    "detailCtaBody": "No shipped client titles yet—I am in active development on my own cultivation RPG—but I bring the same systems discipline to contract and co-dev work. Tell me your milestone and I will map a scoped path."
+  },
+  "Projects": {
+    "eyebrow": "01 — Core Engine Bay",
+    "title": "Game Projects",
+    "description": "In-development gameplay work—modular UE5 systems architecture, designer-ready surfaces, and player-facing polish."
+  },
+  "Contact": {
+    "eyebrow": "07 — Comms channel open",
+    "title": "Let's scope your next milestone",
+    "titleAccent": "together",
+    "body": "Studios and indie teams: tell me where you are stuck—systems, architecture, or player feel—and I will reply with an honest fit and a scoped path forward in UE5.",
+    "showreelSoon": "Coming soon"
+  },
+  "SitePages": {
+    "backToBridge": "Back to bridge",
+    "breadcrumbLabel": "Breadcrumb",
+    "bridgeCrumb": "Bridge"
+  },
+  "AboutPage": {
+    "eyebrow": "Station dossier",
+    "title": "About Yane Zhekov",
+    "description": "Technical game developer focused on Unreal Engine 5 gameplay systems for studios and indie teams—solo operator, direct communication, milestone-scoped work.",
+    "bio": "I am a solo UE5 gameplay engineer partnering with studios and indie teams that need complex systems shipped without agency overhead. I design for modularity and designer-ready surfaces from the start—not as a late refactor—and I use AI-assisted workflows to move faster while keeping everything hardened in C++ before it lands in your project.",
+    "missionLabel": "Mission",
+    "mission": "Deliver UE5 gameplay architecture teams can extend, tune in-editor, and feel in playtests—scoped to your milestone, not a template dump.",
+    "visionLabel": "Vision",
+    "vision": "Help teams ship ambitious mechanics and immersive player moments without brittle architecture or communication layers slowing every sprint.",
+    "valuesTitle": "How I build",
+    "values": [
+      {
+        "title": "Modular first",
+        "body": "Reusable, composable systems are the default—built to survive the next feature, not just the current sprint."
+      },
+      {
+        "title": "Designer-ready",
+        "body": "Clear data boundaries and Blueprint-safe APIs so content authors can iterate without unraveling the stack."
+      },
+      {
+        "title": "Honest scope",
+        "body": "Milestone-based engagements with direct updates from the engineer doing the work—no oversell, no hand-offs."
+      }
+    ],
+    "nowTitle": "Current focus",
+    "nowBody": "I am in full production on Wang Cultivator, a UE5 cultivation action RPG where I own combat, progression, GAS, and VFX integration end-to-end. That active development is the live benchmark for how I work with partners.",
+    "caseStudiesCta": "Read case study",
+    "servicesCta": "View services",
+    "cta": "Get in touch",
+    "ctaBody": "Open to studio and indie partnerships—send your milestone and I will reply with an honest scope.",
+    "eeatTitle": "Experience & trust signals",
+    "eeatBody": "Honest EEAT markers—no inflated awards or fake client logos. This is what you can verify today.",
+    "eeatItems": [
+      "Solo UE5 gameplay engineer with end-to-end ownership on Wang Cultivator (combat, GAS, progression, VFX integration)",
+      "Milestone-scoped partnerships with direct engineer communication—no agency hand-offs",
+      "Open GitHub portfolio and live case study depth instead of borrowed web-client logos",
+      "Transparent pricing tiers and FAQ—scope before commitment"
+    ],
+    "takeawaysTitle": "Key takeaways",
+    "takeaways": [
+      "Focused on UE5 gameplay systems for studios and indie teams—not generalist web or agency work",
+      "Modular, designer-ready architecture is the default from day one",
+      "Honest about status: cultivation RPG in active dev, first partner testimonials welcome"
+    ]
+  },
+  "ServicesPage": {
+    "eyebrow": "Solutions bay",
+    "title": "Services & solutions",
+    "description": "Milestone-scoped UE5 gameplay engineering for studios and indie teams—each offering maps to a detailed brief and audience-specific landing page.",
+    "readBrief": "Open deployment brief",
+    "audiencesTitle": "Built for your team type",
+    "audiencesDescription": "Segmented entry points for the three audiences I work with most—each page spells out pain points, offerings, and outcomes in plain language.",
+    "ctaBody": "Tell me your milestone, team size, and where gameplay is stuck. I will reply with an honest fit and a scoped path forward.",
+    "cta": "Start a conversation",
+    "takeawaysTitle": "Key takeaways",
+    "takeaways": [
+      "Four milestone-scoped offerings map to detailed deployment briefs—not a generic menu",
+      "Audience landing pages spell out pains, deliverables, and outcomes per team type",
+      "Every path ends in an honest scope conversation—no oversold retainers"
+    ],
+    "services": [
+      {
+        "title": "Complex gameplay systems",
+        "body": "Combat loops, GAS, progression, and networked logic in C++—architected for your milestone and wrapped for designer iteration.",
+        "slug": "complex-gameplay-systems"
+      },
+      {
+        "title": "Modular, designer-ready systems",
+        "body": "Reusable architecture with clear data surfaces—so your team tunes content without fighting the stack or reopening foundations.",
+        "slug": "designer-friendly-tooling"
+      },
+      {
+        "title": "Immersive player experiences",
+        "body": "Game feel, progression beats, and VFX tied to gameplay tags—feedback that lands in playtests, not just documentation.",
+        "slug": "immersive-player-experiences"
+      },
+      {
+        "title": "AI-assisted UE5 production",
+        "body": "Faster exploration and iteration across the pipeline—always reviewed and shipped as production-grade C++ and data workflows.",
+        "slug": "ai-assisted-production"
+      }
+    ]
+  },
+  "CaseStudiesPage": {
+    "eyebrow": "Signal archive",
+    "title": "Case studies",
+    "description": "Detailed breakdowns of how I approach real gameplay problems—with honest status labels, not inflated client metrics.",
+    "moreBody": "More client case studies will be added as engagements ship. Until then, Wang Cultivator is the live reference for systems depth, modular architecture, and milestone discipline.",
+    "ctaBody": "Want the same systems discipline on your milestone? Send constraints and I will map an honest scope.",
+    "projectsCta": "View project modules",
+    "servicesCta": "Explore services"
+  },
+  "AudiencePage": {
+    "eyebrow": "Audience brief",
+    "painTitle": "Common pain points",
+    "offerTitle": "What I deliver",
+    "outcomeTitle": "What you gain",
+    "ctaBody": "If this sounds like your team, send your milestone and constraints—I will map an honest scope for UE5 gameplay work.",
+    "cta": "Get in touch",
+    "caseStudiesCta": "Read case study"
+  },
+  "SiteCta": {
+    "defaultBody": "Ready to scope a milestone? Tell me where gameplay is stuck and I will reply with an honest fit and a scoped path forward.",
+    "primary": "Start a conversation",
+    "secondary": "View pricing"
+  },
+  "PricingPage": {
+    "eyebrow": "Scope bay",
+    "title": "Pricing & engagement models",
+    "description": "Milestone-scoped UE5 gameplay work—clear options, honest scoping, and a CTA on every tier. No hidden retainers or agency markup.",
+    "intro": "Every engagement starts with an honest fit check. Final numbers depend on your milestone, team size, and systems depth—I quote after scoping, not from a generic rate card.",
+    "footerBody": "Not sure which tier fits? Send your milestone constraints and I will recommend the smallest scoped path that still de-risks your gameplay goals.",
+    "footerPrimary": "Request a scope call",
+    "footerSecondary": "Explore services",
+    "takeawaysTitle": "Key takeaways",
+    "takeaways": [
+      "Discovery call is complimentary—fit and milestone outline before any quote",
+      "Fixed-scope slices beat open-ended hourly work for gameplay systems",
+      "Final numbers always follow scoping, never a generic rate card"
+    ],
+    "tiers": [
+      {
+        "title": "Discovery & scope",
+        "price": "Complimentary intro",
+        "body": "30-minute fit call to map your milestone, pipeline, and where gameplay is stuck—before any commitment.",
+        "includes": [
+          "Honest fit assessment for UE5 systems work",
+          "Milestone outline and risk flags",
+          "Recommended engagement tier"
+        ],
+        "cta": "Book a scope call"
+      },
+      {
+        "title": "Milestone slice",
+        "price": "Scoped quote",
+        "body": "Fixed-scope delivery for one gameplay vertical—combat loop, GAS foundation, progression slice, or similar.",
+        "includes": [
+          "Defined deliverables and handoff criteria",
+          "Designer-ready surfaces where applicable",
+          "Direct updates from the engineer building it"
+        ],
+        "cta": "Scope a milestone slice"
+      },
+      {
+        "title": "Co-dev block",
+        "price": "Multi-week partnership",
+        "body": "Embedded co-development across a sprint block—architecture, implementation, and iteration with your team.",
+        "includes": [
+          "Weekly milestone-focused sync",
+          "Systems built for your pipeline and content scale",
+          "Documentation aligned to handoff or continuation"
+        ],
+        "cta": "Plan a co-dev block"
+      },
+      {
+        "title": "Architecture review",
+        "price": "Scoped quote",
+        "body": "Targeted audit or refactor plan before debt compounds—boundaries, data surfaces, and a prioritized fix path.",
+        "includes": [
+          "Stack and milestone context review",
+          "Modularity and designer-readiness assessment",
+          "Prioritized recommendations—not a generic checklist"
+        ],
+        "cta": "Request an architecture review"
+      }
+    ]
+  },
+  "Testimonials": {
+    "eyebrow": "03 — Partner signals",
+    "title": "No partner quotes yet",
+    "description": "Be the first studio or indie team to partner on UE5 gameplay systems—your testimonial lands here with full name, title, and company after we ship a milestone together.",
+    "emptyTitle": "Be the first partner",
+    "emptyBody": "No client testimonials yet—I am focused on honest UE5 partnerships, not fabricated social proof. Ship a milestone with me and this panel becomes your attributed quote.",
+    "emptyCta": "Start the conversation",
+    "honestyNote": "Full attribution on every future quote. Until then, see the case study and pricing tiers for proof of approach.",
+    "pricingLink": "View pricing"
+  },
+  "SocialProof": {
+    "eyebrow": "02 — Credibility array",
+    "title": "Partners & proof",
+    "description": "Studio and indie partner logos will appear here as collaborations ship—no filler brands, no borrowed web-client marks.",
+    "emptyPartnersTitle": "No partners yet—be the first",
+    "emptyPartnersBody": "This slot is reserved for studios and indie teams I ship UE5 milestones with. Want to claim it? Bring a scoped gameplay problem and let's talk.",
+    "emptyPartnersCta": "Become the first partner",
+    "videoTitle": "Showreel & devlogs",
+    "videoBody": "Gameplay and pipeline clips are in production—video proof of systems work in motion, not just documentation.",
+    "videoSoonLabel": "Coming soon",
+    "caseStudyNote": "Until partners and video land here, Wang Cultivator is the live systems reference—",
+    "caseStudyLink": "read the case study"
+  },
+  "Faq": {
+    "eyebrow": "06 — Mission FAQ",
+    "title": "Common briefing questions",
+    "description": "Straight answers for studios and indie teams evaluating a UE5 gameplay partner—structured for search, snippets, and AI summaries.",
+    "items": [
+      {
+        "question": "Do you work with studios or only indie teams?",
+        "answer": "Both. I partner with game studios that need senior UE5 systems capacity without a long hire cycle, and with indie teams that need one technical owner for combat, GAS, progression, or architecture foundations."
+      },
+      {
+        "question": "What does a typical engagement look like?",
+        "answer": "It starts with a complimentary scope call, then a milestone-scoped slice or co-dev block—combat vertical, GAS foundation, progression pipeline, or architecture review. You work directly with the engineer building the systems."
+      },
+      {
+        "question": "Are you available for full-time roles?",
+        "answer": "My primary model is milestone-scoped contract and co-dev work. If you have a full-time opportunity, send details—I will reply honestly about fit and timing."
+      },
+      {
+        "question": "How do you price UE5 gameplay work?",
+        "answer": "After scoping—not from a generic rate card. See the pricing page for engagement models (discovery, milestone slice, co-dev block, architecture review), then contact me with your milestone for a scoped quote."
+      },
+      {
+        "question": "Can you show shipped client results?",
+        "answer": "Not third-party shipped titles yet. Wang Cultivator is my live in-development reference for systems depth, modular architecture, and milestone discipline—the case study is honest about that status."
+      },
+      {
+        "question": "How quickly can you start?",
+        "answer": "Depends on current production load on my own title and your milestone urgency. Send constraints and target dates on the contact form—I reply with an honest start window, not a sales funnel delay."
+      }
+    ]
+  },
+  "Footer": {
+    "tagline": "UE5 gameplay systems for studios and indie teams—milestone-scoped, modular, designer-ready.",
+    "navLabel": "Site footer navigation",
+    "pagesTitle": "Pages",
+    "bridgeTitle": "Bridge deck",
+    "bridgeLabel": "Homepage sections",
+    "builtWith": "Station built with Next.js & Framer Motion"
+  },
+  "ResourcesPage": {
+    "eyebrow": "Field notes bay",
+    "title": "Resources",
+    "description": "Deployment briefs, audience guides, case study depth, and open repos—structured content for teams evaluating a UE5 gameplay partner.",
+    "postsTitle": "Featured resources",
+    "postsIntro": "Curated entry points while longer-form posts are in the queue—each link opens a focused brief or live reference.",
+    "briefsTitle": "Deployment briefs",
+    "audiencesTitle": "Audience guides",
+    "ctaBody": "Need a scoped path for your milestone? Start from a brief or send your constraints directly.",
+    "githubCta": "Open GitHub",
+    "contactCta": "Get in touch",
+    "takeawaysTitle": "Key takeaways",
+    "takeaways": [
+      "Curated entry points to case study, services, and open repos",
+      "Long-form posts are coming—each resource page is structured for SEO and AI summarization",
+      "Use FAQ and pricing for quick answers before diving into briefs"
+    ],
+    "posts": [
+      {
+        "title": "Wang Cultivator case study",
+        "body": "Honest in-development breakdown—challenge, approach, progress, and systems shipped so far.",
+        "href": "/case-studies"
+      },
+      {
+        "title": "Services & solutions",
+        "body": "Problems I solve, offerings, and audience-specific landing pages for studios and indies.",
+        "href": "/services"
+      },
+      {
+        "title": "GitHub — engine repos & experiments",
+        "body": "Open-source and portfolio repos for gameplay systems, web prototypes, and pipeline scripts.",
+        "href": "https://github.com/yanezhekov",
+        "external": true
+      }
+    ]
   },
   "SkyLab": {
     "hintNarrow": "Sky Lab is on. Tap the sky to draw stars. Close it from the corner button when done.",

@@ -8,14 +8,18 @@ import { CornerToolsDock } from './corner-tools-dock'
 import { useDeviceProfile } from './device-profile'
 import { resolveSkyLabFx } from './sky-lab-fx'
 import { useVisualFxPreferences } from './visual-fx-preferences'
+import { FaqSection } from './faq-section'
 import { Hero } from './hero'
+import { HomeHubSection } from './home-hub-section'
 import { ProjectsSection } from './projects-section'
 import { ContactSection } from './contact-section'
+import { SiteFooter } from './site-footer'
 import { SiteNav } from './site-nav'
+import { SocialProofSection } from './social-proof-section'
+import { TestimonialsSection } from './testimonials-section'
 import { SiteVariantShell } from './site-variant-shell'
 import { useSiteVariant } from './site-variant-context'
 import { LazySection } from './lazy-section'
-import { useBlockScroll } from './use-block-scroll'
 
 const SkyDecorLayer = dynamic(
   () => import('./sky-decor-layer').then((mod) => ({ default: mod.SkyDecorLayer })),
@@ -59,11 +63,6 @@ function PortfolioContent() {
   const deviceProfile = useDeviceProfile()
   const { showScreenFx, isReduced } = useVisualFxPreferences()
   const { skyLabFxTier } = resolveSkyLabFx(showScreenFx, isReduced, deviceProfile.fxLite)
-  const { isDesktop, prefersReducedMotion } = deviceProfile
-  useBlockScroll({
-    enabled: !mobileSkyLabMode && !skyViewMode && isDesktop,
-    reducedMotion: prefersReducedMotion,
-  })
 
   useEffect(() => {
     document.documentElement.dataset.siteVariant = variant
@@ -108,20 +107,24 @@ function PortfolioContent() {
           <main
             className="station-deck relative min-h-dvh text-foreground"
             data-portfolio-chrome
-            data-block-scroll-root
           >
             <SiteNav />
             <Hero />
+            <HomeHubSection />
             <ProjectsSection />
+            <SocialProofSection />
+            <TestimonialsSection />
             <LazySection minHeight="min(72vh, 720px)">
               <ArsenalSection />
             </LazySection>
             <LazySection minHeight="min(48vh, 560px)">
               <WebStackSection />
             </LazySection>
+            <FaqSection />
             <LazySection minHeight="min(40vh, 480px)">
               <ContactSection />
             </LazySection>
+            <SiteFooter />
           </main>
         ) : null}
       </SiteVariantShell>
