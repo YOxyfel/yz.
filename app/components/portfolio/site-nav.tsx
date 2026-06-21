@@ -28,7 +28,8 @@ export function SiteNav() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
-  const { isNarrow } = useDeviceProfile()
+  const { isDesktop } = useDeviceProfile()
+  const useMobileNav = !isDesktop
   const t = useTranslations('Nav')
 
   useEffect(() => {
@@ -43,7 +44,7 @@ export function SiteNav() {
   }, [])
 
   useEffect(() => {
-    if (!isNarrow) {
+    if (isDesktop) {
       document.body.style.overflow = ''
       return
     }
@@ -51,11 +52,11 @@ export function SiteNav() {
     return () => {
       document.body.style.overflow = ''
     }
-  }, [menuOpen, isNarrow])
+  }, [menuOpen, isDesktop])
 
   useEffect(() => {
-    if (!isNarrow) setMenuOpen(false)
-  }, [isNarrow])
+    if (isDesktop) setMenuOpen(false)
+  }, [isDesktop])
 
   useEffect(() => {
     if (!menuOpen) return
@@ -67,7 +68,7 @@ export function SiteNav() {
   }, [menuOpen])
 
   const mobileMenu =
-    isNarrow && menuOpen && mounted
+    useMobileNav && menuOpen && mounted
       ? createPortal(
           <div className="site-nav-mobile-menu" role="dialog" aria-modal="true">
             <button
@@ -113,26 +114,26 @@ export function SiteNav() {
     <>
       <motion.header
         data-portfolio-chrome
-        className="site-nav-header sticky top-0 z-[60] flex justify-center px-4 pt-[max(0.75rem,env(safe-area-inset-top,0px))]"
+        className="site-nav-header sticky top-0 z-[60] flex justify-center overflow-x-clip px-4 pt-[max(0.75rem,env(safe-area-inset-top,0px))]"
         initial={{ y: -80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: 'easeOut' }}
       >
         <nav
-          className={`station-nav-bar flex w-full max-w-3xl items-center justify-between px-4 py-2.5 transition-all duration-300 sm:px-5 ${
+          className={`station-nav-bar flex w-full min-w-0 max-w-3xl items-center justify-between gap-2 px-3 py-2.5 transition-all duration-300 sm:px-5 ${
             scrolled ? 'opacity-100' : 'opacity-95'
           }`}
         >
           <a
             href="#top"
-            className="flex items-center gap-2 font-heading text-sm font-bold tracking-widest"
+            className="flex shrink-0 items-center gap-2 font-heading text-sm font-bold tracking-widest"
             onClick={(event) => onNavAnchorClick(event, '#top')}
           >
             <StationLed active pulse />
             YZ<span className="text-cyan">.</span>
           </a>
 
-          <ul className={`items-center gap-0.5 ${isNarrow ? 'hidden' : 'flex'}`}>
+          <ul className="site-nav-desktop-links hidden min-w-0 lg:flex items-center gap-0.5">
             {links.map((link) => (
               <li key={link.href}>
                 <a
@@ -146,28 +147,24 @@ export function SiteNav() {
             ))}
           </ul>
 
-          <div className="flex items-center gap-2">
+          <div className="flex shrink-0 items-center gap-2">
             <StationButton
               href="#contact"
               variant="ghost"
-              className={`!px-3.5 !py-1.5 !text-[10px] !uppercase !tracking-[0.18em] text-cyan ${
-                isNarrow ? 'hidden' : 'inline-flex'
-              }`}
+              className="site-nav-desktop-hire hidden !px-3.5 !py-1.5 !text-[10px] !uppercase !tracking-[0.18em] text-cyan lg:inline-flex"
             >
               {t('hireMe')}
             </StationButton>
 
-            {isNarrow ? (
-              <button
-                type="button"
-                className="station-button station-button-secondary !h-10 !w-10 !p-0"
-                aria-label={menuOpen ? t('menuClose') : t('menuOpen')}
-                aria-expanded={menuOpen}
-                onClick={() => setMenuOpen((open) => !open)}
-              >
-                {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-              </button>
-            ) : null}
+            <button
+              type="button"
+              className="site-nav-mobile-trigger station-button station-button-secondary !h-10 !w-10 !p-0 lg:hidden"
+              aria-label={menuOpen ? t('menuClose') : t('menuOpen')}
+              aria-expanded={menuOpen}
+              onClick={() => setMenuOpen((open) => !open)}
+            >
+              {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+            </button>
           </div>
         </nav>
       </motion.header>

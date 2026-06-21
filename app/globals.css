@@ -2243,6 +2243,18 @@ html:not([data-constellation-lab='on']) .corner-sky-lab-stack {
   isolation: isolate;
 }
 
+html[data-narrow='on'] .site-nav-desktop-links,
+html[data-tablet='on'] .site-nav-desktop-links,
+html[data-narrow='on'] .site-nav-desktop-hire,
+html[data-tablet='on'] .site-nav-desktop-hire {
+  display: none !important;
+}
+
+html[data-narrow='on'] .site-nav-mobile-trigger,
+html[data-tablet='on'] .site-nav-mobile-trigger {
+  display: inline-flex !important;
+}
+
 .site-nav-mobile-menu {
   position: fixed;
   inset: 0;
