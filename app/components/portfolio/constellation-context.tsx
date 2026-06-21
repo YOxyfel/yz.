@@ -36,7 +36,10 @@ import {
   type OrbitDecor,
 } from './orbit-decor-logic'
 import { detectMobileSkyLabViewport, useDeviceProfile } from './device-profile'
+import { resolveSkyLabFx } from './sky-lab-fx'
+import { usePageVisible } from './use-page-visible'
 import { useScrollIdle } from './use-scroll-idle'
+import { useVisualFxPreferences } from './visual-fx-preferences'
 
 type ConstellationContextValue = {
   constellationLabEnabled: boolean
@@ -78,13 +81,25 @@ const MERGE_DURATION = 1.35
 
 export function ConstellationProvider({ children }: { children: ReactNode }) {
   const deviceProfile = useDeviceProfile()
-  const { fxLite } = deviceProfile
+  const { fxLite, maxSkyConstellations } = deviceProfile
+  const { showScreenFx, isReduced } = useVisualFxPreferences()
+  const { skyLabFxEnabled, skyLabLite } = resolveSkyLabFx(showScreenFx, isReduced, fxLite)
+  const pageVisible = usePageVisible()
   const scrollIdle = useScrollIdle()
   const [constellationLabEnabled, setConstellationLabEnabled] = useState(false)
   const [mobileSkyLabMode, setMobileSkyLabMode] = useState(false)
   const [constellations, setConstellations] = useState<Constellation[]>([])
   const [archive, setArchive] = useState<ConstellationRecord[]>([])
   const [maxVisible, setMaxVisibleState] = useState<MaxVisibleOption>(4)
+
+  useEffect(() => {
+    const options: MaxVisibleOption[] = [2, 4, 6, 8, 10]
+    const allowed = options.filter((option) => option <= maxSkyConstellations)
+    setMaxVisibleState((current) => {
+      if (allowed.includes(current)) return current
+      return allowed[allowed.length - 1] ?? 2
+    })
+  }, [maxSkyConstellations])
   const [manualMode, setManualMode] = useState(false)
   const [crazyMode, setCrazyMode] = useState(false)
   const [crazySkyFocus, setCrazySkyFocus] = useState(false)
@@ -133,12 +148,13 @@ export function ConstellationProvider({ children }: { children: ReactNode }) {
 
   const setMaxVisible = useCallback(
     (value: MaxVisibleOption) => {
-      setMaxVisibleState(value)
+      const capped = Math.min(value, maxSkyConstellations) as MaxVisibleOption
+      setMaxVisibleState(capped)
       if (!crazyMode) {
-        setConstellations((current) => trimConstellationsToLimit(current, value))
+        setConstellations((current) => trimConstellationsToLimit(current, capped))
       }
     },
-    [crazyMode]
+    [crazyMode, maxSkyConstellations]
   )
 
   const toggleListMode = useCallback(() => {
@@ -259,7 +275,8 @@ export function ConstellationProvider({ children }: { children: ReactNode }) {
 
   const toggleCrazyMode = useCallback(() => {
     if (mobileSkyLabMode) return
-    if (!crazyMode && fxLite) return
+    if (!skyLabFxEnabled) return
+    if (!crazyMode && skyLabLite) return
 
     clearSky()
 
@@ -276,10 +293,10 @@ export function ConstellationProvider({ children }: { children: ReactNode }) {
       createCrazyOrbitDecors({
         width: window.innerWidth,
         height: window.innerHeight,
-      }).slice(0, fxLite ? 2 : 4)
+      }).slice(0, skyLabLite ? 2 : 4)
     )
     setCrazyMode(true)
-  }, [clearSky, crazyMode, fxLite, mobileSkyLabMode])
+  }, [clearSky, crazyMode, mobileSkyLabMode, skyLabFxEnabled, skyLabLite])
 
   const runAuto = useCallback(() => {
     setCrazyMode(false)
@@ -309,8 +326,12 @@ export function ConstellationProvider({ children }: { children: ReactNode }) {
     boostsRef.current = result.boosts
     appendArchive(result.archiveEntries)
     setConstellations(result.constellations)
-    setManualDecors(spawnAutoPlanets(result.constellations, viewport))
-  }, [appendArchive, maxVisible])
+    setManualDecors(
+      skyLabFxEnabled && !skyLabLite
+        ? spawnAutoPlanets(result.constellations, viewport)
+        : []
+    )
+  }, [appendArchive, maxVisible, skyLabFxEnabled, skyLabLite])
 
   const revive = useCallback(
     (record: ConstellationRecord) => {
@@ -328,6 +349,7 @@ export function ConstellationProvider({ children }: { children: ReactNode }) {
   const handlePointerDown = useCallback(
     (event: PointerEvent) => {
       if (!constellationLabEnabled) return
+      if (!skyLabFxEnabled) return
       if (crazyMode) return
       if (event.button !== 0) return
       if (!(event.target instanceof Element)) return
@@ -368,7 +390,7 @@ export function ConstellationProvider({ children }: { children: ReactNode }) {
           appendArchive(result.archive)
         }
 
-        if (manualMode && !crazyMode && !mobileSkyLabMode) {
+        if (manualMode && !crazyMode && !mobileSkyLabMode && !skyLabLite) {
           if (result.spawnedConstellation) {
             planetLuckMeterRef.current += 1
           }
@@ -411,6 +433,8 @@ export function ConstellationProvider({ children }: { children: ReactNode }) {
       mobileSkyLabMode,
       maxLimit,
       memeWindow,
+      skyLabFxEnabled,
+      skyLabLite,
     ]
   )
 
@@ -422,7 +446,8 @@ export function ConstellationProvider({ children }: { children: ReactNode }) {
   }, [handlePointerDown])
 
   useEffect(() => {
-    if (!constellationLabEnabled || !crazyMode || !scrollIdle) return
+    if (!skyLabFxEnabled || !constellationLabEnabled || !crazyMode || !scrollIdle || !pageVisible)
+      return
 
     const tick = () => {
       const viewport = {
@@ -439,9 +464,26 @@ export function ConstellationProvider({ children }: { children: ReactNode }) {
     }
 
     tick()
-    const interval = window.setInterval(tick, fxLite ? 1500 : 850)
+    const interval = window.setInterval(tick, skyLabLite ? 1500 : 850)
     return () => window.clearInterval(interval)
-  }, [appendArchive, constellationLabEnabled, crazyMode, fxLite, scrollIdle])
+  }, [
+    appendArchive,
+    constellationLabEnabled,
+    crazyMode,
+    pageVisible,
+    scrollIdle,
+    skyLabFxEnabled,
+    skyLabLite,
+  ])
+
+  useEffect(() => {
+    if (skyLabFxEnabled && !skyLabLite) return
+    setCrazyMode(false)
+    setCrazySkyFocus(false)
+    document.documentElement.dataset.crazySkyFocus = 'off'
+    setNebulaBurst(null)
+    setCrazyDecors([])
+  }, [skyLabFxEnabled, skyLabLite])
 
   useEffect(() => {
     const merging = constellations.some(

@@ -78,7 +78,7 @@ export function PropViewer({ asset }: PropViewerProps) {
   const [showQuadMesh, setShowQuadMesh] = useState(false)
   const [autoRotate, setAutoRotate] = useState(true)
   const [mobileExpanded, setMobileExpanded] = useState(false)
-  const { isNarrow: isMobile } = useDeviceProfile()
+  const { isNarrow: isMobile, enablePropViewer3d, performanceTier } = useDeviceProfile()
 
   useEffect(() => {
     if (!hasModel && swipeModes.includes(viewMode)) {
@@ -102,6 +102,7 @@ export function PropViewer({ asset }: PropViewerProps) {
   }, [hasModel, hasStills])
 
   const showCanvas =
+    enablePropViewer3d &&
     hasModel &&
     (!isMobile || mobileExpanded) &&
     (canvasModes.includes(viewMode) || swipeModes.includes(viewMode))
@@ -148,6 +149,7 @@ export function PropViewer({ asset }: PropViewerProps) {
             showQuadMesh={showQuadMesh}
             swipeRatio={1}
             autoRotate={false}
+            performanceTier={performanceTier}
           />
         }
         right={renderStill(asset.beauty, `${asset.title} beauty`)}
@@ -164,6 +166,7 @@ export function PropViewer({ asset }: PropViewerProps) {
             showQuadMesh={false}
             swipeRatio={1}
             autoRotate={false}
+            performanceTier={performanceTier}
           />
         }
         right={
@@ -173,11 +176,29 @@ export function PropViewer({ asset }: PropViewerProps) {
             showQuadMesh={false}
             swipeRatio={0}
             autoRotate={false}
+            performanceTier={performanceTier}
           />
         }
         labelLeft="Wireframe"
         labelRight="Rendered"
       />
+    ) : hasModel && !enablePropViewer3d && posterSrc ? (
+      <div className="relative flex h-full w-full flex-col items-center justify-center overflow-hidden bg-black/60 p-8 text-center">
+        <Image
+          src={posterSrc}
+          alt={asset.title}
+          fill
+          className="object-cover opacity-35"
+          sizes="(max-width: 768px) 100vw, 50vw"
+        />
+        <div className="relative z-10 max-w-sm space-y-3">
+          <p className="font-mono text-[10px] uppercase tracking-[0.35em] text-cyan">Performance mode</p>
+          <p className="text-sm leading-relaxed text-muted-foreground">
+            The live 3D viewer is off on this device to keep scrolling smooth. Stills and wireframe
+            swipes stay available when provided.
+          </p>
+        </div>
+      </div>
     ) : showCanvas ? (
       <PropViewerCanvas
         glb={asset.glb!}
@@ -185,6 +206,7 @@ export function PropViewer({ asset }: PropViewerProps) {
         showQuadMesh={showQuadMesh}
         swipeRatio={0.5}
         autoRotate={autoRotate}
+        performanceTier={performanceTier}
       />
     ) : isMobile && posterSrc && !mobileExpanded ? (
       <div className="relative h-full w-full">

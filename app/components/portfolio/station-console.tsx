@@ -340,13 +340,19 @@ export function StationSection({
   children,
   className,
   id,
+  scrollBlock = false,
 }: {
   children: ReactNode
   className?: string
   id?: string
+  scrollBlock?: boolean
 }) {
   return (
-    <section id={id} className={mergeClass('station-section', className)}>
+    <section
+      id={id}
+      {...(scrollBlock ? { 'data-scroll-block': true } : {})}
+      className={mergeClass('station-section', className)}
+    >
       <div className="station-section-inner">{children}</div>
     </section>
   )

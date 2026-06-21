@@ -5,6 +5,10 @@ import { useEffect } from 'react'
 import { BackgroundFx } from './background-fx'
 import { ConstellationProvider, useConstellations } from './constellation-context'
 import { ConstellationLabToggle } from './constellation-lab-toggle'
+import { useDeviceProfile } from './device-profile'
+import { resolveSkyLabFx } from './sky-lab-fx'
+import { VisualFxDock } from './visual-fx-dock'
+import { useVisualFxPreferences } from './visual-fx-preferences'
 import { Hero } from './hero'
 import { ProjectsSection } from './projects-section'
 import { ContactSection } from './contact-section'
@@ -12,6 +16,7 @@ import { SiteNav } from './site-nav'
 import { SiteVariantShell } from './site-variant-shell'
 import { useSiteVariant } from './site-variant-context'
 import { LazySection } from './lazy-section'
+import { useBlockScroll } from './use-block-scroll'
 
 const SkyDecorLayer = dynamic(
   () => import('./sky-decor-layer').then((mod) => ({ default: mod.SkyDecorLayer })),
@@ -52,7 +57,16 @@ function PortfolioContent() {
   const { variant } = useSiteVariant()
   const { constellationLabEnabled, crazyMode, crazySkyFocus, mobileSkyLabMode } =
     useConstellations()
+  const deviceProfile = useDeviceProfile()
+  const { showScreenFx, isReduced } = useVisualFxPreferences()
+  const { skyLabFxTier } = resolveSkyLabFx(showScreenFx, isReduced, deviceProfile.fxLite)
+  const { isCoarsePointer, prefersReducedMotion } = deviceProfile
   const crazyFocus = crazyMode && crazySkyFocus
+
+  useBlockScroll({
+    enabled: !mobileSkyLabMode && !crazyFocus && !isCoarsePointer,
+    reducedMotion: prefersReducedMotion,
+  })
 
   useEffect(() => {
     document.documentElement.dataset.crazySkyFocus = crazyFocus ? 'on' : 'off'
@@ -80,6 +94,13 @@ function PortfolioContent() {
   }, [mobileSkyLabMode])
 
   useEffect(() => {
+    document.documentElement.dataset.skyLabFx = constellationLabEnabled ? skyLabFxTier : 'idle'
+    return () => {
+      delete document.documentElement.dataset.skyLabFx
+    }
+  }, [constellationLabEnabled, skyLabFxTier])
+
+  useEffect(() => {
     if (!mobileSkyLabMode) return
     const prev = document.body.style.overflow
     document.body.style.overflow = 'hidden'
@@ -94,7 +115,11 @@ function PortfolioContent() {
 
       <SiteVariantShell>
         {!mobileSkyLabMode ? (
-          <main className="station-deck relative min-h-dvh text-foreground" data-portfolio-chrome>
+          <main
+            className="station-deck relative min-h-dvh text-foreground"
+            data-portfolio-chrome
+            data-block-scroll-root
+          >
             <SiteNav />
             <Hero />
             <ProjectsSection />
@@ -112,6 +137,7 @@ function PortfolioContent() {
       </SiteVariantShell>
 
       <ConstellationLabToggle />
+      {!mobileSkyLabMode ? <VisualFxDock /> : null}
       {!mobileSkyLabMode ? <SkyDecorLayer /> : null}
       {!mobileSkyLabMode ? <ConstellationPanel /> : null}
     </>

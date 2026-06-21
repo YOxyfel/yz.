@@ -8,7 +8,7 @@ import { artPieces, type ArtPiece } from './arsenal-art'
 import { ArtPovFx } from './art-pov-fx'
 import { ArtScreenFx, artCharacterGlow } from './art-screen-fx'
 import { CatalogStrip, LabShell, LabTransition } from './arsenal-lab-shell'
-import { useVisualFxPreferences, VisualFxControls } from './visual-fx-preferences'
+import { LabFxControls, LabFxPreferencesProvider, useLabFxPreferences } from './lab-fx-preferences'
 
 const accentRing: Record<ArtPiece['accent'], string> = {
   cyan: 'ring-cyan/35 shadow-[0_0_60px_-12px_oklch(0.84_0.16_200/0.5)] border-cyan/25',
@@ -36,7 +36,7 @@ function ArtConsole({ piece }: { piece: ArtPiece }) {
   const [direction, setDirection] = useState(0)
   const [autoCycle, setAutoCycle] = useState(false)
   const [transitionKey, setTransitionKey] = useState('0')
-  const { showCardFx, isReduced } = useVisualFxPreferences()
+  const { showLabCardFx, isReduced } = useLabFxPreferences()
   const frameRef = useRef<HTMLDivElement>(null)
   const pointerX = useMotionValue(0)
   const pointerY = useMotionValue(0)
@@ -79,7 +79,7 @@ function ArtConsole({ piece }: { piece: ArtPiece }) {
         ref={frameRef}
         className={`relative aspect-[4/5] overflow-hidden rounded-2xl border bg-gradient-to-b ring-1 ${accentFrameBg[piece.accent]} ${accentRing[piece.accent]}`}
         onPointerMove={(event) => {
-          if (isReduced || !showCardFx) return
+          if (isReduced || !showLabCardFx) return
           const rect = frameRef.current?.getBoundingClientRect()
           if (!rect) return
           pointerX.set((event.clientX - rect.left) / rect.width - 0.5)
@@ -90,12 +90,13 @@ function ArtConsole({ piece }: { piece: ArtPiece }) {
           pointerY.set(0)
         }}
       >
-        <ArtScreenFx active={showCardFx} accent={piece.accent} />
+        <ArtScreenFx active={showLabCardFx} accent={piece.accent} reduced={isReduced} />
         <ArtPovFx
           accent={piece.accent}
           cycling={autoCycle}
           transitionKey={transitionKey}
-          active={showCardFx}
+          active={showLabCardFx}
+          reduced={isReduced}
         />
 
         <AnimatePresence initial={false} custom={direction} mode="popLayout">
@@ -224,7 +225,6 @@ function ArtConsole({ piece }: { piece: ArtPiece }) {
 
 function ArtShowcaseLabInner({ embedded = false }: { embedded?: boolean }) {
   const [selectedId, setSelectedId] = useState(artPieces[0].id)
-  const { screenFxLive, toggleScreenFxLive } = useVisualFxPreferences()
 
   const selected = useMemo(
     () => artPieces.find((piece) => piece.id === selectedId) ?? artPieces[0],
@@ -244,9 +244,7 @@ function ArtShowcaseLabInner({ embedded = false }: { embedded?: boolean }) {
       title="Cultivation Gallery"
       description="Character sheets for Wang Cultivator — four POVs per cast member, interactive parallax, ambient qi VFX, and a carousel that gives each hero equal room to breathe."
       icon={Sparkles}
-      controls={
-        <VisualFxControls screenFxActive={screenFxLive} onToggleScreenFx={toggleScreenFxLive} />
-      }
+      controls={<LabFxControls labName="art" />}
     >
       <CatalogStrip
         items={artPieces}
@@ -266,5 +264,9 @@ function ArtShowcaseLabInner({ embedded = false }: { embedded?: boolean }) {
 }
 
 export function ArtShowcaseLab({ embedded = false }: { embedded?: boolean }) {
-  return <ArtShowcaseLabInner embedded={embedded} />
+  return (
+    <LabFxPreferencesProvider>
+      <ArtShowcaseLabInner embedded={embedded} />
+    </LabFxPreferencesProvider>
+  )
 }

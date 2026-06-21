@@ -22,7 +22,7 @@ export function LazySection({
   const inView = useInView(ref, { once: true, margin: rootMargin as `${number}px ${number}px` })
 
   return (
-    <div ref={ref} className={className} style={{ minHeight }}>
+    <div ref={ref} className={`perf-deferred-section ${className ?? ''}`.trim()} style={{ minHeight }}>
       {inView ? children : placeholder}
     </div>
   )

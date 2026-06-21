@@ -1,5 +1,37 @@
 # Release history
 
+## V1.1 (`v1.1`)
+
+**Saved:** optimization and polish pass after V1.0.
+
+| | |
+|---|---|
+| **Git tag** | `v1.1` |
+| **Production URL** | https://v0-yanez.vercel.app |
+
+### What this version includes
+
+- Site FX tiers (off / reduced / full) wired to Sky Lab behavior
+- Hero ↔ Game Projects block scroll with scroll buffer; normal scroll elsewhere
+- Nav chart layout fixes; desktop inline nav; mobile drawer only on narrow screens
+- Spotlight reel replay, volume sync on expand/collapse, spacebar play/pause
+- Constellation pattern expansion, performance-adaptive FX, visual FX dock
+- i18n updates for Site FX / Sky Lab copy
+
+### Revert to V1.1
+
+```powershell
+cd D:\999.Personal\Website\website
+git checkout v1.1 -- .
+git clean -fd -e .env.local -e node_modules -e .next -e .vercel
+npm install
+npm run build
+```
+
+Or hard reset: `git reset --hard v1.1`
+
+---
+
 ## V1.0 (`v1.0`)
 
 **Saved:** baseline before optimization and polish pass.

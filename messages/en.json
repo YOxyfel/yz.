@@ -15,11 +15,28 @@
     "menuClose": "Close menu"
   },
   "SkyLab": {
-    "hintNarrow": "Tap the sky to draw stars. Close Sky Lab from the corner button when done.",
-    "hintTouch": "Tap the sky to draw stars. Use Sky Lab in the top-left corner for the nav chart.",
-    "hintDesktop": "Click the sky to draw constellations. Sky Lab lives in the top-left corner.",
+    "hintNarrow": "Sky Lab is on. Tap the sky to draw stars. Close it from the corner button when done.",
+    "hintTouch": "Open Sky Lab in the top-left corner, then tap the sky to draw stars and open the nav chart.",
+    "hintDesktop": "Open Sky Lab in the top-left corner first, then click the sky to draw constellations.",
     "manualDraw": "Manual draw · tap the sky",
+    "manualFxOff": "Site FX off · enable Site FX to draw",
     "navChart": "Nav chart",
     "gotIt": "Got it"
+  },
+  "SiteFx": {
+    "eyebrow": "Site visual FX",
+    "modeFull": "Full",
+    "modeReduced": "Reduced",
+    "modeOff": "Off",
+    "descFull": "Cosmic sky, backgrounds, and full Sky Lab VFX (constellations, planets, crazy mode).",
+    "descReduced": "Lite backgrounds and lite Sky Lab — constellations only; no planets or crazy mode.",
+    "descOff": "All site visual effects off. Sky Lab nav chart works; sky drawing and VFX are off.",
+    "ambientOn": "Ambient FX on",
+    "ambientOff": "Ambient FX off",
+    "close": "Close",
+    "openPanel": "Open site visual FX controls",
+    "dockOn": "Site FX",
+    "dockPaused": "FX paused",
+    "dockOff": "FX off"
   }
 }

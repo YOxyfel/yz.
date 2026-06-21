@@ -10,11 +10,67 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import { MEDIA_NARROW } from './breakpoints'
+import { MEDIA_COARSE_POINTER, MEDIA_NARROW, MEDIA_REDUCED_MOTION } from './breakpoints'
 
 export type VisualFxMode = 'full' | 'reduced' | 'off'
 
 const STORAGE_KEY = 'portfolio-visual-fx-mode'
+const STORAGE_EXPLICIT_KEY = 'portfolio-visual-fx-mode-explicit'
+
+function isCoarsePointerViewport() {
+  return window.matchMedia(MEDIA_COARSE_POINTER).matches
+}
+
+function isNarrowViewport() {
+  return window.matchMedia(MEDIA_NARROW).matches
+}
+
+/** Phones / touch-first layouts — not tablet-only widths. */
+function isMobileFxViewport() {
+  return isNarrowViewport() || isCoarsePointerViewport()
+}
+
+function readExplicitFxChoice() {
+  return localStorage.getItem(STORAGE_EXPLICIT_KEY) === '1'
+}
+
+function markExplicitFxChoice() {
+  localStorage.setItem(STORAGE_EXPLICIT_KEY, '1')
+}
+
+/** Default site FX mode when the user has not picked one explicitly. */
+function defaultFxModeForViewport(): VisualFxMode {
+  const narrow = isNarrowViewport()
+  const coarse = isCoarsePointerViewport()
+  const reducedMotion = window.matchMedia(MEDIA_REDUCED_MOTION).matches
+  const fxLite = document.documentElement.dataset.fxLite === 'on'
+  const perfTier = document.documentElement.dataset.perfTier
+
+  if (!isMobileFxViewport()) {
+    if (perfTier === 'mid' || perfTier === 'low') return 'reduced'
+    return 'full'
+  }
+
+  // Phone / touch: favor performance; full-off on the smallest or lite profiles.
+  if (reducedMotion || (narrow && coarse) || fxLite) return 'off'
+  return 'reduced'
+}
+
+function resolveInitialFxMode(): VisualFxMode {
+  const stored = localStorage.getItem(STORAGE_KEY) as VisualFxMode | null
+  const explicit = readExplicitFxChoice()
+
+  if (explicit && (stored === 'full' || stored === 'reduced' || stored === 'off')) {
+    return stored
+  }
+
+  if (stored === 'full' || stored === 'reduced' || stored === 'off') {
+    if (!isMobileFxViewport()) return stored
+    return defaultFxModeForViewport()
+  }
+
+  return defaultFxModeForViewport()
+}
 
 type VisualFxPreferencesValue = {
   mode: VisualFxMode
@@ -43,19 +99,31 @@ const DEFAULT_VISUAL_FX: VisualFxPreferencesValue = {
 const VisualFxPreferencesContext = createContext<VisualFxPreferencesValue>(DEFAULT_VISUAL_FX)
 
 export function VisualFxPreferencesProvider({ children }: { children: ReactNode }) {
-  const [mode, setModeState] = useState<VisualFxMode>('full')
+  const [mode, setModeState] = useState<VisualFxMode>(() => {
+    if (typeof window === 'undefined') return 'full'
+    return resolveInitialFxMode()
+  })
   const [screenFxLive, setScreenFxLive] = useState(true)
   const [hydrated, setHydrated] = useState(false)
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
 
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY) as VisualFxMode | null
-    if (stored === 'full' || stored === 'reduced' || stored === 'off') {
-      setModeState(stored)
-    } else if (window.matchMedia(MEDIA_NARROW).matches) {
-      setModeState('reduced')
+    const syncMode = () => {
+      if (readExplicitFxChoice()) return
+      setModeState(defaultFxModeForViewport())
     }
+
+    syncMode()
     setHydrated(true)
+
+    const narrowMedia = window.matchMedia(MEDIA_NARROW)
+    const coarseMedia = window.matchMedia(MEDIA_COARSE_POINTER)
+    narrowMedia.addEventListener('change', syncMode)
+    coarseMedia.addEventListener('change', syncMode)
+    return () => {
+      narrowMedia.removeEventListener('change', syncMode)
+      coarseMedia.removeEventListener('change', syncMode)
+    }
   }, [])
 
   useEffect(() => {
@@ -67,6 +135,7 @@ export function VisualFxPreferencesProvider({ children }: { children: ReactNode 
   }, [])
 
   const setMode = useCallback((next: VisualFxMode) => {
+    markExplicitFxChoice()
     setModeState(next)
     localStorage.setItem(STORAGE_KEY, next)
     if (next === 'off') setScreenFxLive(false)
@@ -104,19 +173,23 @@ export function useVisualFxPreferences() {
   return useContext(VisualFxPreferencesContext)
 }
 
-type VisualFxControlsProps = {
+/** Inline site-wide FX controls (Arsenal labs should use LabFxControls instead). */
+export function SiteVisualFxControls({
+  screenFxActive,
+  onToggleScreenFx,
+  compact = false,
+}: {
   screenFxActive: boolean
   onToggleScreenFx: () => void
-}
-
-export function VisualFxControls({ screenFxActive, onToggleScreenFx }: VisualFxControlsProps) {
+  compact?: boolean
+}) {
   const { mode, setMode } = useVisualFxPreferences()
 
   return (
-    <div className="mt-6 space-y-3">
+    <div className={compact ? 'space-y-3' : 'mt-6 space-y-3'}>
       <div className="flex flex-wrap items-center gap-2">
         <span className="font-mono text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
-          Visual FX
+          Site FX
         </span>
         {(
           [
@@ -142,10 +215,11 @@ export function VisualFxControls({ screenFxActive, onToggleScreenFx }: VisualFxC
       </div>
 
       <p className="text-xs text-muted-foreground">
-        {mode === 'full' && 'Ambient cultivation VFX, parallax, and motion synced to the showcase.'}
+        {mode === 'full' &&
+          'Sky backgrounds, cosmic motion, and full Sky Lab VFX (constellations, planets, crazy mode).'}
         {mode === 'reduced' &&
-          'Epilepsy-safe mode — static gradients only, no flashes or rapid motion.'}
-        {mode === 'off' && 'All visual effects disabled. Media and 3D viewers only.'}
+          'Epilepsy-safe site mode — lite backgrounds and lite Sky Lab (no planets or crazy mode).'}
+        {mode === 'off' && 'All site visual effects disabled. Sky Lab chart still works; sky drawing is off.'}
       </p>
 
       <button
@@ -155,8 +229,16 @@ export function VisualFxControls({ screenFxActive, onToggleScreenFx }: VisualFxC
         className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 font-mono text-xs uppercase tracking-wider transition-colors hover:border-cyan/40 hover:text-cyan disabled:cursor-not-allowed disabled:opacity-40"
       >
         {screenFxActive ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-        Screen FX {screenFxActive ? 'On' : 'Off'}
+        Ambient FX {screenFxActive ? 'On' : 'Off'}
       </button>
     </div>
   )
+}
+
+/** @deprecated Use SiteVisualFxControls or VisualFxDock */
+export function VisualFxControls(props: {
+  screenFxActive: boolean
+  onToggleScreenFx: () => void
+}) {
+  return <SiteVisualFxControls {...props} />
 }

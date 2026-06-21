@@ -13,7 +13,7 @@ export function ProjectsSection() {
     useState<(typeof projects)[number] | null>(null)
 
   return (
-    <StationSection id="engine">
+    <StationSection id="engine" scrollBlock className="perf-deferred-section">
       <SectionHeading
         eyebrow="01 — Core Engine Bay"
         title="Game Projects"

@@ -2,9 +2,11 @@
 
 import { motion } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type MouseEvent } from 'react'
 import { createPortal } from 'react-dom'
 import { useTranslations } from 'next-intl'
+import { useDeviceProfile } from './device-profile'
+import { isBlockScrollPair, requestBlockNavScroll } from './block-scroll-nav'
 import { StationButton, StationLed } from './station-console'
 
 const links = [
@@ -14,10 +16,19 @@ const links = [
   { href: '#contact', key: 'contact' as const },
 ]
 
+function onNavAnchorClick(event: MouseEvent<HTMLAnchorElement>, href: string) {
+  if (!document.documentElement.dataset.blockScroll) return
+  const targetId = href.replace(/^#/, '')
+  if (!isBlockScrollPair(targetId)) return
+  event.preventDefault()
+  requestBlockNavScroll(href)
+}
+
 export function SiteNav() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
+  const { isNarrow } = useDeviceProfile()
   const t = useTranslations('Nav')
 
   useEffect(() => {
@@ -32,11 +43,19 @@ export function SiteNav() {
   }, [])
 
   useEffect(() => {
+    if (!isNarrow) {
+      document.body.style.overflow = ''
+      return
+    }
     document.body.style.overflow = menuOpen ? 'hidden' : ''
     return () => {
       document.body.style.overflow = ''
     }
-  }, [menuOpen])
+  }, [menuOpen, isNarrow])
+
+  useEffect(() => {
+    if (!isNarrow) setMenuOpen(false)
+  }, [isNarrow])
 
   useEffect(() => {
     if (!menuOpen) return
@@ -48,9 +67,9 @@ export function SiteNav() {
   }, [menuOpen])
 
   const mobileMenu =
-    menuOpen && mounted
+    isNarrow && menuOpen && mounted
       ? createPortal(
-          <div className="site-nav-mobile-menu md:hidden" role="dialog" aria-modal="true">
+          <div className="site-nav-mobile-menu" role="dialog" aria-modal="true">
             <button
               type="button"
               className="site-nav-mobile-scrim"
@@ -72,7 +91,10 @@ export function SiteNav() {
                     key={link.href}
                     href={link.href}
                     className="site-nav-mobile-link"
-                    onClick={() => setMenuOpen(false)}
+                    onClick={(event) => {
+                      onNavAnchorClick(event, link.href)
+                      setMenuOpen(false)
+                    }}
                   >
                     {t(link.key)}
                   </a>
@@ -101,15 +123,23 @@ export function SiteNav() {
             scrolled ? 'opacity-100' : 'opacity-95'
           }`}
         >
-          <a href="#top" className="flex items-center gap-2 font-heading text-sm font-bold tracking-widest">
+          <a
+            href="#top"
+            className="flex items-center gap-2 font-heading text-sm font-bold tracking-widest"
+            onClick={(event) => onNavAnchorClick(event, '#top')}
+          >
             <StationLed active pulse />
             YZ<span className="text-cyan">.</span>
           </a>
 
-          <ul className="hidden items-center gap-0.5 md:flex">
+          <ul className={`items-center gap-0.5 ${isNarrow ? 'hidden' : 'flex'}`}>
             {links.map((link) => (
               <li key={link.href}>
-                <a href={link.href} className="station-nav-link">
+                <a
+                  href={link.href}
+                  className="station-nav-link"
+                  onClick={(event) => onNavAnchorClick(event, link.href)}
+                >
                   {t(link.key)}
                 </a>
               </li>
@@ -120,20 +150,24 @@ export function SiteNav() {
             <StationButton
               href="#contact"
               variant="ghost"
-              className="hidden !px-3.5 !py-1.5 !text-[10px] !uppercase !tracking-[0.18em] text-cyan md:inline-flex"
+              className={`!px-3.5 !py-1.5 !text-[10px] !uppercase !tracking-[0.18em] text-cyan ${
+                isNarrow ? 'hidden' : 'inline-flex'
+              }`}
             >
               {t('hireMe')}
             </StationButton>
 
-            <button
-              type="button"
-              className="station-button station-button-secondary !h-10 !w-10 !p-0 md:hidden"
-              aria-label={menuOpen ? t('menuClose') : t('menuOpen')}
-              aria-expanded={menuOpen}
-              onClick={() => setMenuOpen((open) => !open)}
-            >
-              {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-            </button>
+            {isNarrow ? (
+              <button
+                type="button"
+                className="station-button station-button-secondary !h-10 !w-10 !p-0"
+                aria-label={menuOpen ? t('menuClose') : t('menuOpen')}
+                aria-expanded={menuOpen}
+                onClick={() => setMenuOpen((open) => !open)}
+              >
+                {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+              </button>
+            ) : null}
           </div>
         </nav>
       </motion.header>

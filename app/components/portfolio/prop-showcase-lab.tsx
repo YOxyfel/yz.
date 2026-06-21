@@ -5,11 +5,10 @@ import { Box } from 'lucide-react'
 import { propAssets } from './arsenal-props'
 import { CatalogStrip, LabShell, LabTransition } from './arsenal-lab-shell'
 import { PropViewer } from './prop-viewer'
-import { VisualFxControls, useVisualFxPreferences } from './visual-fx-preferences'
+import { LabFxControls, LabFxPreferencesProvider } from './lab-fx-preferences'
 
 function PropShowcaseLabInner({ embedded = false }: { embedded?: boolean }) {
   const [selectedId, setSelectedId] = useState(propAssets[0].id)
-  const { screenFxLive, toggleScreenFxLive } = useVisualFxPreferences()
 
   const selected = useMemo(
     () => propAssets.find((asset) => asset.id === selectedId) ?? propAssets[0],
@@ -29,9 +28,7 @@ function PropShowcaseLabInner({ embedded = false }: { embedded?: boolean }) {
       title="Prop Forge"
       description="Inspectable game-ready assets — orbit in real time, expose quad topology, and swipe between rendered and wireframe reads. Each slot in the carousel gets the full stage."
       icon={Box}
-      controls={
-        <VisualFxControls screenFxActive={screenFxLive} onToggleScreenFx={toggleScreenFxLive} />
-      }
+      controls={<LabFxControls labName="props" />}
     >
       <CatalogStrip
         items={propAssets}
@@ -73,5 +70,9 @@ function PropShowcaseLabInner({ embedded = false }: { embedded?: boolean }) {
 }
 
 export function PropShowcaseLab({ embedded = false }: { embedded?: boolean }) {
-  return <PropShowcaseLabInner embedded={embedded} />
+  return (
+    <LabFxPreferencesProvider>
+      <PropShowcaseLabInner embedded={embedded} />
+    </LabFxPreferencesProvider>
+  )
 }

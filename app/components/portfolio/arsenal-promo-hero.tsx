@@ -42,6 +42,17 @@ function clampVolume(value: number) {
   return Math.min(MAX_VOLUME, Math.max(0, Number(value.toFixed(2))))
 }
 
+function syncVideoVolume(video: HTMLVideoElement, level: number) {
+  const clamped = clampVolume(level)
+  video.volume = clamped
+  video.muted = clamped === 0
+}
+
+function isPromoKeyboardTarget(target: EventTarget | null) {
+  if (!(target instanceof HTMLElement)) return false
+  return Boolean(target.closest('input, textarea, select, [contenteditable="true"]'))
+}
+
 function PromoCopy({ placement }: { placement: CopyPlacement }) {
   const isOverlay = placement === 'overlay'
   const isSidebar = placement === 'sidebar'
@@ -167,6 +178,7 @@ function PromoCopyShell({
 export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
   const rootRef = useRef<HTMLDivElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
+  const volumeRef = useRef(DEFAULT_VOLUME)
   const timersRef = useRef<number[]>([])
   const lastVolumeRef = useRef(DEFAULT_VOLUME)
   const scrollAccumRef = useRef(0)
@@ -196,6 +208,17 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
     setPortalReady(true)
   }, [])
 
+  useEffect(() => {
+    volumeRef.current = volume
+    const video = videoRef.current
+    if (video) syncVideoVolume(video, volume)
+  }, [volume])
+
+  const bindVideoRef = useCallback((node: HTMLVideoElement | null) => {
+    videoRef.current = node
+    if (node) syncVideoVolume(node, volumeRef.current)
+  }, [])
+
   const snapshotPlayback = useCallback(() => {
     const video = videoRef.current
     if (!video) return
@@ -215,9 +238,7 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
     if (clamped > 0) lastVolumeRef.current = clamped
     setVolume(clamped)
     const video = videoRef.current
-    if (!video) return
-    video.volume = clamped
-    video.muted = clamped === 0
+    if (video) syncVideoVolume(video, clamped)
   }, [])
 
   const resetMedia = useCallback(() => {
@@ -247,6 +268,30 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
     setPhase('playing')
     setExpanded(true)
   }, [isMobileVideo, snapshotPlayback])
+
+  const replayReel = useCallback(() => {
+    reelEndedRef.current = false
+    manualMinimizeRef.current = false
+    reelStartedRef.current = true
+    setReelStarted(true)
+    clearTimers()
+    setPhase('playing')
+    setShowVideo(true)
+
+    const video = videoRef.current
+    if (video) {
+      video.currentTime = 0
+      syncVideoVolume(video, volume)
+    }
+
+    if (isMobileVideo) {
+      setMobileTheaterOpen(true)
+      void video?.play().catch(() => undefined)
+      return
+    }
+
+    enterTheater()
+  }, [clearTimers, enterTheater, isMobileVideo, volume])
 
   const collapseExpanded = useCallback(() => {
     pauseVideo()
@@ -329,8 +374,7 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
     const video = videoRef.current
     if (!video) return
     video.currentTime = 0
-    video.volume = volume
-    video.muted = volume === 0
+    syncVideoVolume(video, volume)
     void video.play().catch(() => undefined)
   }, [volume])
 
@@ -379,8 +423,7 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
     const startPlayback = () => {
       const video = videoRef.current
       if (!video) return false
-      video.volume = volume
-      video.muted = volume === 0
+      syncVideoVolume(video, volume)
       void video.play().catch(() => undefined)
       return true
     }
@@ -408,9 +451,8 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
     if (!showVideo) return
     const video = videoRef.current
     if (!video) return
-    video.volume = volume
-    video.muted = volume === 0
-  }, [showVideo, volume])
+    syncVideoVolume(video, volume)
+  }, [showVideo, volume, expanded, phase, isMobileVideo])
 
   useEffect(() => {
     if (!expanded || !showVideo || phase !== 'playing' || isMobileVideo) return
@@ -428,8 +470,7 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
     })
     const video = videoRef.current
     if (!video) return () => cancelAnimationFrame(scrollFrame)
-    video.volume = volume
-    video.muted = volume === 0
+    syncVideoVolume(video, volume)
     void video.play().catch(() => undefined)
     return () => cancelAnimationFrame(scrollFrame)
   }, [expanded, showVideo, phase, volume, isMobileVideo])
@@ -511,8 +552,12 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
 
   const togglePlay = () => {
     if (isMobileVideo) {
-      if (!reelStarted || reelEndedRef.current) {
-        beginReel()
+      if (!reelStarted || reelEndedRef.current || phase === 'ended') {
+        if (reelEndedRef.current || phase === 'ended') {
+          replayReel()
+        } else {
+          beginReel()
+        }
         return
       }
       if (mobileTheaterOpen) {
@@ -527,6 +572,11 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
       return
     }
 
+    if (phase === 'ended' || reelEndedRef.current) {
+      replayReel()
+      return
+    }
+
     if (!reelStarted) {
       beginReel()
       return
@@ -538,6 +588,24 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
     else video.pause()
   }
 
+  const togglePlayRef = useRef(togglePlay)
+  togglePlayRef.current = togglePlay
+
+  useEffect(() => {
+    if (!reelStarted || !showVideo) return
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.code !== 'Space' && event.key !== ' ') return
+      if (event.repeat) return
+      if (isPromoKeyboardTarget(event.target)) return
+      event.preventDefault()
+      togglePlayRef.current()
+    }
+
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [reelStarted, showVideo])
+
   const onVideoSurfaceClick = () => {
     if (isMobileVideo) {
       togglePlay()
@@ -546,6 +614,10 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
 
     if (!reelStarted) {
       beginReel()
+      return
+    }
+    if (phase === 'ended' || reelEndedRef.current) {
+      replayReel()
       return
     }
     if (!showVideo) return
@@ -586,6 +658,7 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
     if (!video) return
 
     const restore = () => {
+      syncVideoVolume(video, volumeRef.current)
       video.currentTime = snapshot.time
       if (snapshot.playing) void video.play().catch(() => undefined)
       playbackSnapshotRef.current = null
@@ -641,7 +714,7 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
         transition={{ duration: 0.9, ease: 'easeInOut' }}
       >
         <video
-          ref={videoRef}
+          ref={bindVideoRef}
           className={
             mobileLandscapeTheater
               ? 'promo-mobile-landscape-video'
@@ -946,7 +1019,7 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
       ? createPortal(
           <div className="mobile-promo-theater">
             <video
-              ref={videoRef}
+              ref={bindVideoRef}
               className="mobile-promo-theater-video"
               src={arsenalPromo.videoSrc}
               playsInline

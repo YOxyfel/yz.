@@ -1,13 +1,13 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useVisualFxPreferences } from './visual-fx-preferences'
 
 type ArtPovFxProps = {
   accent: 'cyan' | 'violet' | 'amber'
   cycling: boolean
   transitionKey: string
   active: boolean
+  reduced?: boolean
 }
 
 const accentColor: Record<ArtPovFxProps['accent'], string> = {
@@ -22,10 +22,14 @@ const accentRgb: Record<ArtPovFxProps['accent'], string> = {
   amber: 'oklch(0.75 0.15 75 / 0.5)',
 }
 
-export function ArtPovFx({ accent, cycling, transitionKey, active }: ArtPovFxProps) {
-  const { showScreenFx, isReduced } = useVisualFxPreferences()
-
-  if (!active || !showScreenFx || isReduced) return null
+export function ArtPovFx({
+  accent,
+  cycling,
+  transitionKey,
+  active,
+  reduced = false,
+}: ArtPovFxProps) {
+  if (!active || reduced) return null
 
   return (
     <div className="pointer-events-none absolute inset-0 z-[12] overflow-hidden rounded-2xl" aria-hidden>

@@ -8,6 +8,8 @@ import {
   type MotionValue,
 } from 'framer-motion'
 import { useEffect, useMemo } from 'react'
+import type { PerformanceTier } from './performance-tier'
+import { COSMIC_STAR_COUNTS } from './performance-tier'
 
 type StarSpec = {
   x: number
@@ -184,8 +186,8 @@ function CosmicScrollFxLite({ starCount = 10 }: { starCount?: number }) {
   )
 }
 
-function CosmicScrollFxMedium() {
-  const stars = useMemo(() => buildStars(40), [])
+function CosmicScrollFxMedium({ starCount }: { starCount: number }) {
+  const stars = useMemo(() => buildStars(starCount), [starCount])
 
   return (
     <div className="fixed inset-0 overflow-hidden bg-[oklch(0.08_0.012_270)]">
@@ -197,9 +199,9 @@ function CosmicScrollFxMedium() {
   )
 }
 
-function CosmicScrollFxFull() {
+function CosmicScrollFxFull({ starCount }: { starCount: number }) {
   const scrollYProgress = useMotionValue(0)
-  const stars = useMemo(() => buildStars(72), [])
+  const stars = useMemo(() => buildStars(starCount), [starCount])
 
   useEffect(() => {
     const updateProgress = () => {
@@ -268,19 +270,22 @@ function CosmicScrollFxFull() {
 export function CosmicScrollFx({
   lite = false,
   medium = false,
+  tier = 'mid',
 }: {
   lite?: boolean
   medium?: boolean
+  tier?: PerformanceTier
 }) {
   const reduced = useReducedMotion()
+  const counts = COSMIC_STAR_COUNTS[tier]
 
   if (lite || reduced) {
-    return <CosmicScrollFxLite />
+    return <CosmicScrollFxLite starCount={counts.lite} />
   }
 
   if (medium) {
-    return <CosmicScrollFxMedium />
+    return <CosmicScrollFxMedium starCount={counts.medium} />
   }
 
-  return <CosmicScrollFxFull />
+  return <CosmicScrollFxFull starCount={counts.full} />
 }

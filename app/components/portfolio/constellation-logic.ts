@@ -25,6 +25,8 @@ export type ConstellationRecord = {
   stars: Star[]
   anchor?: { x: number; y: number }
   segments?: MergeSegment[]
+  lines?: [number, number][]
+  patternId?: string
   source: ConstellationSource
   completedAt: number
 }
@@ -56,6 +58,10 @@ export type Constellation = {
   mergeFlash?: boolean
   segments?: MergeSegment[]
   source?: ConstellationSource
+  /** Star index pairs for non-sequential stick figures (auto patterns). */
+  lines?: [number, number][]
+  /** Source stick-figure id — used to prevent repeats in auto/crazy. */
+  patternId?: string
 }
 
 export type MemeResolution = {

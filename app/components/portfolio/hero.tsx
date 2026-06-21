@@ -17,6 +17,7 @@ export function Hero() {
   return (
     <section
       id="top"
+      data-scroll-block
       className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6"
     >
       {!isNarrow ? (

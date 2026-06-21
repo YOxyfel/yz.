@@ -1,11 +1,11 @@
 'use client'
 
 import { useMemo } from 'react'
-import { useVisualFxPreferences } from './visual-fx-preferences'
 
 type ArtScreenFxProps = {
   active: boolean
   accent: 'cyan' | 'violet' | 'amber'
+  reduced?: boolean
 }
 
 const accentTheme = {
@@ -35,33 +35,32 @@ const accentTheme = {
   },
 } as const
 
-export function ArtScreenFx({ active, accent }: ArtScreenFxProps) {
-  const { showScreenFx, isReduced } = useVisualFxPreferences()
+export function ArtScreenFx({ active, accent, reduced = false }: ArtScreenFxProps) {
   const theme = accentTheme[accent]
 
   const orbs = useMemo(
     () =>
-      Array.from({ length: isReduced ? 6 : 16 }, (_, index) => ({
+      Array.from({ length: reduced ? 6 : 16 }, (_, index) => ({
         id: index,
         left: `${4 + ((index * 13) % 92)}%`,
         top: `${8 + ((index * 19) % 78)}%`,
         size: 28 + (index % 5) * 22,
         delay: index * 0.55,
       })),
-    [isReduced]
+    [reduced]
   )
 
   const sparks = useMemo(
     () =>
-      Array.from({ length: isReduced ? 0 : 8 }, (_, index) => ({
+      Array.from({ length: reduced ? 0 : 8 }, (_, index) => ({
         id: index,
         left: `${15 + index * 10}%`,
         delay: index * 1.1,
       })),
-    [isReduced]
+    [reduced]
   )
 
-  if (!active || !showScreenFx) return null
+  if (!active) return null
 
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-2xl" aria-hidden>
@@ -95,7 +94,7 @@ export function ArtScreenFx({ active, accent }: ArtScreenFxProps) {
       />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_42%,oklch(0.08_0.01_270/0.75)_100%)]" />
 
-      {!isReduced ? (
+      {!reduced ? (
         <>
           {orbs.map((orb) => (
             <span

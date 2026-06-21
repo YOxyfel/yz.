@@ -79,10 +79,10 @@ export type NebulaBurst = {
   particleCount: number
 }
 
-const PLANET_BASE_CHANCE = 0.0006
-const PLANET_CHANCE_PER_SPAWN = 0.0022
-const PLANET_MAX_CHANCE = 0.09
-const AUTO_PLANET_BONUS = 0.055
+const PLANET_BASE_CHANCE = 0.012
+const PLANET_CHANCE_PER_SPAWN = 0.0045
+const PLANET_MAX_CHANCE = 0.28
+const AUTO_PLANET_BONUS = 0.12
 const NEBULA_BURST_CHANCE = 0.01
 
 const VARIANT_POOL: Array<{ variant: PlanetVariant; weight: number }> = [
@@ -352,7 +352,7 @@ export function spawnAutoPlanets(
     luck = 0
   }
 
-  if (planets.length === 0 && visible.length >= 2 && Math.random() < 0.45) {
+  if (planets.length === 0 && visible.length >= 1) {
     const anchor = points[Math.floor(Math.random() * points.length)]
     planets.push(
       createOrbitDecor(anchor.x, anchor.y, viewport, { idPrefix: 'auto-planet' })

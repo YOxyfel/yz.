@@ -5,7 +5,13 @@ import type {
   ConstellationVariant,
   Star,
 } from './constellation-logic'
-import { pickCrazyStarCount, pickSpawnIdentity } from './constellation-logic'
+import { pickCrazyStarCount, pickSpawnIdentity, variantForCount } from './constellation-logic'
+import {
+  getConstellationPattern,
+  pickConstellationPattern,
+  pickCrazyConstellationPattern,
+  type ConstellationPattern,
+} from './constellation-patterns'
 import type { IdGenerator } from './constellation-store'
 
 type Bounds = { minX: number; maxX: number; minY: number; maxY: number }
@@ -203,6 +209,102 @@ export function generateStarsInOpenRect(
   return starsInRect(fallbackRect, count, ids)
 }
 
+function placePatternStars(
+  pattern: ConstellationPattern,
+  ids: IdGenerator,
+  viewport: { width: number; height: number },
+  existing: Constellation[],
+  options?: { spreadOutside?: boolean; padding?: number }
+): Star[] {
+  const spreadOutside = options?.spreadOutside ?? false
+  const padding = options?.padding ?? 56
+
+  for (let attempt = 0; attempt < 48; attempt += 1) {
+    const rect = randomRect(viewport, spreadOutside)
+    const points = pattern.stars.map(([nx, ny]) => ({
+      x: rect.left + (nx / 100) * rect.width,
+      y: rect.top + (ny / 100) * rect.height,
+    }))
+    const probe: Constellation = {
+      id: -1,
+      stars: points.map((point, index) => ({ id: index, ...point })),
+      complete: true,
+      targetCount: points.length,
+    }
+    const probeBounds = getConstellationBounds(probe, padding)
+    if (!probeBounds) continue
+
+    const overlaps = existing.some((item) => {
+      const bounds = getConstellationBounds(item, 36)
+      return bounds ? boundsOverlap(probeBounds, bounds) : false
+    })
+
+    if (!overlaps) {
+      return points.map((point) => ({
+        id: ids.nextStarId(),
+        x: point.x,
+        y: point.y,
+      }))
+    }
+  }
+
+  const fallbackRect = randomRect(viewport, spreadOutside)
+  return pattern.stars.map(([nx, ny]) => ({
+    id: ids.nextStarId(),
+    x: fallbackRect.left + (nx / 100) * fallbackRect.width,
+    y: fallbackRect.top + (ny / 100) * fallbackRect.height,
+  }))
+}
+
+export function buildPatternConstellation(
+  id: number,
+  ids: IdGenerator,
+  source: ConstellationSource,
+  viewport: { width: number; height: number },
+  existing: Constellation[],
+  options?: {
+    spreadOutside?: boolean
+    excludePatternIds?: Set<string>
+    patternId?: string
+    patternPool?: 'classic' | 'other' | 'crazy'
+  }
+): Constellation {
+  const pattern = options?.patternId
+    ? getConstellationPattern(options.patternId)
+    : pickConstellationPattern({
+        excludeIds: options?.excludePatternIds,
+        pool: options?.patternPool ?? 'classic',
+      })
+
+  if (!pattern) {
+    const starCount = Math.max(3, Math.min(8, 3 + Math.floor(Math.random() * 6)))
+    const stars = generateStarsInOpenRect(starCount, ids, viewport, existing, options)
+    const identity = pickSpawnIdentity(starCount, { crazyBias: source === 'crazy' })
+    return finalizeInstant(
+      id,
+      starCount,
+      stars,
+      source,
+      identity.name,
+      identity.variant
+    )
+  }
+
+  options?.excludePatternIds?.add(pattern.id)
+
+  const stars = placePatternStars(pattern, ids, viewport, existing, options)
+  return finalizeInstant(
+    id,
+    stars.length,
+    stars,
+    source,
+    pattern.name,
+    variantForCount(stars.length),
+    pattern.edges,
+    pattern.id
+  )
+}
+
 /** @deprecated Use generateStarsInOpenRect — kept for overlap probes */
 export function generateStarPattern(
   originX: number,
@@ -227,7 +329,9 @@ function finalizeInstant(
   stars: Star[],
   source: ConstellationSource,
   name: string,
-  variant: ConstellationVariant
+  variant: ConstellationVariant,
+  lines?: [number, number][],
+  patternId?: string
 ): Constellation {
   return {
     id,
@@ -238,6 +342,8 @@ function finalizeInstant(
     name,
     variant,
     source,
+    lines,
+    patternId,
   }
 }
 
@@ -248,35 +354,65 @@ export function buildInstantConstellation(
   source: ConstellationSource,
   viewport: { width: number; height: number },
   existing: Constellation[],
-  options?: { spreadOutside?: boolean }
+  options?: {
+    spreadOutside?: boolean
+    excludePatternIds?: Set<string>
+    patternId?: string
+    patternPool?: 'classic' | 'other' | 'crazy'
+  }
 ): Constellation {
-  if (starCount === 0) {
-    const anchor = findOpenPosition(existing, viewport, options)
-    const identity = pickSpawnIdentity(0)
-    return {
-      id,
-      stars: [],
-      anchor,
-      complete: true,
-      targetCount: 0,
-      starCount: 0,
-      name: identity.name,
-      variant: identity.variant,
-      source,
+  if (source === 'crazy') {
+    if (starCount === 0) {
+      const anchor = findOpenPosition(existing, viewport, options)
+      const identity = pickSpawnIdentity(0)
+      return {
+        id,
+        stars: [],
+        anchor,
+        complete: true,
+        targetCount: 0,
+        starCount: 0,
+        name: identity.name,
+        variant: identity.variant,
+        source,
+      }
     }
+
+    const stars = generateStarsInOpenRect(starCount, ids, viewport, existing, options)
+    const identity = pickSpawnIdentity(starCount, { crazyBias: true })
+    return finalizeInstant(id, starCount, stars, source, identity.name, identity.variant)
   }
 
-  const stars = generateStarsInOpenRect(starCount, ids, viewport, existing, options)
-  const identity = pickSpawnIdentity(starCount, { crazyBias: source === 'crazy' })
-  return finalizeInstant(id, starCount, stars, source, identity.name, identity.variant)
+  return buildPatternConstellation(id, ids, source, viewport, existing, options)
 }
 
 export function buildCrazyConstellation(
   id: number,
   ids: IdGenerator,
   viewport: { width: number; height: number },
-  existing: Constellation[]
+  existing: Constellation[],
+  options?: { excludePatternIds?: Set<string> }
 ): Constellation {
+  const usePattern = Math.random() < 0.74
+
+  if (usePattern) {
+    const pattern = pickCrazyConstellationPattern(options?.excludePatternIds)
+    if (pattern) {
+      options?.excludePatternIds?.add(pattern.id)
+      const stars = placePatternStars(pattern, ids, viewport, existing, { spreadOutside: true })
+      return finalizeInstant(
+        id,
+        stars.length,
+        stars,
+        'crazy',
+        pattern.name,
+        variantForCount(stars.length),
+        pattern.edges,
+        pattern.id
+      )
+    }
+  }
+
   const starCount = pickCrazyStarCount()
   return buildInstantConstellation(
     id,
@@ -332,6 +468,8 @@ export function cloneConstellationForRevive(
     name: record.name,
     variant: record.variant,
     source: 'revived',
+    patternId: record.patternId,
+    lines: record.lines?.map((pair) => [...pair] as [number, number]),
     segments: record.segments?.map((segment, segmentIndex) => ({
       stars: segment.stars.map((star, starIndex) => ({
         id: newId * 1000 + segmentIndex * 100 + starIndex,

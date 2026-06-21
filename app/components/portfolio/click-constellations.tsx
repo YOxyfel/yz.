@@ -13,6 +13,36 @@ import {
 import { MERGE_DURATION, useConstellations } from './constellation-context'
 import { constellationCenterY, skyVisualFilter, useSkyScrollFade } from './sky-scroll-fade'
 
+function renderConstellationLines(constellation: Constellation, lite = false) {
+  const lineClass = variantLineClass(constellation.complete ? constellation.variant : undefined)
+  const pairs =
+    constellation.lines ??
+    constellation.stars.slice(1).map((_, index) => [index, index + 1] as [number, number])
+
+  return pairs.map(([fromIndex, toIndex], lineIndex) => {
+    const from = constellation.stars[fromIndex]
+    const to = constellation.stars[toIndex]
+    if (!from || !to) return null
+
+    return (
+      <motion.line
+        key={`${constellation.id}-line-${from.id}-${to.id}-${lineIndex}`}
+        x1={from.x}
+        y1={from.y}
+        x2={to.x}
+        y2={to.y}
+        className={lineClass}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: constellation.merging ? 0 : 0.85 }}
+        transition={{
+          duration: lite ? 0 : 0.45,
+          delay: constellation.merging ? MERGE_DURATION * 0.55 : 0,
+        }}
+      />
+    )
+  })
+}
+
 function renderSegmentLines(
   constellation: Constellation,
   segment: MergeSegment,
@@ -141,21 +171,7 @@ function ConstellationCanvas({
 
           return (
             <g key={`lines-${constellation.id}`} style={skyStyle}>
-              {constellation.stars.slice(1).map((star, index) => {
-                const previous = constellation.stars[index]
-                return (
-                  <line
-                    key={`${constellation.id}-${previous.id}-${star.id}`}
-                    x1={previous.x}
-                    y1={previous.y}
-                    x2={star.x}
-                    y2={star.y}
-                    className={variantLineClass(
-                      constellation.complete ? constellation.variant : undefined
-                    )}
-                  />
-                )
-              })}
+              {renderConstellationLines(constellation, lite)}
             </g>
           )
         })}

@@ -501,9 +501,11 @@ export function OrbitDecorSelectionHud() {
 export function OrbitDecorLayer({
   decors,
   renderMode = 'full',
+  reduced = false,
 }: {
   decors: OrbitDecor[]
   renderMode?: OrbitDecorRenderMode
+  reduced?: boolean
 }) {
   const { selectedOrbitDecorId, setSelectedOrbitDecorId } = useConstellations()
   const interaction = useOrbitDecorInteraction()
@@ -512,7 +514,7 @@ export function OrbitDecorLayer({
 
   return (
     <div
-      className={`orbit-decor-layer absolute inset-0 ${renderMode === 'visual' ? 'orbit-decor-layer-visual' : ''} ${renderMode === 'hitbox' ? 'orbit-decor-layer-hitbox' : ''}`}
+      className={`orbit-decor-layer absolute inset-0 ${renderMode === 'visual' ? 'orbit-decor-layer-visual' : ''} ${renderMode === 'hitbox' ? 'orbit-decor-layer-hitbox' : ''} ${reduced ? 'orbit-decor-layer-reduced' : ''}`}
     >
       {decors.map((decor) => (
         <OrbitDecorEntity

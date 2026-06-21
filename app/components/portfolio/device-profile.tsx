@@ -5,10 +5,20 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useState,
   useSyncExternalStore,
   type ReactNode,
 } from 'react'
 import { DEVICE_PROFILE_QUERIES, MEDIA_COARSE_POINTER, TABLET_MAX_PX } from './breakpoints'
+import { PerformanceAdaptiveMonitor } from './performance-adaptive'
+import {
+  getAdaptiveTier,
+  getHardwareTier,
+  resolvePerformanceTier,
+  type PerformanceTier,
+} from './performance-tier'
+
+export type { PerformanceTier } from './performance-tier'
 
 export type DeviceProfile = {
   isCoarsePointer: boolean
@@ -16,9 +26,15 @@ export type DeviceProfile = {
   isTablet: boolean
   isDesktop: boolean
   prefersReducedMotion: boolean
+  performanceTier: PerformanceTier
+  hardwareTier: PerformanceTier
   fxLite: boolean
   fxMedium: boolean
   enableOrbitHitboxes: boolean
+  enableHeavyBackgroundFx: boolean
+  enablePropViewer3d: boolean
+  enablePanelFlip: boolean
+  maxSkyConstellations: number
 }
 
 const DEFAULT_PROFILE: DeviceProfile = {
@@ -27,15 +43,44 @@ const DEFAULT_PROFILE: DeviceProfile = {
   isTablet: false,
   isDesktop: true,
   prefersReducedMotion: false,
+  performanceTier: 'mid',
+  hardwareTier: 'mid',
   fxLite: false,
-  fxMedium: false,
+  fxMedium: true,
   enableOrbitHitboxes: true,
+  enableHeavyBackgroundFx: false,
+  enablePropViewer3d: true,
+  enablePanelFlip: false,
+  maxSkyConstellations: 10,
 }
 
-let cachedSnapshot: DeviceProfile = DEFAULT_PROFILE
-let cachedSignature = ''
+type ViewportSnapshot = Pick<
+  DeviceProfile,
+  'isCoarsePointer' | 'isNarrow' | 'isTablet' | 'isDesktop' | 'prefersReducedMotion'
+>
 
-function readProfileFromDom(): Partial<DeviceProfile> | null {
+let cachedViewport: ViewportSnapshot = {
+  isCoarsePointer: DEFAULT_PROFILE.isCoarsePointer,
+  isNarrow: DEFAULT_PROFILE.isNarrow,
+  isTablet: DEFAULT_PROFILE.isTablet,
+  isDesktop: DEFAULT_PROFILE.isDesktop,
+  prefersReducedMotion: DEFAULT_PROFILE.prefersReducedMotion,
+}
+let cachedViewportSignature = ''
+
+const SERVER_VIEWPORT_SNAPSHOT: ViewportSnapshot = {
+  isCoarsePointer: DEFAULT_PROFILE.isCoarsePointer,
+  isNarrow: DEFAULT_PROFILE.isNarrow,
+  isTablet: DEFAULT_PROFILE.isTablet,
+  isDesktop: DEFAULT_PROFILE.isDesktop,
+  prefersReducedMotion: DEFAULT_PROFILE.prefersReducedMotion,
+}
+
+function getServerViewportSnapshot() {
+  return SERVER_VIEWPORT_SNAPSHOT
+}
+
+function readProfileFromDom(): Partial<ViewportSnapshot> | null {
   if (typeof document === 'undefined') return null
   const root = document.documentElement
   if (root.dataset.narrow === undefined) return null
@@ -44,12 +89,19 @@ function readProfileFromDom(): Partial<DeviceProfile> | null {
     isNarrow: root.dataset.narrow === 'on',
     isTablet: root.dataset.tablet === 'on',
     isCoarsePointer: root.dataset.coarsePointer === 'on',
-    fxLite: root.dataset.fxLite === 'on',
   }
 }
 
-function buildProfileSnapshot(): DeviceProfile {
-  if (typeof window === 'undefined') return DEFAULT_PROFILE
+function buildViewportSnapshot(): ViewportSnapshot {
+  if (typeof window === 'undefined') {
+    return {
+      isCoarsePointer: DEFAULT_PROFILE.isCoarsePointer,
+      isNarrow: DEFAULT_PROFILE.isNarrow,
+      isTablet: DEFAULT_PROFILE.isTablet,
+      isDesktop: DEFAULT_PROFILE.isDesktop,
+      prefersReducedMotion: DEFAULT_PROFILE.prefersReducedMotion,
+    }
+  }
 
   const domHint = readProfileFromDom()
   const isCoarsePointer =
@@ -58,37 +110,24 @@ function buildProfileSnapshot(): DeviceProfile {
   const isTablet = domHint?.isTablet ?? window.matchMedia(DEVICE_PROFILE_QUERIES[2]).matches
   const prefersReducedMotion = window.matchMedia(DEVICE_PROFILE_QUERIES[3]).matches
   const isDesktop = !isNarrow && !isTablet
-  const fxLite = isCoarsePointer || isNarrow || prefersReducedMotion
-  const fxMedium = isTablet && !isCoarsePointer && !prefersReducedMotion
-  const enableOrbitHitboxes = !isCoarsePointer
-  const signature = [
+  const signature = [isCoarsePointer, isNarrow, isTablet, isDesktop, prefersReducedMotion].join(
+    '|'
+  )
+
+  if (signature === cachedViewportSignature) {
+    return cachedViewport
+  }
+
+  cachedViewportSignature = signature
+  cachedViewport = {
     isCoarsePointer,
     isNarrow,
     isTablet,
     isDesktop,
     prefersReducedMotion,
-    fxLite,
-    fxMedium,
-    enableOrbitHitboxes,
-  ].join('|')
-
-  if (signature === cachedSignature) {
-    return cachedSnapshot
   }
 
-  cachedSignature = signature
-  cachedSnapshot = {
-    isCoarsePointer,
-    isNarrow,
-    isTablet,
-    isDesktop,
-    prefersReducedMotion,
-    fxLite,
-    fxMedium,
-    enableOrbitHitboxes,
-  }
-
-  return cachedSnapshot
+  return cachedViewport
 }
 
 function subscribeToProfileChanges(onStoreChange: () => void) {
@@ -97,14 +136,53 @@ function subscribeToProfileChanges(onStoreChange: () => void) {
   return () => media.forEach((entry) => entry.removeEventListener('change', onStoreChange))
 }
 
+function buildDeviceProfile(
+  viewport: ViewportSnapshot,
+  performanceTier: PerformanceTier,
+  hardwareTier: PerformanceTier
+): DeviceProfile {
+  const fxLite = performanceTier === 'low' || viewport.prefersReducedMotion
+  const fxMedium = performanceTier === 'mid' && !fxLite
+  const enableOrbitHitboxes = !viewport.isCoarsePointer && performanceTier !== 'low'
+  const enableHeavyBackgroundFx = performanceTier === 'high' && !viewport.prefersReducedMotion
+  const enablePropViewer3d = performanceTier !== 'low'
+  const enablePanelFlip =
+    performanceTier !== 'low' && viewport.isDesktop && !viewport.isCoarsePointer
+  const maxSkyConstellations = 10
+
+  return {
+    ...viewport,
+    performanceTier,
+    hardwareTier,
+    fxLite,
+    fxMedium,
+    enableOrbitHitboxes,
+    enableHeavyBackgroundFx,
+    enablePropViewer3d,
+    enablePanelFlip,
+    maxSkyConstellations,
+  }
+}
+
 const DeviceProfileContext = createContext<DeviceProfile>(DEFAULT_PROFILE)
 
 export function DeviceProfileProvider({ children }: { children: ReactNode }) {
-  const profile = useSyncExternalStore(
+  const [adaptiveTier, setAdaptiveTierState] = useState<PerformanceTier | null>(null)
+  const viewport = useSyncExternalStore(
     subscribeToProfileChanges,
-    buildProfileSnapshot,
-    () => DEFAULT_PROFILE
+    buildViewportSnapshot,
+    getServerViewportSnapshot
   )
+
+  useEffect(() => {
+    setAdaptiveTierState(getAdaptiveTier())
+  }, [])
+
+  const profile = useMemo(() => {
+    const hardwareTier = getHardwareTier()
+    const performanceTier = resolvePerformanceTier(adaptiveTier)
+    return buildDeviceProfile(viewport, performanceTier, hardwareTier)
+  }, [adaptiveTier, viewport])
 
   useEffect(() => {
     const root = document.documentElement
@@ -112,13 +190,26 @@ export function DeviceProfileProvider({ children }: { children: ReactNode }) {
     root.dataset.tablet = profile.isTablet ? 'on' : 'off'
     root.dataset.coarsePointer = profile.isCoarsePointer ? 'on' : 'off'
     root.dataset.fxLite = profile.fxLite ? 'on' : 'off'
+    root.dataset.perfTier = profile.performanceTier
+    root.dataset.perfHardware = profile.hardwareTier
     root.dataset.deviceReady = 'on'
   }, [profile])
 
-  const value = useMemo(() => profile, [profile])
+  const handleAdaptiveTier = useMemo(
+    () => (tier: PerformanceTier) => {
+      setAdaptiveTierState(tier)
+    },
+    []
+  )
 
   return (
-    <DeviceProfileContext.Provider value={value}>{children}</DeviceProfileContext.Provider>
+    <DeviceProfileContext.Provider value={profile}>
+      <PerformanceAdaptiveMonitor
+        performanceTier={profile.performanceTier}
+        onAdaptiveTier={handleAdaptiveTier}
+      />
+      {children}
+    </DeviceProfileContext.Provider>
   )
 }
 

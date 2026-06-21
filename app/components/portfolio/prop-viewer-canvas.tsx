@@ -1,16 +1,37 @@
 'use client'
 
 import { Center, Edges, Environment, OrbitControls, useGLTF } from '@react-three/drei'
-import { Canvas } from '@react-three/fiber'
+import { Canvas, useThree } from '@react-three/fiber'
 import { Suspense, useEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import type { PropViewMode } from './arsenal-props'
+import type { PerformanceTier } from './performance-tier'
 
 type ModelProps = {
   glb: string
   viewMode: PropViewMode
   showQuadMesh: boolean
   autoRotate: boolean
+}
+
+function WebGLCleanup() {
+  const { gl, scene } = useThree()
+
+  useEffect(() => {
+    return () => {
+      scene.traverse((object) => {
+        if (!(object instanceof THREE.Mesh)) return
+        object.geometry?.dispose()
+        const materials = Array.isArray(object.material) ? object.material : [object.material]
+        materials.forEach((material) => {
+          if (material instanceof THREE.Material) material.dispose()
+        })
+      })
+      gl.dispose()
+    }
+  }, [gl, scene])
+
+  return null
 }
 
 function Model({ glb, viewMode, showQuadMesh, autoRotate }: ModelProps) {
@@ -62,6 +83,7 @@ function Model({ glb, viewMode, showQuadMesh, autoRotate }: ModelProps) {
         maxDistance={6}
       />
       <Environment preset="city" />
+      <WebGLCleanup />
     </>
   )
 }
@@ -72,6 +94,7 @@ type PropViewerCanvasProps = {
   showQuadMesh: boolean
   swipeRatio: number
   autoRotate: boolean
+  performanceTier?: PerformanceTier
   className?: string
 }
 
@@ -80,11 +103,18 @@ export function PropViewerCanvas({
   viewMode,
   showQuadMesh,
   autoRotate,
+  performanceTier = 'mid',
   className = '',
 }: PropViewerCanvasProps) {
+  const dpr: [number, number] = performanceTier === 'high' ? [1, 2] : [1, 1.25]
+
   return (
     <div className={`h-full w-full ${className}`}>
-      <Canvas camera={{ position: [0, 0.4, 2.8], fov: 42 }} gl={{ antialias: true, alpha: true }}>
+      <Canvas
+        camera={{ position: [0, 0.4, 2.8], fov: 42 }}
+        dpr={dpr}
+        gl={{ antialias: performanceTier === 'high', alpha: true, powerPreference: 'high-performance' }}
+      >
         <color attach="background" args={['#050508']} />
         <Suspense fallback={null}>
           <Model

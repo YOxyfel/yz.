@@ -1,0 +1,116 @@
+{
+  "constellations": [
+    {
+      "id": "heart",
+      "name": "Heart",
+      "category": "popular",
+      "file": "/StarImagesOther/heart.svg",
+      "starCount": 8
+    },
+    {
+      "id": "five-star",
+      "name": "Five Star",
+      "category": "popular",
+      "file": "/StarImagesOther/five-star.svg",
+      "starCount": 10
+    },
+    {
+      "id": "smiley",
+      "name": "Smiley",
+      "category": "meme",
+      "file": "/StarImagesOther/smiley.svg",
+      "starCount": 9
+    },
+    {
+      "id": "rocket",
+      "name": "Rocket",
+      "category": "object",
+      "file": "/StarImagesOther/rocket.svg",
+      "starCount": 9
+    },
+    {
+      "id": "cat",
+      "name": "Cat",
+      "category": "meme",
+      "file": "/StarImagesOther/cat.svg",
+      "starCount": 11
+    },
+    {
+      "id": "sword",
+      "name": "Sword",
+      "category": "popular",
+      "file": "/StarImagesOther/sword.svg",
+      "starCount": 9
+    },
+    {
+      "id": "lightning",
+      "name": "Lightning",
+      "category": "icon",
+      "file": "/StarImagesOther/lightning.svg",
+      "starCount": 7
+    },
+    {
+      "id": "crown",
+      "name": "Crown",
+      "category": "popular",
+      "file": "/StarImagesOther/crown.svg",
+      "starCount": 8
+    },
+    {
+      "id": "ufo",
+      "name": "UFO",
+      "category": "meme",
+      "file": "/StarImagesOther/ufo.svg",
+      "starCount": 9
+    },
+    {
+      "id": "controller",
+      "name": "Controller",
+      "category": "meme",
+      "file": "/StarImagesOther/controller.svg",
+      "starCount": 11
+    },
+    {
+      "id": "peace",
+      "name": "Peace",
+      "category": "popular",
+      "file": "/StarImagesOther/peace.svg",
+      "starCount": 7
+    },
+    {
+      "id": "thumbs-up",
+      "name": "Thumbs Up",
+      "category": "meme",
+      "file": "/StarImagesOther/thumbs-up.svg",
+      "starCount": 10
+    },
+    {
+      "id": "skull",
+      "name": "Skull",
+      "category": "meme",
+      "file": "/StarImagesOther/skull.svg",
+      "starCount": 12
+    },
+    {
+      "id": "diamond",
+      "name": "Diamond",
+      "category": "popular",
+      "file": "/StarImagesOther/diamond.svg",
+      "starCount": 6
+    },
+    {
+      "id": "coffee",
+      "name": "Coffee",
+      "category": "object",
+      "file": "/StarImagesOther/coffee.svg",
+      "starCount": 10
+    },
+    {
+      "id": "wifi",
+      "name": "WiFi",
+      "category": "icon",
+      "file": "/StarImagesOther/wifi.svg",
+      "starCount": 6
+    }
+  ]
+}

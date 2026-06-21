@@ -25,6 +25,7 @@ import {
   getMaxConstellations,
   trimConstellationsToLimit,
 } from './constellation-generate'
+import { collectUsedPatternIds } from './constellation-patterns'
 
 export type MaxVisibleOption = 2 | 4 | 6 | 8 | 10
 
@@ -133,6 +134,8 @@ export function snapshotRecord(constellation: Constellation): ConstellationRecor
       initialStars: segment.initialStars.map((star) => ({ ...star })),
       initialAnchor: segment.initialAnchor ? { ...segment.initialAnchor } : undefined,
     })),
+    lines: constellation.lines?.map((pair) => [...pair] as [number, number]),
+    patternId: constellation.patternId,
     source: constellation.source ?? 'manual',
     completedAt: Date.now(),
   }
@@ -295,21 +298,22 @@ export function seedAmbientConstellations(
   let next: Constellation[] = []
   let nextHistory = history
   let nextBoosts = boosts
+  const usedPatterns = new Set<string>()
 
   for (let index = 0; index < AMBIENT_SEED_COUNT; index += 1) {
-    const skyHistory = skyCompletedHistory(next)
-    const recentCounts = skyHistory.map((entry) => entry.count)
-    const lastCount = recentCounts[recentCounts.length - 1] ?? null
-    const starCount = pickTargetCount(lastCount, recentCounts, nextBoosts, 4)
     const built = buildInstantConstellation(
       ids.nextConstellationId(),
-      starCount,
+      0,
       ids,
       'auto',
       viewport,
       visible(next),
-      { spreadOutside: false }
+      { spreadOutside: false, excludePatternIds: usedPatterns }
     )
+    if (built.patternId) {
+      usedPatterns.add(built.patternId)
+    }
+    const starCount = built.starCount ?? built.stars.length
     next = [...next, built]
     nextHistory = [...nextHistory, { id: built.id, count: starCount }].slice(-8)
     nextBoosts = updateBoostsAfterComplete(nextBoosts, starCount)
@@ -336,27 +340,29 @@ export function runAutoBatch(
   boosts: MemeBoostState
   archiveEntries: ConstellationRecord[]
 } {
-  const batchSize = 2 + Math.floor(Math.random() * 9)
+  const batchSize =
+    maxLimit <= 2 ? maxLimit : 2 + Math.floor(Math.random() * (maxLimit - 1))
   let next = [...current]
   let nextHistory = history
   let nextBoosts = boosts
   const archiveEntries: ConstellationRecord[] = []
   const existing = () => visible(next)
+  const usedPatterns = collectUsedPatternIds(existing())
 
   for (let index = 0; index < batchSize; index += 1) {
-    const skyHistory = skyCompletedHistory(next)
-    const recentCounts = skyHistory.map((entry) => entry.count)
-    const lastCount = recentCounts[recentCounts.length - 1] ?? null
-    const starCount = pickTargetCount(lastCount, recentCounts, nextBoosts, memeWindow)
     const built = buildInstantConstellation(
       ids.nextConstellationId(),
-      starCount,
+      0,
       ids,
       'auto',
       viewport,
       existing(),
-      { spreadOutside: false }
+      { spreadOutside: false, excludePatternIds: usedPatterns }
     )
+    if (built.patternId) {
+      usedPatterns.add(built.patternId)
+    }
+    const starCount = built.starCount ?? built.stars.length
     next = trimConstellationsToLimit([...next, built], maxLimit)
     nextHistory = [...nextHistory, { id: built.id, count: starCount }].slice(-8)
     nextBoosts = updateBoostsAfterComplete(nextBoosts, starCount)
@@ -381,11 +387,14 @@ export function runCrazySpawn(
 } | null {
   if (visible(current).length >= 20) return null
 
+  const usedPatterns = collectUsedPatternIds(visible(current))
+
   const built = buildCrazyConstellation(
     ids.nextConstellationId(),
     ids,
     viewport,
-    visible(current)
+    visible(current),
+    { excludePatternIds: usedPatterns }
   )
 
   return {

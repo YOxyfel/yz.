@@ -146,9 +146,9 @@ export function SiteVariantProvider({ children }: { children: ReactNode }) {
       isTransitioning,
       scrollProgress,
       setVariant,
-      panelUsesFlip: variant === 'station' && isDesktop,
+      panelUsesFlip: variant === 'station' && isDesktop && !isCoarsePointer,
     }),
-    [isTransitioning, isDesktop, scrollProgress, setVariant, transitionDirection, variant]
+    [isCoarsePointer, isDesktop, isTransitioning, scrollProgress, setVariant, transitionDirection, variant]
   )
 
   return (

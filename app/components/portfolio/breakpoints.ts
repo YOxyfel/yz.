@@ -16,4 +16,4 @@ export const DEVICE_PROFILE_QUERIES = [
   MEDIA_REDUCED_MOTION,
 ] as const
 
-export const DEVICE_BOOTSTRAP_SCRIPT = `(function(){try{var n=window.matchMedia('${MEDIA_NARROW}').matches,c=window.matchMedia('${MEDIA_COARSE_POINTER}').matches,r=window.matchMedia('${MEDIA_REDUCED_MOTION}').matches,t=window.matchMedia('${MEDIA_TABLET}').matches,d=document.documentElement;d.dataset.narrow=n?'on':'off';d.dataset.tablet=t?'on':'off';d.dataset.coarsePointer=c?'on':'off';d.dataset.fxLite=n||c||r?'on':'off';}catch(e){}})();`
+export const DEVICE_BOOTSTRAP_SCRIPT = `(function(){try{var n=window.matchMedia('${MEDIA_NARROW}').matches,c=window.matchMedia('${MEDIA_COARSE_POINTER}').matches,r=window.matchMedia('${MEDIA_REDUCED_MOTION}').matches,t=window.matchMedia('${MEDIA_TABLET}').matches,cores=navigator.hardwareConcurrency||4,mem=navigator.deviceMemory,d=document.documentElement,tier='mid';if(n||c||r)tier='low';else if(cores>=8&&(!mem||mem>=8))tier='high';d.dataset.narrow=n?'on':'off';d.dataset.tablet=t?'on':'off';d.dataset.coarsePointer=c?'on':'off';d.dataset.fxLite=n||c||r||tier==='low'?'on':'off';d.dataset.perfTier=tier;d.dataset.perfHardware=tier;}catch(e){}})();`
