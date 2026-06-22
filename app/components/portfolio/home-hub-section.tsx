@@ -34,7 +34,6 @@ export function HomeHubSection() {
                 variant="module"
                 interactive
                 fill
-                flipDelay={index * 0.08}
                 backLabel={`LNK-${String(index + 1).padStart(2, '0')}`}
                 className="h-full"
               >

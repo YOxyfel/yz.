@@ -7,10 +7,11 @@ import { Menu, Sparkles, X, Eye, EyeOff } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useTranslations } from 'next-intl'
-import { useCompactNavLayout } from './device-profile'
+import { useCompactNavLayout, useCornerDockVisible } from './device-profile'
 import { useConstellations } from './constellation-context'
 import { SiteFxControls } from './site-fx-controls'
 import { StationButton, StationLed } from './station-console'
+import { SiteVariantPicker } from './site-variant-picker'
 
 const pageLinks = [
   { href: '/about', key: 'about' as const },
@@ -44,6 +45,9 @@ export function SiteNav() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
   const compactNav = useCompactNavLayout()
+  const cornerDockVisible = useCornerDockVisible()
+  const toolsInMenu = !cornerDockVisible
+  const showMenuTrigger = compactNav || toolsInMenu
   const { constellationLabEnabled, toggleConstellationLab, skyViewMode, toggleSkyViewMode } =
     useConstellations()
   const t = useTranslations('Nav')
@@ -58,14 +62,17 @@ export function SiteNav() {
   }, [])
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40)
+    const onScroll = () => {
+      const next = window.scrollY > 40
+      setScrolled((prev) => (prev === next ? prev : next))
+    }
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
   useEffect(() => {
-    if (!compactNav) {
+    if (!showMenuTrigger) {
       document.body.style.overflow = ''
       return
     }
@@ -73,11 +80,11 @@ export function SiteNav() {
     return () => {
       document.body.style.overflow = ''
     }
-  }, [menuOpen, compactNav])
+  }, [menuOpen, showMenuTrigger])
 
   useEffect(() => {
-    if (!compactNav) setMenuOpen(false)
-  }, [compactNav])
+    if (!showMenuTrigger) setMenuOpen(false)
+  }, [showMenuTrigger])
 
   useEffect(() => {
     if (!menuOpen) return
@@ -88,8 +95,63 @@ export function SiteNav() {
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [menuOpen])
 
+  const mobileTools = (
+    <div className={compactNav ? 'site-nav-mobile-tools mt-6 border-t border-[var(--station-bezel)]/35 pt-5' : 'site-nav-mobile-tools'}>
+      <SiteFxControls embedded />
+
+      <div className="mt-4">
+        <p className="site-nav-mobile-section-label mb-2">{t('themes')}</p>
+        <SiteVariantPicker className="station-nav-theme-menu flex flex-col gap-2" />
+      </div>
+
+      <button
+        type="button"
+        data-no-constellation
+        data-sky-lab-keep
+        aria-pressed={constellationLabEnabled}
+        onClick={() => {
+          toggleConstellationLab()
+          setMenuOpen(false)
+        }}
+        className={`site-nav-mobile-tool-btn mt-4 w-full ${
+          constellationLabEnabled ? 'site-nav-mobile-tool-btn-active' : ''
+        }`}
+      >
+        <span className="flex items-center justify-center gap-2">
+          <StationLed active pulse={constellationLabEnabled} />
+          <Sparkles className="h-4 w-4 shrink-0 text-cyan" aria-hidden />
+          <span>{constellationLabEnabled ? t('skyLabOn') : t('skyLab')}</span>
+        </span>
+      </button>
+
+      <button
+        type="button"
+        data-no-constellation
+        data-sky-lab-keep
+        aria-pressed={skyViewMode}
+        onClick={() => {
+          toggleSkyViewMode()
+          setMenuOpen(false)
+        }}
+        className={`site-nav-mobile-tool-btn mt-3 w-full ${
+          skyViewMode ? 'site-nav-mobile-tool-btn-active' : ''
+        }`}
+      >
+        <span className="flex items-center justify-center gap-2">
+          <StationLed active={skyViewMode} pulse={skyViewMode} />
+          {skyViewMode ? (
+            <Eye className="h-4 w-4 shrink-0 text-cyan" aria-hidden />
+          ) : (
+            <EyeOff className="h-4 w-4 shrink-0 text-cyan" aria-hidden />
+          )}
+          <span>{skyViewMode ? t('showUi') : t('skyView')}</span>
+        </span>
+      </button>
+    </div>
+  )
+
   const mobileMenu =
-    compactNav && menuOpen && mounted
+    showMenuTrigger && menuOpen && mounted
       ? createPortal(
           <div
             className="site-nav-mobile-menu pointer-events-auto"
@@ -113,69 +175,31 @@ export function SiteNav() {
                 <X className="h-4 w-4" />
               </button>
               <nav className="flex flex-col items-stretch gap-2 px-6 pb-8 pt-16">
-                {allLinks.map((link) => (
-                  <a
-                    key={link.key}
-                    href={navHref(link.href)}
-                    className="site-nav-mobile-link"
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    {t(link.key)}
-                  </a>
-                ))}
-                <StationButton className="mt-4 w-full justify-center" href={navHref('#contact')}>
-                  {t('hireMe')}
-                </StationButton>
-
-                <div className="site-nav-mobile-tools mt-6 border-t border-[var(--station-bezel)]/35 pt-5">
-                  <SiteFxControls embedded />
-
-                  <button
-                    type="button"
-                    data-no-constellation
-                    data-sky-lab-keep
-                    aria-pressed={constellationLabEnabled}
-                    onClick={() => {
-                      toggleConstellationLab()
-                      setMenuOpen(false)
-                    }}
-                    className={`site-nav-mobile-tool-btn mt-4 w-full ${
-                      constellationLabEnabled ? 'site-nav-mobile-tool-btn-active' : ''
-                    }`}
-                  >
-                    <span className="flex items-center justify-center gap-2">
-                      <StationLed active pulse={constellationLabEnabled} />
-                      <Sparkles className="h-4 w-4 shrink-0 text-cyan" aria-hidden />
-                      <span>
-                        {constellationLabEnabled ? t('skyLabOn') : t('skyLab')}
-                      </span>
-                    </span>
-                  </button>
-
-                  <button
-                    type="button"
-                    data-no-constellation
-                    data-sky-lab-keep
-                    aria-pressed={skyViewMode}
-                    onClick={() => {
-                      toggleSkyViewMode()
-                      setMenuOpen(false)
-                    }}
-                    className={`site-nav-mobile-tool-btn mt-3 w-full ${
-                      skyViewMode ? 'site-nav-mobile-tool-btn-active' : ''
-                    }`}
-                  >
-                    <span className="flex items-center justify-center gap-2">
-                      <StationLed active={skyViewMode} pulse={skyViewMode} />
-                      {skyViewMode ? (
-                        <Eye className="h-4 w-4 shrink-0 text-cyan" aria-hidden />
-                      ) : (
-                        <EyeOff className="h-4 w-4 shrink-0 text-cyan" aria-hidden />
-                      )}
-                      <span>{skyViewMode ? t('showUi') : t('skyView')}</span>
-                    </span>
-                  </button>
-                </div>
+                {compactNav ? (
+                  <>
+                    {allLinks.map((link) => (
+                      <a
+                        key={link.key}
+                        href={navHref(link.href)}
+                        className="site-nav-mobile-link"
+                        onClick={() => setMenuOpen(false)}
+                      >
+                        {t(link.key)}
+                      </a>
+                    ))}
+                    <StationButton className="mt-4 w-full justify-center" href={navHref('#contact')}>
+                      {t('hireMe')}
+                    </StationButton>
+                    {mobileTools}
+                  </>
+                ) : (
+                  <>
+                    <p className="site-nav-mobile-section-label mb-1 text-center">
+                      {t('interactiveTools')}
+                    </p>
+                    {mobileTools}
+                  </>
+                )}
               </nav>
             </div>
           </div>,
@@ -222,11 +246,11 @@ export function SiteNav() {
           {t('hireMe')}
         </StationButton>
 
-        {compactNav ? (
+        {showMenuTrigger ? (
           <button
             type="button"
-            className="site-nav-mobile-trigger station-button station-button-secondary !h-10 !w-10 !p-0"
-            aria-label={menuOpen ? t('menuClose') : t('menuOpen')}
+            className="site-nav-menu-trigger station-button station-button-secondary !h-10 !w-10 !p-0"
+            aria-label={menuOpen ? t('menuClose') : compactNav ? t('menuOpen') : t('interactiveTools')}
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((open) => !open)}
           >

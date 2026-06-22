@@ -4,6 +4,9 @@ export const MOBILE_MAX_PX = 767
 /** Matches Tailwind `lg` — tablet range ends here. */
 export const TABLET_MAX_PX = 1023
 
+/** Min width for the labeled corner tools dock on the nav row (below → hamburger menu). */
+export const CORNER_DOCK_MIN_PX = 1720
+
 export const MEDIA_NARROW = `(max-width: ${MOBILE_MAX_PX}px)` as const
 export const MEDIA_TABLET = `(min-width: ${MOBILE_MAX_PX + 1}px) and (max-width: ${TABLET_MAX_PX}px)` as const
 export const MEDIA_COARSE_POINTER = '(pointer: coarse)' as const

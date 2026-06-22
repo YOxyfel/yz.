@@ -37,13 +37,14 @@ export function BackgroundFx() {
   const { showScreenFx, isReduced } = useVisualFxPreferences()
   const pageVisible = usePageVisible()
   const scrollIdle = useScrollIdle()
+  const scrollBusy = !scrollIdle
 
   const mobileSkyLab = mobileSkyLabMode
   const skyLabOpen = constellationLabEnabled || mobileSkyLab
   const skyLabLite = isReduced || fxLite
 
   const cosmicLite = (fxLite || isReduced || !pageVisible) && !fxMedium
-  const cosmicMedium = !cosmicLite && fxMedium
+  const cosmicMedium = !cosmicLite && (fxMedium || scrollBusy)
   const showHeavyFx = showScreenFx && pageVisible && !isReduced && !fxLite
   const heavyExtrasReady = useDeferredFxMount(
     showHeavyFx && enableHeavyBackgroundFx && pageVisible
@@ -56,8 +57,7 @@ export function BackgroundFx() {
     !isReduced &&
     !mobileSkyLab &&
     !skyLabOpen &&
-    performanceTier !== 'low' &&
-    scrollIdle
+    performanceTier !== 'low'
   const showStarship = showMobileSkyLabStarships || showAmbientStarships
   const showClickConstellations =
     showScreenFx &&
@@ -66,10 +66,12 @@ export function BackgroundFx() {
 
   useEffect(() => {
     document.documentElement.dataset.bgFxActive = showHeavyFx ? 'on' : 'off'
+    document.documentElement.dataset.scrollBusy = scrollBusy ? 'on' : 'off'
     return () => {
       delete document.documentElement.dataset.bgFxActive
+      delete document.documentElement.dataset.scrollBusy
     }
-  }, [showHeavyFx])
+  }, [scrollBusy, showHeavyFx])
 
   if (!showScreenFx) {
     return <StaticBackdrop />
@@ -82,7 +84,7 @@ export function BackgroundFx() {
     >
       <CosmicScrollFx lite={cosmicLite} medium={cosmicMedium} tier={performanceTier} />
 
-      {showHighTierExtras ? (
+      {showHighTierExtras && scrollIdle ? (
         <>
           <div className="bg-fx-blur-blob animate-breathe absolute -left-32 top-1/4 h-[42rem] w-[42rem] rounded-full bg-cyan/[0.04] blur-3xl max-md:hidden" />
           <div className="bg-fx-blur-blob animate-breathe-slow absolute -right-40 top-1/2 h-[40rem] w-[40rem] rounded-full bg-violet/[0.04] blur-3xl max-md:hidden" />

@@ -105,14 +105,17 @@ export function ContactSection() {
           {links.map((link, index) => {
             const Icon = link.icon
             const value = 'valueKey' in link ? t(link.valueKey) : link.value
+            const isShowreelSoon = 'comingSoon' in link && link.comingSoon
             const card = (
               <StationPanel
                 variant="module"
-                interactive={'comingSoon' in link ? false : true}
+                interactive={!isShowreelSoon}
                 fill
-                flipDelay={0.08 * index}
+                flip={isShowreelSoon}
+                flipOnView={isShowreelSoon}
+                flipDelay={isShowreelSoon ? 0.2 : 0}
                 backLabel={`LNK-${String(index + 1).padStart(2, '0')}`}
-                className={`contact-card-panel h-full ${'comingSoon' in link ? 'opacity-75' : ''}`}
+                className={`contact-card-panel h-full ${isShowreelSoon ? 'opacity-75' : ''}`}
               >
                 <div className="contact-card-body">
                   <span className="contact-card-icon" aria-hidden>

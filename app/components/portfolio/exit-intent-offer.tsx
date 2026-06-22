@@ -102,10 +102,6 @@ export function ExitIntentOffer() {
       <button type="button" className="exit-intent-scrim" aria-label={t('dismiss')} onClick={dismiss} />
       <div className="exit-intent-panel-wrap">
         <div className="station-panel station-module exit-intent-panel">
-          <span className="station-rivet station-rivet-tl" aria-hidden />
-          <span className="station-rivet station-rivet-tr" aria-hidden />
-          <span className="station-rivet station-rivet-bl" aria-hidden />
-          <span className="station-rivet station-rivet-br" aria-hidden />
           <div className="station-panel-content">
             <button
               type="button"

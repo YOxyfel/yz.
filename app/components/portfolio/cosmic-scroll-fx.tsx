@@ -119,7 +119,6 @@ function DimensionRifts({
             top: layer.top,
             y: shifts[index],
             background: `linear-gradient(105deg, transparent 0%, oklch(0.55 0.2 ${layer.hue} / 0.05) 40%, oklch(0.7 0.18 ${layer.hue} / 0.09) 50%, transparent 100%)`,
-            filter: 'blur(32px)',
           }}
         />
       ))}
@@ -157,7 +156,7 @@ function ScrollMeteor({
       />
       <motion.div
         className="absolute right-[58%] top-1/2 h-[10px] w-[80px] origin-right -translate-y-1/2 rounded-full bg-gradient-to-l from-transparent via-cyan/20 to-cyan/35 opacity-70"
-        style={{ scaleX: tailScale, filter: 'blur(6px)' }}
+        style={{ scaleX: tailScale }}
       />
       <div className="relative h-7 w-7 sm:h-8 sm:w-8">
         <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_35%_30%,white,oklch(0.84_0.16_200)_45%,oklch(0.45_0.2_280)_100%)] shadow-[0_0_18px_4px_oklch(0.84_0.16_200/0.45)]" />
@@ -204,18 +203,27 @@ function CosmicScrollFxFull({ starCount }: { starCount: number }) {
   const stars = useMemo(() => buildStars(starCount), [starCount])
 
   useEffect(() => {
+    let frame = 0
+
     const updateProgress = () => {
+      frame = 0
       const max = document.documentElement.scrollHeight - window.innerHeight
       const next = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0
       scrollYProgress.set(next)
     }
 
+    const onScroll = () => {
+      if (frame) return
+      frame = requestAnimationFrame(updateProgress)
+    }
+
     updateProgress()
-    window.addEventListener('scroll', updateProgress, { passive: true })
+    window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('resize', updateProgress, { passive: true })
     return () => {
-      window.removeEventListener('scroll', updateProgress)
+      window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', updateProgress)
+      if (frame) cancelAnimationFrame(frame)
     }
   }, [scrollYProgress])
 

@@ -9,7 +9,7 @@ import {
   useSyncExternalStore,
   type ReactNode,
 } from 'react'
-import { DEVICE_PROFILE_QUERIES, MEDIA_COARSE_POINTER, MOBILE_MAX_PX, TABLET_MAX_PX } from './breakpoints'
+import { CORNER_DOCK_MIN_PX, DEVICE_PROFILE_QUERIES, MEDIA_COARSE_POINTER, MOBILE_MAX_PX, TABLET_MAX_PX } from './breakpoints'
 import { PerformanceAdaptiveMonitor } from './performance-adaptive'
 import {
   getAdaptiveTier,
@@ -237,6 +237,29 @@ export function useCompactNavLayout() {
     subscribeCompactNav,
     getCompactNavSnapshot,
     getServerCompactNavSnapshot
+  )
+}
+
+function subscribeCornerDockVisible(onStoreChange: () => void) {
+  const media = window.matchMedia(`(min-width: ${CORNER_DOCK_MIN_PX}px)`)
+  media.addEventListener('change', onStoreChange)
+  return () => media.removeEventListener('change', onStoreChange)
+}
+
+function getCornerDockVisibleSnapshot() {
+  return window.matchMedia(`(min-width: ${CORNER_DOCK_MIN_PX}px)`).matches
+}
+
+function getServerCornerDockVisibleSnapshot() {
+  return true
+}
+
+/** True when Site FX / Sky Lab / Sky View render in the top-left dock (≥1720px). */
+export function useCornerDockVisible() {
+  return useSyncExternalStore(
+    subscribeCornerDockVisible,
+    getCornerDockVisibleSnapshot,
+    getServerCornerDockVisibleSnapshot
   )
 }
 

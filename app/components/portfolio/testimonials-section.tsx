@@ -56,7 +56,6 @@ export function TestimonialsSection({
               key={item.id}
               variant="module"
               fill
-              flipDelay={index * 0.06}
               backLabel={`SIG-${String(index + 1).padStart(2, '0')}`}
               className="h-full"
             >

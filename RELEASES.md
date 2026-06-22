@@ -1,5 +1,34 @@
 # Release history
 
+## V2.3.0 (`v2.3.0`)
+
+**Saved:** corner dock layout, scroll performance, and continued station polish.
+
+| | |
+|---|---|
+| **Git tag** | `v2.3.0` |
+| **Production URL** | https://v0-yanez.vercel.app |
+
+### What this version includes
+
+- Labeled Site FX / Sky Lab / Sky View dock on the nav row at ≥1720px; below that width, tools move into the menu
+- Scroll performance: lighter cosmic FX while scrolling, shared scroll-idle signal, no starship remount on wheel
+- Panel chrome cleanup, opt-in flip cards, hero/scroll fixes, and coming-soon project copy
+
+### Revert to V2.3.0
+
+```powershell
+cd D:\999.Personal\Website\website
+git checkout v2.3.0 -- .
+git clean -fd -e .env.local -e node_modules -e .next -e .vercel
+npm install
+npm run build
+```
+
+Or hard reset: `git reset --hard v2.3.0`
+
+---
+
 ## V1.1.1 (`v1.1.1`)
 
 **Saved:** mobile nav, Sky Lab, and FX polish after V1.1.

@@ -521,7 +521,7 @@
   }
 
   .station-section--engine .station-sector-heading {
-    border-color: oklch(0.72 0.14 55 / 0.25);
+    box-shadow: none;
   }
 
   .station-section--signal .station-sector-backdrop {
@@ -780,44 +780,17 @@
       -3px 0 24px -8px oklch(0.55 0.1 200 / 0.1);
   }
 
-  .station-sector-heading[data-section-tone='bridge'] {
-    box-shadow: inset 0 0 0 1px oklch(0.55 0.1 200 / 0.2);
-  }
-
-  .station-sector-heading[data-section-tone='nav'] {
-    box-shadow: inset 0 0 0 1px oklch(0.55 0.1 200 / 0.16);
-  }
-
-  .station-sector-heading[data-section-tone='engine'] {
-    box-shadow: inset 0 0 0 1px oklch(0.72 0.14 55 / 0.18);
-  }
-
-  .station-sector-heading[data-section-tone='signal'] {
-    box-shadow: inset 0 0 0 1px oklch(0.58 0.12 290 / 0.2);
-  }
-
-  .station-sector-heading[data-section-tone='partner'] {
-    box-shadow: inset 0 0 0 1px oklch(0.62 0.12 350 / 0.18);
-  }
-
-  .station-sector-heading[data-section-tone='arsenal'] {
-    box-shadow: inset 0 0 0 1px oklch(0.65 0.16 35 / 0.18);
-  }
-
-  .station-sector-heading[data-section-tone='stack'] {
-    box-shadow: inset 0 0 0 1px oklch(0.62 0.1 180 / 0.18);
-  }
-
-  .station-sector-heading[data-section-tone='faq'] {
-    box-shadow: inset 0 0 0 1px oklch(0.55 0.1 230 / 0.22);
-  }
-
-  .station-sector-heading[data-section-tone='comms'] {
-    box-shadow: inset 0 0 0 1px oklch(0.58 0.12 290 / 0.22);
-  }
-
+  .station-sector-heading[data-section-tone='bridge'],
+  .station-sector-heading[data-section-tone='nav'],
+  .station-sector-heading[data-section-tone='engine'],
+  .station-sector-heading[data-section-tone='signal'],
+  .station-sector-heading[data-section-tone='partner'],
+  .station-sector-heading[data-section-tone='arsenal'],
+  .station-sector-heading[data-section-tone='stack'],
+  .station-sector-heading[data-section-tone='faq'],
+  .station-sector-heading[data-section-tone='comms'],
   .station-sector-heading[data-section-tone='page'] {
-    box-shadow: inset 0 0 0 1px oklch(0.55 0.1 200 / 0.14);
+    box-shadow: none;
   }
 
   .station-faq-list {
@@ -1044,13 +1017,11 @@
     position: relative;
     overflow: hidden;
     border-radius: 0.65rem;
-    border: 1px solid oklch(0.42 0.035 248 / 0.55);
+    border: none;
     background:
       linear-gradient(155deg, var(--station-hull-light) 0%, var(--station-hull) 38%, var(--station-hull-dark) 100%);
     box-shadow:
-      inset 0 1px 0 oklch(0.55 0.04 245 / 0.35),
-      inset 0 -2px 6px oklch(0.06 0.01 270 / 0.65),
-      0 1px 0 oklch(0.5 0.04 245 / 0.25),
+      inset 0 -2px 6px oklch(0.06 0.01 270 / 0.5),
       0 18px 40px -14px oklch(0 0 0 / 0.72),
       0 6px 14px -6px oklch(0 0 0 / 0.55);
     transform-style: preserve-3d;
@@ -1059,33 +1030,16 @@
   }
 
   .station-panel::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
-    border-radius: inherit;
-    background: linear-gradient(
-      125deg,
-      oklch(1 0 0 / 0.07) 0%,
-      transparent 28%,
-      transparent 72%,
-      oklch(0 0 0 / 0.18) 100%
-    );
+    display: none;
   }
 
   .station-flip-interactive:hover .station-panel-interactive,
   .station-panel-interactive:hover {
     transform: translateY(-5px);
     box-shadow:
-      inset 0 1px 0 oklch(0.55 0.04 245 / 0.4),
-      inset 0 -2px 6px oklch(0.06 0.01 270 / 0.65),
+      inset 0 -2px 6px oklch(0.06 0.01 270 / 0.5),
       0 28px 56px -16px oklch(0 0 0 / 0.78),
       0 0 40px -10px var(--station-glow);
-  }
-
-  .station-module {
-    border-color: oklch(0.48 0.05 200 / 0.4);
   }
 
   .station-display-bezel {
@@ -1097,7 +1051,7 @@
     z-index: 1;
     padding: 1.35rem 1.5rem;
     overflow: hidden;
-    border-radius: calc(0.65rem - 1px);
+    border-radius: inherit;
   }
 
   .station-panel-interactive .station-panel-content {
@@ -1216,7 +1170,8 @@
   .station-flip-back {
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
-    overflow: visible;
+    border-radius: 0.65rem;
+    overflow: hidden;
   }
 
   .station-flip-fill,
@@ -1243,6 +1198,20 @@
     transform: rotateY(180deg);
   }
 
+  /* Flip faces — clip edge bleed during 3D rotation */
+  .station-flip-scene .station-panel,
+  .station-flip-scene .station-panel-back {
+    border: none;
+  }
+
+  .station-flip-scene .station-flip-interactive:hover .station-panel-interactive,
+  .station-flip-scene .station-panel-interactive:hover {
+    box-shadow:
+      inset 0 -2px 6px oklch(0.06 0.01 270 / 0.5),
+      0 28px 56px -16px oklch(0 0 0 / 0.78),
+      0 0 40px -10px var(--station-glow);
+  }
+
   .station-panel-back {
     position: relative;
     display: flex;
@@ -1252,11 +1221,10 @@
     justify-content: space-between;
     overflow: hidden;
     border-radius: 0.65rem;
-    border: 1px solid oklch(0.32 0.028 252 / 0.75);
+    border: none;
     background:
       linear-gradient(165deg, oklch(0.2 0.018 258) 0%, oklch(0.12 0.014 264) 55%, oklch(0.08 0.01 270) 100%);
     box-shadow:
-      inset 0 0 0 1px oklch(0 0 0 / 0.45),
       inset 0 2px 12px oklch(0 0 0 / 0.35),
       0 10px 28px -12px oklch(0 0 0 / 0.75);
     padding: 1.35rem 1.5rem;
@@ -1359,35 +1327,7 @@
   }
 
   .station-rivet {
-    position: absolute;
-    z-index: 2;
-    width: 7px;
-    height: 7px;
-    border-radius: 9999px;
-    background: radial-gradient(circle at 35% 30%, oklch(0.55 0.03 250), oklch(0.22 0.02 260));
-    box-shadow:
-      inset 0 -1px 2px oklch(0 0 0 / 0.55),
-      0 1px 0 oklch(0.65 0.04 245 / 0.35);
-  }
-
-  .station-rivet-tl {
-    left: 0.85rem;
-    top: 0.85rem;
-  }
-
-  .station-rivet-tr {
-    right: 0.85rem;
-    top: 0.85rem;
-  }
-
-  .station-rivet-bl {
-    left: 0.85rem;
-    bottom: 0.85rem;
-  }
-
-  .station-rivet-br {
-    right: 0.85rem;
-    bottom: 0.85rem;
+    display: none;
   }
 
   .station-screen {
@@ -3016,9 +2956,14 @@
 }
 
 html[data-constellation-lab='on'] .corner-tools-dock {
-  top: max(0.75rem, env(safe-area-inset-top, 0px));
   left: max(0.75rem, env(safe-area-inset-left, 0px));
   z-index: 80;
+}
+
+@media (max-width: 1023px) {
+  html[data-constellation-lab='on'] .corner-tools-dock {
+    top: max(0.75rem, env(safe-area-inset-top, 0px));
+  }
 }
 
 /* Nav chart — fixed below corner tools dock row. */
@@ -3104,9 +3049,9 @@ html[data-mobile-sky-lab='on'] .constellation-label {
   white-space: nowrap;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1720px) {
   html:not([data-constellation-lab='on']) .corner-tools-dock:not(.corner-tools-dock-minimal) {
-    top: calc(max(0.75rem, env(safe-area-inset-top, 0px)) + 4.75rem);
+    top: max(0.75rem, env(safe-area-inset-top, 0px));
     left: max(0.75rem, env(safe-area-inset-left, 0px));
   }
 }
@@ -3164,6 +3109,10 @@ html[data-mobile-sky-lab='on'] .constellation-label {
 html[data-narrow='on'] .site-nav-desktop-links,
 html[data-narrow='on'] .site-nav-desktop-hire {
   display: none !important;
+}
+
+.site-nav-menu-trigger {
+  display: inline-flex !important;
 }
 
 .site-nav-mobile-trigger {
@@ -3280,9 +3229,17 @@ html[data-narrow='on'] .site-nav-mobile-trigger {
   color: oklch(0.84 0.16 200);
 }
 
-/* Mobile/tablet: corner tools live in the hamburger menu only. */
-@media (max-width: 1023px) {
+/* Below desktop dock width: corner tools live in the menu. */
+@media (max-width: 1719px) {
   .corner-tools-dock:not(.corner-tools-dock-minimal) {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .corner-station-dock-stack {
     display: none !important;
     visibility: hidden !important;
     pointer-events: none !important;
@@ -3880,12 +3837,6 @@ html[data-fx-lite='on'] .corner-dock-icon {
   50% {
     opacity: 1;
     transform: scale(1.06);
-  }
-}
-
-@media (min-width: 768px) {
-  html:not([data-constellation-lab='on']) .corner-tools-dock:not(.corner-tools-dock-minimal) {
-    top: max(1rem, env(safe-area-inset-top, 0px));
   }
 }
 
@@ -4778,4 +4729,13 @@ html[data-perf-tier='mid'] .cosmic-star-twinkle {
 html[data-perf-tier='low'] .bg-fx-heavy,
 html[data-perf-tier='mid'] .bg-fx-heavy {
   display: none !important;
+}
+
+html[data-scroll-busy='on'] .cosmic-star-twinkle,
+html[data-scroll-busy='on'] .cosmic-nebula-a,
+html[data-scroll-busy='on'] .cosmic-nebula-b,
+html[data-scroll-busy='on'] .bg-fx-blur-blob,
+html[data-scroll-busy='on'] .animate-breathe,
+html[data-scroll-busy='on'] .animate-breathe-slow {
+  animation-play-state: paused !important;
 }

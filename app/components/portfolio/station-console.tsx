@@ -28,15 +28,7 @@ const backVariantLabel = {
 type StationVariant = keyof typeof variantMap
 
 function PanelChrome({ children }: { children: ReactNode }) {
-  return (
-    <>
-      <span className="station-rivet station-rivet-tl" aria-hidden />
-      <span className="station-rivet station-rivet-tr" aria-hidden />
-      <span className="station-rivet station-rivet-bl" aria-hidden />
-      <span className="station-rivet station-rivet-br" aria-hidden />
-      <div className="station-panel-content">{children}</div>
-    </>
-  )
+  return <div className="station-panel-content">{children}</div>
 }
 
 function PanelBack({
@@ -173,6 +165,9 @@ type StationPanelProps = {
   variant?: StationVariant
   tilt?: 'none' | 'left' | 'right' | 'center'
   interactive?: boolean
+  /** Opt-in 3D flip reveal — off by default so reading panels stay static. */
+  flip?: boolean
+  /** @deprecated Use `flip` instead. */
   iso?: boolean
   flipDelay?: number
   flipOnView?: boolean
@@ -185,16 +180,18 @@ export function StationPanel({
   className,
   variant = 'hull',
   interactive = false,
-  iso = true,
+  flip = false,
+  iso = false,
   flipDelay = 0,
-  flipOnView = true,
+  flipOnView = false,
   backLabel,
   fill = false,
   ...props
 }: StationPanelProps) {
   const { panelUsesFlip } = useSiteVariant()
-  const useFlipPanels = iso && panelUsesFlip
-  const useFlipOnView = flipOnView && panelUsesFlip
+  const wantsFlip = flip || iso
+  const useFlipPanels = wantsFlip && panelUsesFlip
+  const useFlipOnView = flipOnView && wantsFlip && panelUsesFlip
 
   if (!useFlipPanels) {
     const panelClass = mergeClass(

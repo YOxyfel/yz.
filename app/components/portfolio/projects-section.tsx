@@ -31,7 +31,6 @@ export function ProjectsSection() {
               variant="display"
               interactive
               fill
-              flipDelay={index * 0.1}
               backLabel={`PRJ-${String(index + 1).padStart(2, '0')}`}
               className="group relative cursor-pointer"
               onClick={() => setSelectedProject(project)}

@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useTranslations } from 'next-intl'
 import { useConstellations } from './constellation-context'
-import { isMobileSkyLabViewport, useCompactNavLayout, useDeviceProfile } from './device-profile'
+import { isMobileSkyLabViewport, useCompactNavLayout, useCornerDockVisible, useDeviceProfile } from './device-profile'
 import { FEATURE_HINT_KEYS, hasSeenHint, markHintSeen } from './feature-hints'
 import { SiteFxControls } from './site-fx-controls'
 import { StationLed } from './station-console'
@@ -23,6 +23,7 @@ export function CornerToolsDock() {
   const [showHint, setShowHint] = useState(false)
   const deviceProfile = useDeviceProfile()
   const compactNav = useCompactNavLayout()
+  const cornerDockVisible = useCornerDockVisible()
   const touchViewport = isMobileSkyLabViewport(deviceProfile)
   const { mode, screenFxLive } = useVisualFxPreferences()
   const {
@@ -81,7 +82,7 @@ export function CornerToolsDock() {
   }
 
   if (!mounted) return null
-  if (compactNav && !mobileSkyLabMode) return null
+  if ((!cornerDockVisible || compactNav) && !mobileSkyLabMode) return null
 
   if (skyViewMode && !mobileSkyLabMode) {
     return createPortal(

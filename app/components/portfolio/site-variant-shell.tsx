@@ -71,7 +71,7 @@ export function SiteVariantShell({ children }: { children: ReactNode }) {
     setVariant(SITE_VARIANTS[nextIndex]!, 1)
   }
 
-  const panelVisible = useTouchPicker ? panelOpen : panelOpen || showHint
+  const panelVisible = !useTouchPicker && (panelOpen || showHint)
 
   return (
     <>
@@ -85,6 +85,7 @@ export function SiteVariantShell({ children }: { children: ReactNode }) {
         </div>
       </div>
 
+      {!useTouchPicker ? (
       <div
         data-portfolio-chrome
         data-site-variant={variant}
@@ -174,6 +175,7 @@ export function SiteVariantShell({ children }: { children: ReactNode }) {
           </div>
         ) : null}
       </div>
+      ) : null}
     </>
   )
 }

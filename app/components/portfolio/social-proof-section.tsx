@@ -51,7 +51,7 @@ export function SocialProofSection({
         </div>
       </StationPanel>
 
-      <StationPanel variant="module" backLabel="REEL" className={showHeading ? 'mt-8' : 'mt-8'}>
+      <StationPanel variant="module" backLabel="REEL" flip flipOnView className={showHeading ? 'mt-8' : 'mt-8'}>
         <div className="relative z-[1] flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-4">
             <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-violet/35 bg-violet/10 text-violet">
