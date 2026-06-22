@@ -19,7 +19,6 @@ import {
   reviveFromArchive,
   runAutoBatch,
   runCrazySpawn,
-  seedAmbientConstellations,
   type MaxVisibleOption,
 } from './constellation-store'
 import { createDefaultBoosts, type CompletedEntry, type MemeBoostState } from './constellation-logic'
@@ -75,6 +74,18 @@ type ConstellationContextValue = {
   revive: (record: ConstellationRecord) => void
 }
 
+type ConstellationChromeValue = {
+  constellationLabEnabled: boolean
+  mobileSkyLabMode: boolean
+  skyViewMode: boolean
+  toggleConstellationLab: () => void
+  toggleSkyViewMode: () => void
+}
+
+type ConstellationRuntimeValue = Omit<ConstellationContextValue, keyof ConstellationChromeValue>
+
+const ConstellationChromeContext = createContext<ConstellationChromeValue | null>(null)
+const ConstellationRuntimeContext = createContext<ConstellationRuntimeValue | null>(null)
 const ConstellationContext = createContext<ConstellationContextValue | null>(null)
 
 const MERGE_DURATION = 1.35
@@ -263,27 +274,6 @@ export function ConstellationProvider({ children }: { children: ReactNode }) {
       window.removeEventListener('resize', syncMobileSkyLabForViewport)
       coarseMedia.removeEventListener('change', syncMobileSkyLabForViewport)
     }
-  }, [])
-
-  useEffect(() => {
-    const viewport = {
-      width: window.innerWidth,
-      height: window.innerHeight,
-    }
-    const result = seedAmbientConstellations(
-      historyRef.current,
-      boostsRef.current,
-      idsRef.current,
-      viewport
-    )
-    historyRef.current = result.history
-    boostsRef.current = result.boosts
-    ambientSnapshotRef.current = {
-      constellations: structuredClone(result.constellations),
-      history: [...result.history],
-      boosts: { ...result.boosts },
-    }
-    setConstellations(result.constellations)
   }, [])
 
   const toggleManualMode = useCallback(() => {
@@ -598,17 +588,30 @@ export function ConstellationProvider({ children }: { children: ReactNode }) {
     [crazyDecors, manualDecors]
   )
 
-  const value = useMemo(
+  const chromeValue = useMemo<ConstellationChromeValue>(
     () => ({
       constellationLabEnabled,
       mobileSkyLabMode,
+      skyViewMode,
       toggleConstellationLab,
+      toggleSkyViewMode,
+    }),
+    [
+      constellationLabEnabled,
+      mobileSkyLabMode,
+      skyViewMode,
+      toggleConstellationLab,
+      toggleSkyViewMode,
+    ]
+  )
+
+  const runtimeValue = useMemo<ConstellationRuntimeValue>(
+    () => ({
       constellations,
       archive,
       maxVisible,
       manualMode,
       crazyMode,
-      skyViewMode,
       listMode,
       skyList,
       orbitDecors,
@@ -622,42 +625,63 @@ export function ConstellationProvider({ children }: { children: ReactNode }) {
       toggleListMode,
       toggleManualMode,
       toggleCrazyMode,
-      toggleSkyViewMode,
       runAuto,
       revive,
     }),
     [
       archive,
-      constellationLabEnabled,
       constellations,
       crazyMode,
-      skyViewMode,
       listMode,
       manualMode,
-      mobileSkyLabMode,
       maxVisible,
       nebulaBurst,
       orbitDecors,
       selectedOrbitDecorId,
-      setSelectedOrbitDecorId,
-      updateOrbitDecor,
-      removeOrbitDecor,
       dismissNebulaBurst,
       revive,
       runAuto,
       setMaxVisible,
       skyList,
-      toggleConstellationLab,
       toggleCrazyMode,
-      toggleSkyViewMode,
       toggleListMode,
       toggleManualMode,
+      updateOrbitDecor,
+      removeOrbitDecor,
     ]
   )
 
-  return (
-    <ConstellationContext.Provider value={value}>{children}</ConstellationContext.Provider>
+  const value = useMemo(
+    () => ({
+      ...chromeValue,
+      ...runtimeValue,
+    }),
+    [chromeValue, runtimeValue]
   )
+
+  return (
+    <ConstellationChromeContext.Provider value={chromeValue}>
+      <ConstellationRuntimeContext.Provider value={runtimeValue}>
+        <ConstellationContext.Provider value={value}>{children}</ConstellationContext.Provider>
+      </ConstellationRuntimeContext.Provider>
+    </ConstellationChromeContext.Provider>
+  )
+}
+
+export function useConstellationChrome() {
+  const context = useContext(ConstellationChromeContext)
+  if (!context) {
+    throw new Error('useConstellationChrome must be used within ConstellationProvider')
+  }
+  return context
+}
+
+export function useConstellationRuntime() {
+  const context = useContext(ConstellationRuntimeContext)
+  if (!context) {
+    throw new Error('useConstellationRuntime must be used within ConstellationProvider')
+  }
+  return context
 }
 
 export function useConstellations() {

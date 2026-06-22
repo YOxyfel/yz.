@@ -635,10 +635,12 @@ export function StarshipTraffic({
   enabled = true,
   liteMode = false,
   pauseSpawning = false,
+  pauseMotion = false,
 }: {
   enabled?: boolean
   liteMode?: boolean
   pauseSpawning?: boolean
+  pauseMotion?: boolean
 }) {
   const reducedMotion = useReducedMotion()
   const pageVisible = usePageVisible()
@@ -667,6 +669,13 @@ export function StarshipTraffic({
   useEffect(() => {
     shipsRef.current = ships
   }, [ships])
+
+  useEffect(() => {
+    if (!pauseMotion) return
+    setShips([])
+    staggerRefs.current.forEach((timer) => window.clearTimeout(timer))
+    staggerRefs.current = []
+  }, [pauseMotion])
 
   const removeShip = useCallback((id: string) => {
     setShips((current) => current.filter((ship) => ship.id !== id))
@@ -852,9 +861,11 @@ export function StarshipTraffic({
 
   if (!enabled || reducedMotion) return null
 
+  const visibleShips = pauseMotion ? [] : ships
+
   return (
     <div className="starship-traffic-layer pointer-events-none absolute inset-0 z-[4] overflow-hidden">
-      {ships.map((flight) => (
+      {visibleShips.map((flight) => (
         <StarshipEntity key={flight.id} flight={flight} onComplete={removeShip} />
       ))}
     </div>

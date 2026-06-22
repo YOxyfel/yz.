@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useTranslations } from 'next-intl'
 import { useCompactNavLayout, useCornerDockVisible } from './device-profile'
-import { useConstellations } from './constellation-context'
+import { useConstellationChrome } from './constellation-context'
 import { SiteFxControls } from './site-fx-controls'
 import { StationButton, StationLed } from './station-console'
 import { SiteVariantPicker } from './site-variant-picker'
@@ -49,7 +49,7 @@ export function SiteNav() {
   const toolsInMenu = !cornerDockVisible
   const showMenuTrigger = compactNav || toolsInMenu
   const { constellationLabEnabled, toggleConstellationLab, skyViewMode, toggleSkyViewMode } =
-    useConstellations()
+    useConstellationChrome()
   const t = useTranslations('Nav')
   const locale = useLocale()
   const navHref = useNavHref()

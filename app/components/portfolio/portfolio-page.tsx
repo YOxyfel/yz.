@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic'
 import { useEffect } from 'react'
 import { BackgroundFx } from './background-fx'
-import { ConstellationProvider, useConstellations } from './constellation-context'
+import { ConstellationProvider, useConstellationChrome } from './constellation-context'
 import { CornerToolsDock } from './corner-tools-dock'
 import { useDeviceProfile } from './device-profile'
 import { resolveSkyLabFx } from './sky-lab-fx'
@@ -59,8 +59,7 @@ const WebStackSection = dynamic(
 
 function PortfolioContent() {
   const { variant } = useSiteVariant()
-  const { constellationLabEnabled, skyViewMode, mobileSkyLabMode } =
-    useConstellations()
+  const { constellationLabEnabled, skyViewMode, mobileSkyLabMode } = useConstellationChrome()
   const deviceProfile = useDeviceProfile()
   const { showScreenFx, isReduced } = useVisualFxPreferences()
   const { skyLabFxTier } = resolveSkyLabFx(showScreenFx, isReduced, deviceProfile.fxLite)
@@ -109,16 +108,24 @@ function PortfolioContent() {
             <SiteNav />
             <Hero />
             <HomeHubSection />
-            <ProjectsSection />
-            <SocialProofSection />
-            <TestimonialsSection />
+            <LazySection minHeight="min(56vh, 640px)">
+              <ProjectsSection />
+            </LazySection>
+            <LazySection minHeight="min(40vh, 520px)">
+              <SocialProofSection />
+            </LazySection>
+            <LazySection minHeight="min(36vh, 480px)">
+              <TestimonialsSection />
+            </LazySection>
             <LazySection minHeight="min(72vh, 720px)">
               <ArsenalSection />
             </LazySection>
             <LazySection minHeight="min(48vh, 560px)">
               <WebStackSection />
             </LazySection>
-            <FaqSection />
+            <LazySection minHeight="min(32vh, 420px)">
+              <FaqSection />
+            </LazySection>
             <LazySection minHeight="min(40vh, 480px)">
               <ContactSection />
             </LazySection>

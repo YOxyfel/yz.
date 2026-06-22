@@ -20,7 +20,7 @@ import {
 } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { useConstellations } from './constellation-context'
+import { useConstellationChrome } from './constellation-context'
 import { arsenalPromo } from './arsenal-promo'
 import { isMobileSkyLabViewport, useDeviceProfile } from './device-profile'
 
@@ -191,7 +191,7 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
   const playbackSnapshotRef = useRef<{ time: number; playing: boolean } | null>(null)
   const inView = useInView(rootRef, { once: false, margin: '-10%' })
   const reduceMotion = useReducedMotion()
-  const { skyViewMode } = useConstellations()
+  const { skyViewMode } = useConstellationChrome()
   const deviceProfile = useDeviceProfile()
   const isMobileVideo = isMobileSkyLabViewport(deviceProfile)
 

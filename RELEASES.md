@@ -1,5 +1,38 @@
 # Release history
 
+## V2.4.0 (`v2.4.0`)
+
+**Saved:** scroll performance, lazy sections, and smarter FX defaults.
+
+| | |
+|---|---|
+| **Git tag** | `v2.4.0` |
+| **Production URL** | https://yanezhekov.dev |
+
+### What this version includes
+
+- Cinematic cosmic FX only on high-tier + Site FX Full; medium/lite while scrolling
+- Constellations and heavy sky work only when Sky Lab is open
+- Lazy-mounted Projects, Social Proof, Testimonials, and FAQ sections
+- Split constellation chrome context so nav/dock don’t re-render on sky spawns
+- Hardware-based Site FX defaults (high → Full, mid → Reduced, low/mobile → Off)
+- Scroll FPS watchdog with adaptive tier downgrade; starship pause during scroll
+- `backdrop-filter` disabled on fixed chrome while scrolling
+
+### Revert to V2.4.0
+
+```powershell
+cd D:\999.Personal\Website\website
+git checkout v2.4.0 -- .
+git clean -fd -e .env.local -e node_modules -e .next -e .vercel
+npm install
+npm run build
+```
+
+Or hard reset: `git reset --hard v2.4.0`
+
+---
+
 ## V2.3.0 (`v2.3.0`)
 
 **Saved:** corner dock layout, scroll performance, and continued station polish.

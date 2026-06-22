@@ -11,6 +11,7 @@ import {
   type ReactNode,
 } from 'react'
 import { MOBILE_MAX_PX } from './breakpoints'
+import { getHardwareTier } from './performance-tier'
 
 export type VisualFxMode = 'full' | 'reduced' | 'off'
 
@@ -33,7 +34,11 @@ function markExplicitFxChoice() {
 
 /** Default site FX mode when the user has not picked one explicitly. */
 function defaultFxModeForViewport(): VisualFxMode {
-  return isMobileFxViewport() ? 'off' : 'full'
+  if (isMobileFxViewport()) return 'off'
+  const hardware = getHardwareTier()
+  if (hardware === 'high') return 'full'
+  if (hardware === 'mid') return 'reduced'
+  return 'off'
 }
 
 function resolveInitialFxMode(): VisualFxMode {

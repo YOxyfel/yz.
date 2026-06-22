@@ -4739,3 +4739,13 @@ html[data-scroll-busy='on'] .animate-breathe,
 html[data-scroll-busy='on'] .animate-breathe-slow {
   animation-play-state: paused !important;
 }
+
+html[data-scroll-busy='on'] .site-nav-header .station-nav-bar,
+html[data-scroll-busy='on'] .corner-dock-frame,
+html[data-scroll-busy='on'] .corner-vfx-dock-panel,
+html[data-scroll-busy='on'] .site-nav-mobile-panel,
+html[data-scroll-busy='on'] .sky-lab-nav-chart,
+html[data-scroll-busy='on'] .corner-station-dock .corner-dock-frame {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}

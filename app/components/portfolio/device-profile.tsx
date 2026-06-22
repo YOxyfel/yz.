@@ -11,6 +11,7 @@ import {
 } from 'react'
 import { CORNER_DOCK_MIN_PX, DEVICE_PROFILE_QUERIES, MEDIA_COARSE_POINTER, MOBILE_MAX_PX, TABLET_MAX_PX } from './breakpoints'
 import { PerformanceAdaptiveMonitor } from './performance-adaptive'
+import { ScrollPerformanceMonitor } from './use-scroll-performance'
 import {
   getAdaptiveTier,
   getHardwareTier,
@@ -205,6 +206,10 @@ export function DeviceProfileProvider({ children }: { children: ReactNode }) {
   return (
     <DeviceProfileContext.Provider value={profile}>
       <PerformanceAdaptiveMonitor
+        performanceTier={profile.performanceTier}
+        onAdaptiveTier={handleAdaptiveTier}
+      />
+      <ScrollPerformanceMonitor
         performanceTier={profile.performanceTier}
         onAdaptiveTier={handleAdaptiveTier}
       />

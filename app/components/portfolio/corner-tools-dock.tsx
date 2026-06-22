@@ -4,7 +4,7 @@ import { Eye, EyeOff, Shield, Sparkles, ZapOff } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useTranslations } from 'next-intl'
-import { useConstellations } from './constellation-context'
+import { useConstellationChrome } from './constellation-context'
 import { isMobileSkyLabViewport, useCompactNavLayout, useCornerDockVisible, useDeviceProfile } from './device-profile'
 import { FEATURE_HINT_KEYS, hasSeenHint, markHintSeen } from './feature-hints'
 import { SiteFxControls } from './site-fx-controls'
@@ -32,7 +32,7 @@ export function CornerToolsDock() {
     toggleConstellationLab,
     skyViewMode,
     toggleSkyViewMode,
-  } = useConstellations()
+  } = useConstellationChrome()
   const tFx = useTranslations('SiteFx')
   const tSky = useTranslations('SkyLab')
   const tNav = useTranslations('Nav')

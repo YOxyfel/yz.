@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic'
 import { useEffect } from 'react'
 import { ClickConstellations } from './click-constellations'
 import { CosmicScrollFx } from './cosmic-scroll-fx'
-import { useConstellations } from './constellation-context'
+import { useConstellationChrome } from './constellation-context'
 import { useDeviceProfile } from './device-profile'
 import { useDeferredFxMount } from './use-deferred-fx-mount'
 import { usePageVisible } from './use-page-visible'
@@ -26,7 +26,7 @@ function StaticBackdrop() {
 }
 
 export function BackgroundFx() {
-  const { constellationLabEnabled, mobileSkyLabMode } = useConstellations()
+  const { constellationLabEnabled, mobileSkyLabMode } = useConstellationChrome()
   const deviceProfile = useDeviceProfile()
   const {
     fxLite,
@@ -34,7 +34,7 @@ export function BackgroundFx() {
     performanceTier,
     enableHeavyBackgroundFx,
   } = deviceProfile
-  const { showScreenFx, isReduced } = useVisualFxPreferences()
+  const { showScreenFx, isReduced, mode } = useVisualFxPreferences()
   const pageVisible = usePageVisible()
   const scrollIdle = useScrollIdle()
   const scrollBusy = !scrollIdle
@@ -43,11 +43,17 @@ export function BackgroundFx() {
   const skyLabOpen = constellationLabEnabled || mobileSkyLab
   const skyLabLite = isReduced || fxLite
 
-  const cosmicLite = (fxLite || isReduced || !pageVisible) && !fxMedium
-  const cosmicMedium = !cosmicLite && (fxMedium || scrollBusy)
-  const showHeavyFx = showScreenFx && pageVisible && !isReduced && !fxLite
+  const cosmicLite = fxLite || isReduced || !pageVisible || !showScreenFx
+  const cinematicCosmic =
+    !cosmicLite &&
+    !fxMedium &&
+    performanceTier === 'high' &&
+    mode === 'full' &&
+    !scrollBusy
+  const cosmicMedium = !cosmicLite && !cinematicCosmic
+  const showHeavyFx = showScreenFx && pageVisible && !isReduced && !fxLite && mode === 'full'
   const heavyExtrasReady = useDeferredFxMount(
-    showHeavyFx && enableHeavyBackgroundFx && pageVisible
+    showHeavyFx && enableHeavyBackgroundFx && pageVisible && cinematicCosmic
   )
   const showHighTierExtras = showHeavyFx && enableHeavyBackgroundFx && heavyExtrasReady
   const showMobileSkyLabStarships = mobileSkyLab && skyLabOpen && showScreenFx && pageVisible && !isReduced
@@ -59,10 +65,9 @@ export function BackgroundFx() {
     !skyLabOpen &&
     performanceTier !== 'low'
   const showStarship = showMobileSkyLabStarships || showAmbientStarships
-  const showClickConstellations =
-    showScreenFx &&
-    (skyLabOpen || mobileSkyLab || (showHeavyFx && !fxLite))
+  const showClickConstellations = showScreenFx && (skyLabOpen || mobileSkyLab)
   const constellationLite = skyLabLite || mobileSkyLab
+  const pauseStarshipMotion = scrollBusy && !showMobileSkyLabStarships
 
   useEffect(() => {
     document.documentElement.dataset.bgFxActive = showHeavyFx ? 'on' : 'off'
@@ -95,7 +100,8 @@ export function BackgroundFx() {
         <StarshipTraffic
           enabled
           liteMode={performanceTier !== 'high' || mobileSkyLab}
-          pauseSpawning={!pageVisible || (!scrollIdle && !showMobileSkyLabStarships)}
+          pauseSpawning={!pageVisible || pauseStarshipMotion}
+          pauseMotion={pauseStarshipMotion}
         />
       ) : null}
 
