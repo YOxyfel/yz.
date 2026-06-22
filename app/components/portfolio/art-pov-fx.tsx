@@ -43,11 +43,11 @@ export function ArtPovFx({
       {cycling ? (
         <>
           <span
-            className="art-orbit-orb absolute left-1/2 top-3 h-2 w-2 -translate-x-1/2 rounded-full blur-[1px]"
+            className="art-orbit-orb absolute left-1/2 top-3 h-2 w-2 -translate-x-1/2 rounded-full"
             style={{ background: accentColor[accent], boxShadow: `0 0 14px ${accentColor[accent]}` }}
           />
           <span
-            className="art-orbit-orb art-orbit-orb-delayed absolute bottom-8 right-8 h-1.5 w-1.5 rounded-full blur-[1px]"
+            className="art-orbit-orb art-orbit-orb-delayed absolute bottom-8 right-8 h-1.5 w-1.5 rounded-full"
             style={{ background: accentColor[accent], boxShadow: `0 0 10px ${accentColor[accent]}` }}
           />
         </>

@@ -93,7 +93,7 @@ export function CornerToolsDock() {
         aria-label={tNav('showUi')}
         aria-pressed={skyViewMode}
         onClick={toggleSkyViewMode}
-        className="sky-view-restore-toggle pointer-events-auto fixed left-1/2 z-[80] inline-flex -translate-x-1/2 items-center gap-2 rounded-full border border-cyan/55 bg-cyan/15 px-4 py-2.5 font-mono text-[10px] uppercase tracking-[0.18em] text-cyan transition-colors backdrop-blur-sm"
+        className="sky-view-restore-toggle pointer-events-auto fixed left-1/2 z-[80] inline-flex -translate-x-1/2 items-center gap-2 rounded-full border border-cyan/55 bg-[oklch(0.1_0.012_270/0.94)] px-4 py-2.5 font-mono text-[10px] uppercase tracking-[0.18em] text-cyan transition-colors"
       >
         <Eye className="h-3.5 w-3.5" aria-hidden />
         <span>{tNav('showUi')}</span>

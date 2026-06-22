@@ -202,7 +202,7 @@ function VoidStorm({
           ))
         : null}
       {!animate ? (
-        <div className="absolute inset-x-[10%] top-[8%] h-[50%] rounded-[40%] bg-violet/10 blur-xl" />
+        <div className="absolute inset-x-[10%] top-[8%] h-[50%] rounded-[40%] bg-[radial-gradient(ellipse,oklch(0.55_0.24_295/0.12),transparent_72%)]" />
       ) : null}
     </div>
   )
@@ -341,7 +341,7 @@ function CultivationFx({
         )
       })}
       <div
-        className="absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan/10 blur-3xl"
+        className="absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,oklch(0.84_0.16_200/0.12),transparent_70%)]"
         style={{ opacity: 0.35 + qiPulse * 0.5, transform: `scale(${0.9 + qiPulse * 0.3})` }}
       />
       {[0, 1, 2].map((ring) => (
@@ -689,7 +689,7 @@ export function AudioScreenFx({
               renderThemeFx(theme, currentTime, effectiveDuration, cues, animate)
             )}
 
-            <div className="absolute inset-0 bg-background/12 backdrop-blur-[1px]" />
+            <div className="absolute inset-0 bg-background/18" />
             <div className="absolute inset-0 [box-shadow:inset_0_0_140px_50px_oklch(0.12_0.01_270/0.88)]" />
           </div>
 
@@ -701,7 +701,7 @@ export function AudioScreenFx({
                   event.stopPropagation()
                   onStop?.()
                 }}
-                className="audio-screen-fx-stop-btn absolute left-1/2 top-[max(1rem,env(safe-area-inset-top))] z-[2] inline-flex -translate-x-1/2 items-center gap-2 rounded-full border border-rose-400/45 bg-black/80 px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.18em] text-rose-100 shadow-[0_8px_32px_-8px_oklch(0_0_0/0.85)] backdrop-blur-md"
+                className="audio-screen-fx-stop-btn absolute left-1/2 top-[max(1rem,env(safe-area-inset-top))] z-[2] inline-flex -translate-x-1/2 items-center gap-2 rounded-full border border-rose-400/45 bg-[oklch(0.08_0.012_270/0.94)] px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.18em] text-rose-100 shadow-[0_8px_32px_-8px_oklch(0_0_0/0.85)]"
               >
                 <Square className="h-3.5 w-3.5 fill-current" />
                 Stop

@@ -68,7 +68,7 @@ export function ContactSection() {
     <StationSection id="contact" tone="comms" className="!pb-24">
       <div
         aria-hidden
-        className="bg-fx-blur-blob pointer-events-none absolute left-1/2 top-0 -z-10 h-64 w-[36rem] -translate-x-1/2 rounded-full bg-cyan/10 blur-[140px] max-md:hidden"
+        className="bg-fx-soft-blob bg-fx-soft-blob-cyan pointer-events-none absolute left-1/2 top-0 -z-10 h-64 w-[36rem] -translate-x-1/2 max-md:hidden"
       />
 
       <div className="relative mx-auto max-w-4xl text-center">

@@ -22,7 +22,7 @@ export function Hero() {
       {!isNarrow ? (
         <motion.div
           aria-hidden
-          className="bg-fx-blur-blob absolute left-1/3 top-1/3 -z-10 h-56 w-56 rounded-full bg-cyan/10 blur-[100px]"
+          className="bg-fx-soft-blob bg-fx-soft-blob-cyan absolute left-1/3 top-1/3 -z-10 h-56 w-56"
           animate={reducedMotion ? { opacity: 0.3 } : { opacity: [0.25, 0.4, 0.25] }}
           transition={
             reducedMotion

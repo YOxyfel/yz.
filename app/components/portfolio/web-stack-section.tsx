@@ -3,6 +3,7 @@
 import { ArrowUpRight, ChevronLeft, ChevronRight, ExternalLink, Globe } from 'lucide-react'
 import Image from 'next/image'
 import { useCallback, useRef, useState } from 'react'
+import { OffscreenAnimationFreeze } from './offscreen-animation-freeze'
 import { SectionHeading } from './section-heading'
 import { StationChip, StationPanel, StationScreen, StationSection } from './station-console'
 import { useDeviceProfile } from './device-profile'
@@ -264,7 +265,7 @@ export function WebStackSection() {
 
       <GitHubShowcaseCard />
 
-      <div className="relative mt-14 overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)]">
+      <OffscreenAnimationFreeze className="relative mt-14 overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)]">
         <div className="flex w-max animate-marquee gap-3">
           {items.map((item, index) => (
             <StationChip key={`${item}-${index}`} className="whitespace-nowrap !px-5 !py-2.5 !text-xs">
@@ -273,7 +274,7 @@ export function WebStackSection() {
             </StationChip>
           ))}
         </div>
-      </div>
+      </OffscreenAnimationFreeze>
     </StationSection>
   )
 }

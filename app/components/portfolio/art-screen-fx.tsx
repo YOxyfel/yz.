@@ -77,8 +77,8 @@ export function ArtScreenFx({ active, accent, reduced = false }: ArtScreenFxProp
         }}
       />
       <div
-        className="art-halo-pulse absolute left-1/2 top-[38%] h-[55%] w-[70%] rounded-full blur-3xl"
-        style={{ background: theme.glow }}
+        className="art-halo-pulse absolute left-1/2 top-[38%] h-[55%] w-[70%] -translate-x-1/2 rounded-full"
+        style={{ background: `radial-gradient(ellipse, ${theme.glow}, transparent 72%)` }}
       />
       <div
         className="absolute inset-0 opacity-90"
@@ -99,13 +99,13 @@ export function ArtScreenFx({ active, accent, reduced = false }: ArtScreenFxProp
           {orbs.map((orb) => (
             <span
               key={orb.id}
-              className="art-qi-orb absolute rounded-full blur-xl"
+              className="art-qi-orb absolute rounded-full"
               style={{
                 left: orb.left,
                 top: orb.top,
                 width: orb.size,
                 height: orb.size,
-                background: theme.glow,
+                background: `radial-gradient(circle, ${theme.glow}, transparent 70%)`,
                 animationDelay: `${orb.delay}s`,
               }}
             />
@@ -113,7 +113,7 @@ export function ArtScreenFx({ active, accent, reduced = false }: ArtScreenFxProp
           {sparks.map((spark) => (
             <span
               key={spark.id}
-              className="art-spark absolute h-px w-8 rotate-45 blur-[0.5px]"
+              className="art-spark absolute h-px w-8 rotate-45"
               style={{
                 left: spark.left,
                 top: `${22 + (spark.id % 4) * 18}%`,

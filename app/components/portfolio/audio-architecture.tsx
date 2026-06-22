@@ -735,7 +735,7 @@ function AudioArchitectureInner({ embedded = false }: { embedded?: boolean }) {
 
       {playing && mode !== 'off' ? (
         <div
-          className={`pointer-events-auto fixed left-1/2 z-[60] flex -translate-x-1/2 gap-2 rounded-full border border-[var(--station-bezel)]/45 bg-[var(--station-hull-dark)]/90 p-1.5 shadow-xl backdrop-blur-md ${
+          className={`pointer-events-auto fixed left-1/2 z-[60] flex -translate-x-1/2 gap-2 rounded-full border border-[var(--station-bezel)]/45 bg-[oklch(0.12_0.014_262/0.96)] p-1.5 shadow-xl ${
             mobileAudioStop
               ? 'bottom-[max(1rem,env(safe-area-inset-bottom))]'
               : 'bottom-6'

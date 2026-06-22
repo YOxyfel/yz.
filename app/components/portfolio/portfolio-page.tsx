@@ -19,6 +19,7 @@ import { SocialProofSection } from './social-proof-section'
 import { TestimonialsSection } from './testimonials-section'
 import { SiteVariantShell } from './site-variant-shell'
 import { useSiteVariant } from './site-variant-context'
+import { HeroVisibilityBridge } from './hero-visibility-bridge'
 import { LazySection } from './lazy-section'
 import { NavScrollSentinel } from './nav-scroll-sentinel'
 import { StationDeckShell } from './station-deck-shell'
@@ -101,6 +102,7 @@ function PortfolioContent() {
 
   return (
     <>
+      <HeroVisibilityBridge />
       <BackgroundFx />
 
       <SiteVariantShell>

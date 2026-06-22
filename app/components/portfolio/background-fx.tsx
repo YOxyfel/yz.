@@ -1,10 +1,12 @@
 'use client'
 
 import dynamic from 'next/dynamic'
+import { useEffect, useState } from 'react'
 import { ClickConstellations } from './click-constellations'
 import { CosmicScrollFx } from './cosmic-scroll-fx'
 import { useConstellationChrome } from './constellation-context'
 import { useDeviceProfile } from './device-profile'
+import { isHeroInView } from './hero-visibility-bridge'
 import { useDeferredFxMount } from './use-deferred-fx-mount'
 import { usePageVisible } from './use-page-visible'
 import { useScrollIdle } from './use-scroll-idle'
@@ -34,11 +36,29 @@ type CosmicScrollRouterProps = {
 
 function CosmicScrollRouter({ cosmicLite, fxMedium, performanceTier, mode }: CosmicScrollRouterProps) {
   const scrollIdle = useScrollIdle()
+  const [heroInView, setHeroInView] = useState(true)
+
+  useEffect(() => {
+    const sync = () => setHeroInView(isHeroInView())
+    sync()
+    const observer = new MutationObserver(sync)
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-hero-in-view'],
+    })
+    return () => observer.disconnect()
+  }, [])
+
   const cinematicCosmic =
-    !cosmicLite && !fxMedium && performanceTier === 'high' && mode === 'full' && scrollIdle
+    !cosmicLite &&
+    !fxMedium &&
+    performanceTier === 'high' &&
+    mode === 'full' &&
+    scrollIdle &&
+    heroInView
   const cosmicMedium = !cosmicLite && !cinematicCosmic
 
-  return <CosmicScrollFx lite={cosmicLite} medium={cosmicMedium} tier={performanceTier} />
+  return <CosmicScrollFx lite={cosmicLite || !heroInView} medium={cosmicMedium} tier={performanceTier} />
 }
 type ScrollGatedBlurBlobsProps = {
   enabled: boolean
@@ -50,8 +70,8 @@ function ScrollGatedBlurBlobs({ enabled }: ScrollGatedBlurBlobsProps) {
 
   return (
     <>
-      <div className="bg-fx-blur-blob animate-breathe absolute -left-32 top-1/4 h-[42rem] w-[42rem] rounded-full bg-cyan/[0.04] blur-3xl max-md:hidden" />
-      <div className="bg-fx-blur-blob animate-breathe-slow absolute -right-40 top-1/2 h-[40rem] w-[40rem] rounded-full bg-violet/[0.04] blur-3xl max-md:hidden" />
+      <div className="bg-fx-soft-blob bg-fx-soft-blob-cyan animate-breathe absolute -left-32 top-1/4 h-[42rem] w-[42rem] max-md:hidden" />
+      <div className="bg-fx-soft-blob bg-fx-soft-blob-violet animate-breathe-slow absolute -right-40 top-1/2 h-[40rem] w-[40rem] max-md:hidden" />
     </>
   )
 }
@@ -72,8 +92,21 @@ function ScrollGatedStarships({
   pageVisible,
 }: ScrollGatedStarshipsProps) {
   const scrollIdle = useScrollIdle()
-  const showStarship = showMobileSkyLabStarships || showAmbientStarships
-  const pauseStarshipMotion = !scrollIdle && !showMobileSkyLabStarships
+  const [heroInView, setHeroInView] = useState(true)
+
+  useEffect(() => {
+    const sync = () => setHeroInView(isHeroInView())
+    sync()
+    const observer = new MutationObserver(sync)
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-hero-in-view'],
+    })
+    return () => observer.disconnect()
+  }, [])
+
+  const showStarship = showMobileSkyLabStarships || (showAmbientStarships && heroInView)
+  const pauseStarshipMotion = (!scrollIdle && !showMobileSkyLabStarships) || !heroInView
 
   if (!showStarship) return null
 
@@ -107,12 +140,26 @@ function ScrollGatedHeavyExtras({
   fxMedium,
 }: ScrollGatedHeavyExtrasProps) {
   const scrollIdle = useScrollIdle()
+  const [heroInView, setHeroInView] = useState(true)
+
+  useEffect(() => {
+    const sync = () => setHeroInView(isHeroInView())
+    sync()
+    const observer = new MutationObserver(sync)
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-hero-in-view'],
+    })
+    return () => observer.disconnect()
+  }, [])
+
   const cinematicCosmic =
     !cosmicLite &&
     !fxMedium &&
     performanceTier === 'high' &&
     mode === 'full' &&
-    scrollIdle
+    scrollIdle &&
+    heroInView
   const heavyExtrasReady = useDeferredFxMount(
     showHeavyFx && enableHeavyBackgroundFx && pageVisible && cinematicCosmic
   )

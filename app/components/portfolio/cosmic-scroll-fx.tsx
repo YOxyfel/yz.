@@ -91,8 +91,8 @@ function MysticNebula({ opacity }: { opacity: MotionValue<number> | number }) {
 
   return (
     <motion.div className="cosmic-scroll-nebula-layer absolute inset-0 overflow-hidden" style={style}>
-      <div className="cosmic-nebula-a absolute -left-[8%] top-[2%] h-[28rem] w-[28rem] rounded-full bg-[radial-gradient(circle,oklch(0.55_0.24_295/0.14),transparent_70%)] blur-2xl md:blur-3xl" />
-      <div className="cosmic-nebula-b absolute right-[4%] top-[8%] h-[22rem] w-[32rem] rounded-full bg-[radial-gradient(circle,oklch(0.84_0.16_200/0.1),transparent_72%)] blur-2xl md:blur-[80px]" />
+      <div className="cosmic-nebula-a absolute -left-[12%] top-[0%] h-[34rem] w-[40rem] rounded-full bg-[radial-gradient(ellipse,oklch(0.55_0.24_295/0.16),transparent_72%)]" />
+      <div className="cosmic-nebula-b absolute right-[0%] top-[6%] h-[28rem] w-[36rem] rounded-full bg-[radial-gradient(ellipse,oklch(0.84_0.16_200/0.12),transparent_74%)]" />
     </motion.div>
   )
 }
@@ -165,7 +165,7 @@ function ScrollMeteor({
           className="cosmic-scroll-crash cosmic-scroll-layer-motion pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
           style={{ opacity: crashOpacity, scale: crashRing }}
         >
-          <div className="h-24 w-24 rounded-full bg-[radial-gradient(circle,oklch(0.84_0.16_200/0.28),transparent_68%)] blur-xl" />
+          <div className="h-24 w-24 rounded-full bg-[radial-gradient(circle,oklch(0.84_0.16_200/0.22),transparent_68%)]" />
           <div className="absolute inset-2 rounded-full border border-cyan/30 bg-[radial-gradient(circle,oklch(0.84_0.16_200/0.15),transparent_70%)]" />
         </motion.div>
       </div>

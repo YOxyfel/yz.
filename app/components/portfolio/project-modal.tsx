@@ -49,7 +49,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
           exit={{ opacity: 0 }}
         >
           <motion.div
-            className="mobile-solid-backdrop absolute inset-0 bg-background/88 md:bg-background/80 md:backdrop-blur-xl"
+            className="mobile-solid-backdrop absolute inset-0 bg-background/92 md:bg-background/88"
             onClick={onClose}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

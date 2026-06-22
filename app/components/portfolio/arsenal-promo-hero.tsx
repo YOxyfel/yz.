@@ -100,7 +100,7 @@ function PromoCopy({ placement }: { placement: CopyPlacement }) {
         {arsenalPromo.tags.map((tag) => (
           <span
             key={tag}
-            className={`rounded-full border px-3 py-1 font-mono text-[10px] uppercase tracking-widest backdrop-blur-md ${
+            className={`rounded-full border px-3 py-1 font-mono text-[10px] uppercase tracking-widest ${
               isOverlay
                 ? 'border-white/20 bg-black/50 text-foreground/80'
                 : 'border-white/15 bg-black/40 text-foreground/75'
@@ -126,7 +126,7 @@ function PromoCopyShell({
   const layoutId = sharedLayout ? 'promo-hero-copy' : undefined
   if (placement === 'overlay') {
     return (
-      <div className={`relative max-w-2xl overflow-hidden rounded-2xl border border-white/20 bg-black/55 px-5 py-7 shadow-[0_12px_48px_rgba(0,0,0,0.75)] backdrop-blur-xl sm:px-8 sm:py-9 ${className}`}>
+      <div className={`relative max-w-2xl overflow-hidden rounded-2xl border border-white/20 bg-black/90 px-5 py-7 shadow-[0_12px_48px_rgba(0,0,0,0.75)] sm:px-8 sm:py-9 ${className}`}>
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/25 via-black/45 to-black/65" />
         <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan/45 to-transparent" />
         <motion.div
@@ -160,7 +160,7 @@ function PromoCopyShell({
 
   return (
     <div
-      className={`relative overflow-hidden rounded-2xl border border-white/12 bg-black/85 p-6 shadow-[0_12px_48px_-16px_rgba(0,0,0,0.85)] backdrop-blur-xl sm:p-8 ${className}`}
+      className={`relative overflow-hidden rounded-2xl border border-white/12 bg-black/92 p-6 shadow-[0_12px_48px_-16px_rgba(0,0,0,0.85)] sm:p-8 ${className}`}
     >
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-cyan/8 via-transparent to-violet/8" />
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan/55 to-transparent" />
@@ -746,7 +746,7 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
       {showOverlayCopy ? (
         <>
           <div
-            className="pointer-events-none absolute inset-0 z-[17] bg-black/45 backdrop-blur-[3px]"
+            className="pointer-events-none absolute inset-0 z-[17] bg-black/60"
             aria-hidden
           />
           <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-5 px-4 sm:px-10">
@@ -755,7 +755,7 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
               <button
                 type="button"
                 onClick={beginReel}
-                className="inline-flex items-center gap-2.5 rounded-full border border-cyan/40 bg-cyan/15 px-6 py-3 font-mono text-xs uppercase tracking-wider text-cyan shadow-[0_0_32px_-8px_oklch(0.84_0.16_200/0.65)] backdrop-blur-md transition-transform hover:scale-105 sm:px-8 sm:text-sm"
+                className="inline-flex items-center gap-2.5 rounded-full border border-cyan/40 bg-cyan/15 px-6 py-3 font-mono text-xs uppercase tracking-wider text-cyan shadow-[0_0_32px_-8px_oklch(0.84_0.16_200/0.65)] transition-transform hover:scale-105 sm:px-8 sm:text-sm"
               >
                 <Play className="h-4 w-4 fill-current" />
                 Press to play
@@ -775,7 +775,7 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
             <button
               type="button"
               onClick={beginReel}
-              className="inline-flex items-center gap-2.5 rounded-full border border-cyan/40 bg-cyan/15 px-6 py-3 font-mono text-xs uppercase tracking-wider text-cyan shadow-[0_0_32px_-8px_oklch(0.84_0.16_200/0.65)] backdrop-blur-md"
+              className="inline-flex items-center gap-2.5 rounded-full border border-cyan/40 bg-cyan/15 px-6 py-3 font-mono text-xs uppercase tracking-wider text-cyan shadow-[0_0_32px_-8px_oklch(0.84_0.16_200/0.65)]"
             >
               <Play className="h-4 w-4 fill-current" />
               Press to play
@@ -792,7 +792,7 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
               manualMinimizeRef.current = false
               setMobileTheaterOpen(true)
             }}
-            className="inline-flex items-center gap-2.5 rounded-full border border-cyan/40 bg-black/70 px-6 py-3 font-mono text-xs uppercase tracking-wider text-cyan backdrop-blur-md"
+            className="inline-flex items-center gap-2.5 rounded-full border border-cyan/40 bg-[oklch(0.08_0.012_270/0.94)] px-6 py-3 font-mono text-xs uppercase tracking-wider text-cyan"
           >
             <Play className="h-4 w-4 fill-current" />
             Resume
@@ -811,7 +811,7 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
         <button
           type="button"
           onClick={collapseExpanded}
-          className="absolute right-3 top-3 z-40 inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-black/75 px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider text-foreground backdrop-blur-md transition-colors hover:border-cyan/40 hover:text-cyan"
+          className="absolute right-3 top-3 z-40 inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-[oklch(0.08_0.012_270/0.94)] px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider text-foreground transition-colors hover:border-cyan/40 hover:text-cyan"
         >
           <Minimize2 className="h-3.5 w-3.5" />
           Minimize
@@ -860,7 +860,7 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
       </div>
 
       <div
-        className={`relative z-30 shrink-0 flex flex-wrap items-center justify-between gap-2 border-t border-white/10 bg-black/75 p-3 backdrop-blur-md sm:gap-3 sm:p-5 ${
+        className={`relative z-30 shrink-0 flex flex-wrap items-center justify-between gap-2 border-t border-white/10 bg-[oklch(0.08_0.012_270/0.94)] p-3 sm:gap-3 sm:p-5 ${
           isMobileVideo ? 'hidden' : ''
         }`}
       >
@@ -868,7 +868,7 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
           <button
             type="button"
             onClick={togglePlay}
-            className="inline-flex items-center gap-2 rounded-full border border-cyan/35 bg-black/70 px-3 py-2 font-mono text-[10px] uppercase tracking-wider text-cyan backdrop-blur-md transition-transform hover:scale-105 sm:px-4 sm:text-xs"
+            className="inline-flex items-center gap-2 rounded-full border border-cyan/35 bg-[oklch(0.08_0.012_270/0.94)] px-3 py-2 font-mono text-[10px] uppercase tracking-wider text-cyan transition-transform hover:scale-105 sm:px-4 sm:text-xs"
           >
             {!reelStarted ? (
               <>
@@ -891,7 +891,7 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
           <button
             type="button"
             onClick={restartReel}
-            className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/70 px-3 py-2 font-mono text-[10px] uppercase tracking-wider text-foreground backdrop-blur-md transition-transform hover:scale-105 sm:px-4 sm:text-xs"
+            className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-[oklch(0.08_0.012_270/0.94)] px-3 py-2 font-mono text-[10px] uppercase tracking-wider text-foreground transition-transform hover:scale-105 sm:px-4 sm:text-xs"
           >
             <RotateCcw className="h-4 w-4" />
             Restart
@@ -901,7 +901,7 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
             <button
               type="button"
               onClick={collapseExpanded}
-              className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/70 px-3 py-2 font-mono text-[10px] uppercase tracking-wider text-foreground backdrop-blur-md transition-transform hover:scale-105 sm:px-4 sm:text-xs"
+              className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-[oklch(0.08_0.012_270/0.94)] px-3 py-2 font-mono text-[10px] uppercase tracking-wider text-foreground transition-transform hover:scale-105 sm:px-4 sm:text-xs"
             >
               <Minimize2 className="h-4 w-4" />
               Minimize
@@ -910,7 +910,7 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
             <button
               type="button"
               onClick={expandReel}
-              className="inline-flex items-center gap-2 rounded-full border border-cyan/35 bg-cyan/10 px-3 py-2 font-mono text-[10px] uppercase tracking-wider text-cyan backdrop-blur-md transition-transform hover:scale-105 sm:px-4 sm:text-xs"
+              className="inline-flex items-center gap-2 rounded-full border border-cyan/35 bg-cyan/10 px-3 py-2 font-mono text-[10px] uppercase tracking-wider text-cyan transition-transform hover:scale-105 sm:px-4 sm:text-xs"
             >
               <Maximize2 className="h-4 w-4" />
               Expand
@@ -918,7 +918,7 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
           ) : null}
         </div>
 
-        <div className="flex items-center gap-1.5 rounded-full border border-white/15 bg-black/70 p-1 backdrop-blur-md">
+        <div className="flex items-center gap-1.5 rounded-full border border-white/15 bg-[oklch(0.08_0.012_270/0.94)] p-1">
           <button
             type="button"
             aria-label="Decrease volume"
@@ -1001,7 +1001,7 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
               <motion.div
                 key="cinema-backdrop"
                 data-portfolio-chrome
-                className="fixed inset-0 z-[98] bg-black/92 backdrop-blur-md"
+                className="fixed inset-0 z-[98] bg-black/92"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -1104,7 +1104,7 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
               transition={{ duration: 0.4, ease }}
             >
               <div
-                className="pointer-events-none absolute -inset-3 rounded-3xl bg-black/50 blur-2xl sm:-inset-4"
+                className="pointer-events-none absolute -inset-3 rounded-3xl bg-[radial-gradient(ellipse,oklch(0_0_0/0.45),transparent_72%)] sm:-inset-4"
                 aria-hidden
               />
               <PromoCopyShell placement="below" />

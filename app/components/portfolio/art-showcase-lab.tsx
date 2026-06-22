@@ -9,6 +9,7 @@ import { ArtPovFx } from './art-pov-fx'
 import { ArtScreenFx, artCharacterGlow } from './art-screen-fx'
 import { CatalogStrip, LabShell, LabTransition } from './arsenal-lab-shell'
 import { LabFxControls, LabFxPreferencesProvider, useLabFxPreferences } from './lab-fx-preferences'
+import { OffscreenAnimationFreeze } from './offscreen-animation-freeze'
 import { usePointerBoundsCache } from './use-pointer-bounds-cache'
 
 const accentRing: Record<ArtPiece['accent'], string> = {
@@ -110,6 +111,7 @@ function ArtConsole({ piece }: { piece: ArtPiece }) {
 
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
+      <OffscreenAnimationFreeze>
       <div
         ref={frameRef}
         className={`relative aspect-[4/5] overflow-hidden rounded-2xl border bg-gradient-to-b ring-1 ${accentFrameBg[piece.accent]} ${accentRing[piece.accent]}`}
@@ -164,7 +166,7 @@ function ArtConsole({ piece }: { piece: ArtPiece }) {
           type="button"
           onClick={() => go(-1)}
           aria-label="Previous POV"
-          className="absolute left-3 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/55 text-foreground backdrop-blur-md transition-colors hover:border-cyan/40 hover:text-cyan"
+          className="absolute left-3 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-[oklch(0.08_0.012_270/0.9)] text-foreground transition-colors hover:border-cyan/40 hover:text-cyan"
         >
           <ChevronLeft className="h-5 w-5" />
         </button>
@@ -172,12 +174,12 @@ function ArtConsole({ piece }: { piece: ArtPiece }) {
           type="button"
           onClick={() => go(1)}
           aria-label="Next POV"
-          className="absolute right-3 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/55 text-foreground backdrop-blur-md transition-colors hover:border-cyan/40 hover:text-cyan"
+          className="absolute right-3 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-[oklch(0.08_0.012_270/0.9)] text-foreground transition-colors hover:border-cyan/40 hover:text-cyan"
         >
           <ChevronRight className="h-5 w-5" />
         </button>
 
-        <div className="absolute bottom-4 left-4 z-20 rounded-full border border-white/10 bg-black/55 px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-muted-foreground backdrop-blur-md">
+        <div className="absolute bottom-4 left-4 z-20 rounded-full border border-white/10 bg-[oklch(0.08_0.012_270/0.9)] px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
           {piece.povLabels[povIndex]} · {String(povIndex + 1).padStart(2, '0')} /{' '}
           {String(piece.views.length).padStart(2, '0')}
         </div>
@@ -198,6 +200,7 @@ function ArtConsole({ piece }: { piece: ArtPiece }) {
           ))}
         </div>
       </div>
+      </OffscreenAnimationFreeze>
 
       <div className="flex flex-col justify-between gap-6 rounded-2xl border border-white/10 bg-black/30 p-6">
         <div>

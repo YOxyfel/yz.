@@ -55,7 +55,11 @@ export function LazySection({
   const shouldMount = inView || hashForced
 
   return (
-    <div ref={ref} className={`perf-deferred-section ${className ?? ''}`.trim()} style={{ minHeight }}>
+    <div
+      ref={ref}
+      className={`perf-deferred-section content-deferred-section ${className ?? ''}`.trim()}
+      style={{ minHeight, contentVisibility: 'auto' }}
+    >
       {shouldMount ? children : placeholder}
     </div>
   )
