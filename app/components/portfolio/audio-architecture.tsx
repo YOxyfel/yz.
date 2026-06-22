@@ -422,14 +422,15 @@ function TrackConsole({
               aria-valuemax={100}
               tabIndex={0}
               onClick={(event) => {
-                const rect = event.currentTarget.getBoundingClientRect()
-                onSeek(((event.clientX - rect.left) / rect.width) * duration)
+                const trackWidth = event.currentTarget.clientWidth
+                if (!trackWidth) return
+                onSeek((event.nativeEvent.offsetX / trackWidth) * duration)
               }}
               className="h-1.5 cursor-pointer overflow-hidden rounded-full bg-white/10"
             >
               <div
-                className={`h-full rounded-full ${accentText[track.accent]} bg-current transition-all`}
-                style={{ width: `${progress * 100}%` }}
+                className={`audio-seek-progress h-full origin-left rounded-full ${accentText[track.accent]} bg-current`}
+                style={{ transform: `scaleX(${progress})` }}
               />
             </div>
             <div className="mt-2 flex items-center justify-between font-mono text-[11px] text-muted-foreground">
@@ -542,10 +543,7 @@ function AudioArchitectureInner({ embedded = false }: { embedded?: boolean }) {
   useEffect(() => {
     if (!playing) return
 
-    let frame = 0
-    const tick = () => {
-      if (!playingRef.current) return
-
+    const onTimeUpdate = () => {
       if (activeIdRef.current === 'wood-slice-combined') {
         const primary = stackRef.current[0]
         if (primary) {
@@ -554,21 +552,28 @@ function AudioArchitectureInner({ embedded = false }: { embedded?: boolean }) {
             setDuration(primary.duration)
           }
         }
-      } else {
-        const audio = audioRef.current
-        if (audio) {
-          setCurrentTime(audio.currentTime)
-          if (audio.duration && Number.isFinite(audio.duration)) {
-            setDuration(audio.duration)
-          }
-        }
+        return
       }
 
-      frame = requestAnimationFrame(tick)
+      const audio = audioRef.current
+      if (audio) {
+        setCurrentTime(audio.currentTime)
+        if (audio.duration && Number.isFinite(audio.duration)) {
+          setDuration(audio.duration)
+        }
+      }
     }
 
-    frame = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(frame)
+    const audio = audioRef.current
+    const stackSnapshot = [...stackRef.current]
+
+    audio?.addEventListener('timeupdate', onTimeUpdate)
+    stackSnapshot.forEach((clip) => clip.addEventListener('timeupdate', onTimeUpdate))
+
+    return () => {
+      audio?.removeEventListener('timeupdate', onTimeUpdate)
+      stackSnapshot.forEach((clip) => clip.removeEventListener('timeupdate', onTimeUpdate))
+    }
   }, [playing])
 
   const pause = useCallback(() => {

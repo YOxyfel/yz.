@@ -1,7 +1,6 @@
 'use client'
 
 import dynamic from 'next/dynamic'
-import { useEffect } from 'react'
 import { ClickConstellations } from './click-constellations'
 import { CosmicScrollFx } from './cosmic-scroll-fx'
 import { useConstellationChrome } from './constellation-context'
@@ -10,6 +9,7 @@ import { useDeferredFxMount } from './use-deferred-fx-mount'
 import { usePageVisible } from './use-page-visible'
 import { useScrollIdle } from './use-scroll-idle'
 import { useVisualFxPreferences } from './visual-fx-preferences'
+import type { PerformanceTier } from './performance-tier'
 
 const StarshipTraffic = dynamic(
   () => import('./starship-traffic').then((mod) => mod.StarshipTraffic),
@@ -25,37 +25,115 @@ function StaticBackdrop() {
   )
 }
 
+type CosmicScrollRouterProps = {
+  cosmicLite: boolean
+  fxMedium: boolean
+  performanceTier: PerformanceTier
+  mode: string
+}
+
+function CosmicScrollRouter({ cosmicLite, fxMedium, performanceTier, mode }: CosmicScrollRouterProps) {
+  const scrollIdle = useScrollIdle()
+  const cinematicCosmic =
+    !cosmicLite && !fxMedium && performanceTier === 'high' && mode === 'full' && scrollIdle
+  const cosmicMedium = !cosmicLite && !cinematicCosmic
+
+  return <CosmicScrollFx lite={cosmicLite} medium={cosmicMedium} tier={performanceTier} />
+}
+type ScrollGatedBlurBlobsProps = {
+  enabled: boolean
+}
+
+function ScrollGatedBlurBlobs({ enabled }: ScrollGatedBlurBlobsProps) {
+  const scrollIdle = useScrollIdle()
+  if (!enabled || !scrollIdle) return null
+
+  return (
+    <>
+      <div className="bg-fx-blur-blob animate-breathe absolute -left-32 top-1/4 h-[42rem] w-[42rem] rounded-full bg-cyan/[0.04] blur-3xl max-md:hidden" />
+      <div className="bg-fx-blur-blob animate-breathe-slow absolute -right-40 top-1/2 h-[40rem] w-[40rem] rounded-full bg-violet/[0.04] blur-3xl max-md:hidden" />
+    </>
+  )
+}
+
+type ScrollGatedStarshipsProps = {
+  showMobileSkyLabStarships: boolean
+  showAmbientStarships: boolean
+  performanceTier: PerformanceTier
+  mobileSkyLab: boolean
+  pageVisible: boolean
+}
+
+function ScrollGatedStarships({
+  showMobileSkyLabStarships,
+  showAmbientStarships,
+  performanceTier,
+  mobileSkyLab,
+  pageVisible,
+}: ScrollGatedStarshipsProps) {
+  const scrollIdle = useScrollIdle()
+  const showStarship = showMobileSkyLabStarships || showAmbientStarships
+  const pauseStarshipMotion = !scrollIdle && !showMobileSkyLabStarships
+
+  if (!showStarship) return null
+
+  return (
+    <StarshipTraffic
+      enabled
+      liteMode={performanceTier !== 'high' || mobileSkyLab}
+      pauseSpawning={!pageVisible || pauseStarshipMotion}
+      pauseMotion={pauseStarshipMotion}
+    />
+  )
+}
+
+type ScrollGatedHeavyExtrasProps = {
+  showHeavyFx: boolean
+  enableHeavyBackgroundFx: boolean
+  pageVisible: boolean
+  performanceTier: PerformanceTier
+  mode: string
+  cosmicLite: boolean
+  fxMedium: boolean
+}
+
+function ScrollGatedHeavyExtras({
+  showHeavyFx,
+  enableHeavyBackgroundFx,
+  pageVisible,
+  performanceTier,
+  mode,
+  cosmicLite,
+  fxMedium,
+}: ScrollGatedHeavyExtrasProps) {
+  const scrollIdle = useScrollIdle()
+  const cinematicCosmic =
+    !cosmicLite &&
+    !fxMedium &&
+    performanceTier === 'high' &&
+    mode === 'full' &&
+    scrollIdle
+  const heavyExtrasReady = useDeferredFxMount(
+    showHeavyFx && enableHeavyBackgroundFx && pageVisible && cinematicCosmic
+  )
+  const showHighTierExtras = showHeavyFx && enableHeavyBackgroundFx && heavyExtrasReady
+
+  return <ScrollGatedBlurBlobs enabled={showHighTierExtras} />
+}
+
 export function BackgroundFx() {
   const { constellationLabEnabled, mobileSkyLabMode } = useConstellationChrome()
   const deviceProfile = useDeviceProfile()
-  const {
-    fxLite,
-    fxMedium,
-    performanceTier,
-    enableHeavyBackgroundFx,
-  } = deviceProfile
+  const { fxLite, fxMedium, performanceTier, enableHeavyBackgroundFx } = deviceProfile
   const { showScreenFx, isReduced, mode } = useVisualFxPreferences()
   const pageVisible = usePageVisible()
-  const scrollIdle = useScrollIdle()
-  const scrollBusy = !scrollIdle
 
   const mobileSkyLab = mobileSkyLabMode
   const skyLabOpen = constellationLabEnabled || mobileSkyLab
   const skyLabLite = isReduced || fxLite
 
   const cosmicLite = fxLite || isReduced || !pageVisible || !showScreenFx
-  const cinematicCosmic =
-    !cosmicLite &&
-    !fxMedium &&
-    performanceTier === 'high' &&
-    mode === 'full' &&
-    !scrollBusy
-  const cosmicMedium = !cosmicLite && !cinematicCosmic
   const showHeavyFx = showScreenFx && pageVisible && !isReduced && !fxLite && mode === 'full'
-  const heavyExtrasReady = useDeferredFxMount(
-    showHeavyFx && enableHeavyBackgroundFx && pageVisible && cinematicCosmic
-  )
-  const showHighTierExtras = showHeavyFx && enableHeavyBackgroundFx && heavyExtrasReady
   const showMobileSkyLabStarships = mobileSkyLab && skyLabOpen && showScreenFx && pageVisible && !isReduced
   const showAmbientStarships =
     showScreenFx &&
@@ -64,19 +142,8 @@ export function BackgroundFx() {
     !mobileSkyLab &&
     !skyLabOpen &&
     performanceTier !== 'low'
-  const showStarship = showMobileSkyLabStarships || showAmbientStarships
   const showClickConstellations = showScreenFx && (skyLabOpen || mobileSkyLab)
   const constellationLite = skyLabLite || mobileSkyLab
-  const pauseStarshipMotion = scrollBusy && !showMobileSkyLabStarships
-
-  useEffect(() => {
-    document.documentElement.dataset.bgFxActive = showHeavyFx ? 'on' : 'off'
-    document.documentElement.dataset.scrollBusy = scrollBusy ? 'on' : 'off'
-    return () => {
-      delete document.documentElement.dataset.bgFxActive
-      delete document.documentElement.dataset.scrollBusy
-    }
-  }, [scrollBusy, showHeavyFx])
 
   if (!showScreenFx) {
     return <StaticBackdrop />
@@ -87,23 +154,30 @@ export function BackgroundFx() {
       aria-hidden
       className="device-profile-gated pointer-events-none fixed inset-0 z-0 overflow-hidden"
     >
-      <CosmicScrollFx lite={cosmicLite} medium={cosmicMedium} tier={performanceTier} />
+      <CosmicScrollRouter
+        cosmicLite={cosmicLite}
+        fxMedium={fxMedium}
+        performanceTier={performanceTier}
+        mode={mode}
+      />
 
-      {showHighTierExtras && scrollIdle ? (
-        <>
-          <div className="bg-fx-blur-blob animate-breathe absolute -left-32 top-1/4 h-[42rem] w-[42rem] rounded-full bg-cyan/[0.04] blur-3xl max-md:hidden" />
-          <div className="bg-fx-blur-blob animate-breathe-slow absolute -right-40 top-1/2 h-[40rem] w-[40rem] rounded-full bg-violet/[0.04] blur-3xl max-md:hidden" />
-        </>
-      ) : null}
+      <ScrollGatedHeavyExtras
+        showHeavyFx={showHeavyFx}
+        enableHeavyBackgroundFx={enableHeavyBackgroundFx}
+        pageVisible={pageVisible}
+        performanceTier={performanceTier}
+        mode={mode}
+        cosmicLite={cosmicLite}
+        fxMedium={fxMedium}
+      />
 
-      {showStarship ? (
-        <StarshipTraffic
-          enabled
-          liteMode={performanceTier !== 'high' || mobileSkyLab}
-          pauseSpawning={!pageVisible || pauseStarshipMotion}
-          pauseMotion={pauseStarshipMotion}
-        />
-      ) : null}
+      <ScrollGatedStarships
+        showMobileSkyLabStarships={showMobileSkyLabStarships}
+        showAmbientStarships={showAmbientStarships}
+        performanceTier={performanceTier}
+        mobileSkyLab={mobileSkyLab}
+        pageVisible={pageVisible}
+      />
 
       {showClickConstellations ? (
         <ClickConstellations

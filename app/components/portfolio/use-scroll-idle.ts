@@ -17,6 +17,9 @@ function emit() {
 function setScrollIdle(next: boolean) {
   if (scrollIdle === next) return
   scrollIdle = next
+  if (typeof document !== 'undefined') {
+    document.documentElement.dataset.scrollBusy = next ? 'off' : 'on'
+  }
   emit()
 }
 
@@ -43,6 +46,7 @@ function subscribe(listener: () => void) {
       if (idleTimer) window.clearTimeout(idleTimer)
       idleTimer = undefined
       scrollIdle = true
+      document.documentElement.dataset.scrollBusy = 'off'
     }
   }
 }
@@ -53,6 +57,15 @@ function getSnapshot() {
 
 function getServerSnapshot() {
   return true
+}
+
+export function getScrollIdle() {
+  return scrollIdle
+}
+
+/** Subscribe without React — for heavy providers that must not re-render on scroll. */
+export function subscribeScrollIdle(listener: () => void) {
+  return subscribe(listener)
 }
 
 /** Shared scroll-idle signal — only notifies subscribers when idle/active flips. */

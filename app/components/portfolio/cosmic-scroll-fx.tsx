@@ -2,14 +2,15 @@
 
 import {
   motion,
-  useMotionValue,
   useReducedMotion,
   useTransform,
   type MotionValue,
 } from 'framer-motion'
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import type { PerformanceTier } from './performance-tier'
 import { COSMIC_STAR_COUNTS } from './performance-tier'
+import { useDocumentScrollProgress } from './use-document-scroll-progress'
+import { useViewportSize } from './use-viewport-size'
 
 type StarSpec = {
   x: number
@@ -61,11 +62,11 @@ function StarField({
   const style = typeof opacity === 'number' ? { opacity } : { opacity }
 
   return (
-    <motion.div className="absolute inset-0" style={style}>
+    <motion.div className="cosmic-scroll-layer-motion absolute inset-0" style={style}>
       {stars.map((star, index) => (
         <span
           key={index}
-          className={`cosmic-star absolute rounded-full ${
+          className={`cosmic-star cosmic-scroll-star absolute rounded-full ${
             star.cool
               ? 'bg-violet/90 shadow-[0_0_8px_var(--violet)]'
               : 'bg-white/80 shadow-[0_0_6px_var(--cyan)]'
@@ -89,7 +90,7 @@ function MysticNebula({ opacity }: { opacity: MotionValue<number> | number }) {
   const style = typeof opacity === 'number' ? { opacity } : { opacity }
 
   return (
-    <motion.div className="absolute inset-0 overflow-hidden" style={style}>
+    <motion.div className="cosmic-scroll-nebula-layer absolute inset-0 overflow-hidden" style={style}>
       <div className="cosmic-nebula-a absolute -left-[8%] top-[2%] h-[28rem] w-[28rem] rounded-full bg-[radial-gradient(circle,oklch(0.55_0.24_295/0.14),transparent_70%)] blur-2xl md:blur-3xl" />
       <div className="cosmic-nebula-b absolute right-[4%] top-[8%] h-[22rem] w-[32rem] rounded-full bg-[radial-gradient(circle,oklch(0.84_0.16_200/0.1),transparent_72%)] blur-2xl md:blur-[80px]" />
     </motion.div>
@@ -110,11 +111,11 @@ function DimensionRifts({
   const shifts = [shift1, shift2, shift3]
 
   return (
-    <motion.div className="absolute inset-0" style={{ opacity }}>
+    <motion.div className="cosmic-scroll-layer-motion absolute inset-0" style={{ opacity }}>
       {DIMENSION_LAYERS.map((layer, index) => (
         <motion.div
           key={layer.hue}
-          className="absolute inset-x-[-8%] h-[32vh] opacity-70"
+          className="cosmic-scroll-rift absolute inset-x-[-8%] h-[32vh] opacity-70"
           style={{
             top: layer.top,
             y: shifts[index],
@@ -136,8 +137,8 @@ function ScrollMeteor({
   crashOpacity,
   crashRing,
 }: {
-  x: MotionValue<string>
-  y: MotionValue<string>
+  x: MotionValue<number>
+  y: MotionValue<number>
   scale: MotionValue<number>
   rotate: MotionValue<number>
   tailScale: MotionValue<number>
@@ -147,21 +148,21 @@ function ScrollMeteor({
 }) {
   return (
     <motion.div
-      className="absolute left-0 top-0 z-[6] origin-center"
+      className="cosmic-scroll-meteor cosmic-scroll-layer-motion absolute left-0 top-0 z-[6] origin-center"
       style={{ x, y, scale, rotate, opacity }}
     >
       <motion.div
-        className="absolute right-[58%] top-1/2 h-[2px] origin-right -translate-y-1/2 rounded-full bg-gradient-to-l from-transparent via-cyan/50 to-white/80"
+        className="cosmic-scroll-meteor-tail absolute right-[58%] top-1/2 h-[2px] origin-right -translate-y-1/2 rounded-full bg-gradient-to-l from-transparent via-cyan/50 to-white/80"
         style={{ width: 120, scaleX: tailScale }}
       />
       <motion.div
-        className="absolute right-[58%] top-1/2 h-[10px] w-[80px] origin-right -translate-y-1/2 rounded-full bg-gradient-to-l from-transparent via-cyan/20 to-cyan/35 opacity-70"
+        className="cosmic-scroll-meteor-tail absolute right-[58%] top-1/2 h-[10px] w-[80px] origin-right -translate-y-1/2 rounded-full bg-gradient-to-l from-transparent via-cyan/20 to-cyan/35 opacity-70"
         style={{ scaleX: tailScale }}
       />
       <div className="relative h-7 w-7 sm:h-8 sm:w-8">
         <div className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_35%_30%,white,oklch(0.84_0.16_200)_45%,oklch(0.45_0.2_280)_100%)] shadow-[0_0_18px_4px_oklch(0.84_0.16_200/0.45)]" />
         <motion.div
-          className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+          className="cosmic-scroll-crash cosmic-scroll-layer-motion pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
           style={{ opacity: crashOpacity, scale: crashRing }}
         >
           <div className="h-24 w-24 rounded-full bg-[radial-gradient(circle,oklch(0.84_0.16_200/0.28),transparent_68%)] blur-xl" />
@@ -176,7 +177,7 @@ function CosmicScrollFxLite({ starCount = 10 }: { starCount?: number }) {
   const stars = useMemo(() => buildStars(starCount), [starCount])
 
   return (
-    <div className="fixed inset-0 overflow-hidden bg-[oklch(0.08_0.012_270)]">
+    <div className="cosmic-scroll-fx-root fixed inset-0 overflow-hidden bg-[oklch(0.08_0.012_270)]">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_120%_90%_at_50%_0%,oklch(0.14_0.02_270/0.35),transparent_62%)]" />
       <MysticNebula opacity={0.38} />
       <StarField stars={stars} opacity={0.75} reduced />
@@ -189,7 +190,7 @@ function CosmicScrollFxMedium({ starCount }: { starCount: number }) {
   const stars = useMemo(() => buildStars(starCount), [starCount])
 
   return (
-    <div className="fixed inset-0 overflow-hidden bg-[oklch(0.08_0.012_270)]">
+    <div className="cosmic-scroll-fx-root fixed inset-0 overflow-hidden bg-[oklch(0.08_0.012_270)]">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_120%_90%_at_50%_0%,oklch(0.14_0.02_270/0.35),transparent_62%)]" />
       <MysticNebula opacity={0.45} />
       <StarField stars={stars} opacity={0.7} reduced />
@@ -199,41 +200,17 @@ function CosmicScrollFxMedium({ starCount }: { starCount: number }) {
 }
 
 function CosmicScrollFxFull({ starCount }: { starCount: number }) {
-  const scrollYProgress = useMotionValue(0)
+  const scrollYProgress = useDocumentScrollProgress()
+  const { width: viewportWidth, height: viewportHeight } = useViewportSize()
   const stars = useMemo(() => buildStars(starCount), [starCount])
-
-  useEffect(() => {
-    let frame = 0
-
-    const updateProgress = () => {
-      frame = 0
-      const max = document.documentElement.scrollHeight - window.innerHeight
-      const next = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0
-      scrollYProgress.set(next)
-    }
-
-    const onScroll = () => {
-      if (frame) return
-      frame = requestAnimationFrame(updateProgress)
-    }
-
-    updateProgress()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    window.addEventListener('resize', updateProgress, { passive: true })
-    return () => {
-      window.removeEventListener('scroll', onScroll)
-      window.removeEventListener('resize', updateProgress)
-      if (frame) cancelAnimationFrame(frame)
-    }
-  }, [scrollYProgress])
 
   const starOpacity = useTransform(scrollYProgress, [0, 0.35, 0.65], [1, 0.65, 0.2])
   const cosmicTopOpacity = useTransform(scrollYProgress, [0, 0.4, 0.7], [1, 0.5, 0])
   const dimensionOpacity = useTransform(scrollYProgress, [0, 0.2, 0.75], [0, 0.45, 0.7])
   const meteorOpacity = useTransform(scrollYProgress, [0, 0.05, 0.97, 1], [0.5, 0.85, 0.85, 0.35])
 
-  const meteorX = useTransform(scrollYProgress, [0, 1], ['10vw', '72vw'])
-  const meteorY = useTransform(scrollYProgress, [0, 1], ['2vh', '86vh'])
+  const meteorX = useTransform(scrollYProgress, [0, 1], [viewportWidth * 0.1, viewportWidth * 0.72])
+  const meteorY = useTransform(scrollYProgress, [0, 1], [viewportHeight * 0.02, viewportHeight * 0.86])
   const meteorScale = useTransform(scrollYProgress, [0, 0.6, 1], [0.45, 0.95, 1.35])
   const meteorRotate = useTransform(scrollYProgress, [0, 1], [32, 38])
   const meteorTail = useTransform(scrollYProgress, [0, 1], [0.5, 1.25])
@@ -246,7 +223,7 @@ function CosmicScrollFxFull({ starCount }: { starCount: number }) {
   const layerShift3 = useTransform(scrollYProgress, [0, 1], [0, 240])
 
   return (
-    <div className="fixed inset-0 overflow-hidden bg-[oklch(0.08_0.012_270)]">
+    <div className="cosmic-scroll-fx-root fixed inset-0 overflow-hidden bg-[oklch(0.08_0.012_270)]">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_120%_90%_at_50%_0%,oklch(0.14_0.02_270/0.35),transparent_62%)]" />
 
       <DimensionRifts

@@ -477,12 +477,21 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
 
   useEffect(() => {
     if (!expanded || isMobileVideo) {
-      if (!mobileTheaterOpen) document.body.style.overflow = ''
+      if (!mobileTheaterOpen) {
+        document.body.style.overflow = ''
+        document.body.style.position = ''
+        document.body.style.top = ''
+        document.body.style.width = ''
+      }
       return
     }
 
+    const lockedScrollY = window.scrollY
     document.body.style.overflow = 'hidden'
-    scrollAnchorYRef.current = window.scrollY
+    document.body.style.position = 'fixed'
+    document.body.style.top = `-${lockedScrollY}px`
+    document.body.style.width = '100%'
+    scrollAnchorYRef.current = lockedScrollY
     scrollAccumRef.current = 0
 
     const tryCollapse = () => {
@@ -498,16 +507,6 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
         return
       }
       scrollAccumRef.current += Math.abs(event.deltaY)
-      tryCollapse()
-    }
-
-    const onScroll = () => {
-      if (Date.now() - expandedAtRef.current < SCROLL_LOCK_MS) {
-        window.scrollTo(0, scrollAnchorYRef.current)
-        return
-      }
-      const delta = Math.abs(window.scrollY - scrollAnchorYRef.current)
-      scrollAccumRef.current = Math.max(scrollAccumRef.current, delta)
       tryCollapse()
     }
 
@@ -531,15 +530,17 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
     }
 
     window.addEventListener('wheel', onWheel, { passive: false })
-    window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('touchmove', onTouchMove, { passive: false })
     window.addEventListener('keydown', onKeyDown)
 
     return () => {
       document.body.style.overflow = ''
+      document.body.style.position = ''
+      document.body.style.top = ''
+      document.body.style.width = ''
+      window.scrollTo(0, lockedScrollY)
       lastTouchYRef.current = null
       window.removeEventListener('wheel', onWheel)
-      window.removeEventListener('scroll', onScroll)
       window.removeEventListener('touchmove', onTouchMove)
       window.removeEventListener('keydown', onKeyDown)
     }

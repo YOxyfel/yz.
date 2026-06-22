@@ -9,6 +9,7 @@ import { ArtPovFx } from './art-pov-fx'
 import { ArtScreenFx, artCharacterGlow } from './art-screen-fx'
 import { CatalogStrip, LabShell, LabTransition } from './arsenal-lab-shell'
 import { LabFxControls, LabFxPreferencesProvider, useLabFxPreferences } from './lab-fx-preferences'
+import { usePointerBoundsCache } from './use-pointer-bounds-cache'
 
 const accentRing: Record<ArtPiece['accent'], string> = {
   cyan: 'ring-cyan/35 shadow-[0_0_60px_-12px_oklch(0.84_0.16_200/0.5)] border-cyan/25',
@@ -40,10 +41,44 @@ function ArtConsole({ piece }: { piece: ArtPiece }) {
   const frameRef = useRef<HTMLDivElement>(null)
   const pointerX = useMotionValue(0)
   const pointerY = useMotionValue(0)
+  const readRaf = useRef(0)
+  const writeRaf = useRef(0)
+  const pendingPointer = useRef({ x: 0, y: 0 })
+  const { boundsRef, refreshBounds } = usePointerBoundsCache(frameRef)
   const springX = useSpring(pointerX, { stiffness: 120, damping: 20 })
   const springY = useSpring(pointerY, { stiffness: 120, damping: 20 })
   const parallaxX = useTransform(springX, [-0.5, 0.5], [-12, 12])
   const parallaxY = useTransform(springY, [-0.5, 0.5], [-8, 8])
+
+  const scheduleParallax = useCallback(
+    (clientX: number, clientY: number) => {
+      pendingPointer.current = { x: clientX, y: clientY }
+      if (readRaf.current) return
+
+      readRaf.current = requestAnimationFrame(() => {
+        readRaf.current = 0
+        const { left, top, width, height } = boundsRef.current
+        const nx = (pendingPointer.current.x - left) / width - 0.5
+        const ny = (pendingPointer.current.y - top) / height - 0.5
+
+        if (!writeRaf.current) {
+          writeRaf.current = requestAnimationFrame(() => {
+            writeRaf.current = 0
+            pointerX.set(nx)
+            pointerY.set(ny)
+          })
+        }
+      })
+    },
+    [boundsRef, pointerX, pointerY]
+  )
+
+  useEffect(() => {
+    return () => {
+      if (readRaf.current) cancelAnimationFrame(readRaf.current)
+      if (writeRaf.current) cancelAnimationFrame(writeRaf.current)
+    }
+  }, [])
 
   const go = useCallback((step: number) => {
     setDirection(step)
@@ -78,12 +113,10 @@ function ArtConsole({ piece }: { piece: ArtPiece }) {
       <div
         ref={frameRef}
         className={`relative aspect-[4/5] overflow-hidden rounded-2xl border bg-gradient-to-b ring-1 ${accentFrameBg[piece.accent]} ${accentRing[piece.accent]}`}
+        onPointerEnter={refreshBounds}
         onPointerMove={(event) => {
           if (isReduced || !showLabCardFx) return
-          const rect = frameRef.current?.getBoundingClientRect()
-          if (!rect) return
-          pointerX.set((event.clientX - rect.left) / rect.width - 0.5)
-          pointerY.set((event.clientY - rect.top) / rect.height - 0.5)
+          scheduleParallax(event.clientX, event.clientY)
         }}
         onPointerLeave={() => {
           pointerX.set(0)

@@ -9,6 +9,7 @@ import { createPortal } from 'react-dom'
 import { useTranslations } from 'next-intl'
 import { useCompactNavLayout, useCornerDockVisible } from './device-profile'
 import { useConstellationChrome } from './constellation-context'
+import { useNavScrolled } from './use-nav-scrolled'
 import { SiteFxControls } from './site-fx-controls'
 import { StationButton, StationLed } from './station-console'
 import { SiteVariantPicker } from './site-variant-picker'
@@ -41,7 +42,7 @@ function useNavHref() {
 }
 
 export function SiteNav() {
-  const [scrolled, setScrolled] = useState(false)
+  const scrolled = useNavScrolled()
   const [menuOpen, setMenuOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
   const compactNav = useCompactNavLayout()
@@ -59,16 +60,6 @@ export function SiteNav() {
 
   useEffect(() => {
     setMounted(true)
-  }, [])
-
-  useEffect(() => {
-    const onScroll = () => {
-      const next = window.scrollY > 40
-      setScrolled((prev) => (prev === next ? prev : next))
-    }
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
   useEffect(() => {

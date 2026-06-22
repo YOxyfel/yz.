@@ -37,7 +37,7 @@ import {
 import { detectMobileSkyLabViewport, useDeviceProfile } from './device-profile'
 import { resolveSkyLabFx } from './sky-lab-fx'
 import { usePageVisible } from './use-page-visible'
-import { useScrollIdle } from './use-scroll-idle'
+import { getScrollIdle, subscribeScrollIdle } from './use-scroll-idle'
 import { useVisualFxPreferences } from './visual-fx-preferences'
 
 type ConstellationContextValue = {
@@ -115,7 +115,7 @@ export function ConstellationProvider({ children }: { children: ReactNode }) {
   const { showScreenFx, isReduced } = useVisualFxPreferences()
   const { skyLabFxEnabled, skyLabLite } = resolveSkyLabFx(showScreenFx, isReduced, fxLite)
   const pageVisible = usePageVisible()
-  const scrollIdle = useScrollIdle()
+  const scrollIdleRef = useRef(true)
   const [constellationLabEnabled, setConstellationLabEnabled] = useState(false)
   const [mobileSkyLabMode, setMobileSkyLabMode] = useState(false)
   const [constellations, setConstellations] = useState<Constellation[]>([])
@@ -455,6 +455,13 @@ export function ConstellationProvider({ children }: { children: ReactNode }) {
   const skyLoadRef = useRef({ visible: 0, decors: 0 })
 
   useEffect(() => {
+    scrollIdleRef.current = getScrollIdle()
+    return subscribeScrollIdle(() => {
+      scrollIdleRef.current = getScrollIdle()
+    })
+  }, [])
+
+  useEffect(() => {
     skyLoadRef.current = {
       visible: constellations.filter((item) => !item.hidden).length,
       decors: crazyDecors.length + manualDecors.length,
@@ -462,13 +469,13 @@ export function ConstellationProvider({ children }: { children: ReactNode }) {
   }, [constellations, crazyDecors, manualDecors])
 
   useEffect(() => {
-    if (!skyLabFxEnabled || !constellationLabEnabled || !crazyMode || !scrollIdle || !pageVisible)
-      return
+    if (!skyLabFxEnabled || !constellationLabEnabled || !crazyMode || !pageVisible) return
 
     let cancelled = false
     let timer: number | null = null
 
     const tick = () => {
+      if (!scrollIdleRef.current) return
       const load = computeSkyLoadBudget(
         skyLoadRef.current.visible,
         skyLoadRef.current.decors
@@ -495,10 +502,11 @@ export function ConstellationProvider({ children }: { children: ReactNode }) {
         skyLoadRef.current.visible,
         skyLoadRef.current.decors
       )
+      const delay = scrollIdleRef.current ? crazySpawnDelayMs(load, skyLabLite) : 120
       timer = window.setTimeout(() => {
         tick()
         scheduleNext()
-      }, crazySpawnDelayMs(load, skyLabLite))
+      }, delay)
     }
 
     tick()
@@ -515,7 +523,6 @@ export function ConstellationProvider({ children }: { children: ReactNode }) {
     crazyDecors.length,
     manualDecors.length,
     pageVisible,
-    scrollIdle,
     skyLabFxEnabled,
     skyLabLite,
   ])

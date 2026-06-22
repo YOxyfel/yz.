@@ -2,21 +2,37 @@
 
 import { usePathname } from 'next/navigation'
 import { useEffect } from 'react'
+import { hashTargetId, requestHashSectionMount } from './hash-scroll'
 
-const NAV_OFFSET_PX = 88
 const INTRO_ONLY_HASH = '#explore'
+const HASH_SCROLL_MAX_RETRIES = 32
 
 export function scrollToHashTarget(hash: string, behavior: ScrollBehavior = 'smooth') {
-  const id = decodeURIComponent(hash.replace(/^#/, ''))
+  const id = hashTargetId(hash)
   if (!id) return false
 
   const target = document.getElementById(id)
   if (!target) return false
 
   target.style.contentVisibility = 'visible'
-  const top = target.getBoundingClientRect().top + window.scrollY - NAV_OFFSET_PX
-  window.scrollTo({ top: Math.max(0, top), behavior })
+  target.scrollIntoView({ behavior, block: 'start' })
   return true
+}
+
+function scrollToHashTargetWithRetry(hash: string, behavior: ScrollBehavior = 'smooth') {
+  const id = hashTargetId(hash)
+  if (!id) return
+
+  requestHashSectionMount(id)
+
+  const attempt = (retries = 0) => {
+    if (scrollToHashTarget(hash, behavior)) return
+    if (retries < HASH_SCROLL_MAX_RETRIES) {
+      requestAnimationFrame(() => attempt(retries + 1))
+    }
+  }
+
+  attempt()
 }
 
 function isSamePageHashLink(href: string, pathname: string) {
@@ -91,8 +107,9 @@ export function HashScrollBridge() {
       }
 
       const attempt = (retries = 0) => {
+        requestHashSectionMount(hashTargetId(hash))
         if (scrollToHashTarget(hash)) return
-        if (retries < 12) {
+        if (retries < HASH_SCROLL_MAX_RETRIES) {
           requestAnimationFrame(() => attempt(retries + 1))
         }
       }
@@ -116,7 +133,7 @@ export function HashScrollBridge() {
       const hash = href.slice(href.indexOf('#'))
       event.preventDefault()
       window.history.pushState(null, '', hash)
-      scrollToHashTarget(hash)
+      scrollToHashTargetWithRetry(hash)
     }
 
     window.addEventListener('hashchange', onHashChange)

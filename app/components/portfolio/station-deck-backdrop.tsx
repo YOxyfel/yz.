@@ -109,7 +109,7 @@ export function StationDeckBackdrop() {
             <span
               key={ripple.id}
               className="station-grid-pond-ripple"
-              style={{ left: ripple.x, top: ripple.y }}
+              style={{ transform: `translate3d(${ripple.x}px, ${ripple.y}px, 0)` }}
               onAnimationEnd={() => removeRipple(ripple.id)}
             />
           ))}

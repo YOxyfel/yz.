@@ -20,6 +20,7 @@ import { TestimonialsSection } from './testimonials-section'
 import { SiteVariantShell } from './site-variant-shell'
 import { useSiteVariant } from './site-variant-context'
 import { LazySection } from './lazy-section'
+import { NavScrollSentinel } from './nav-scroll-sentinel'
 import { StationDeckShell } from './station-deck-shell'
 
 const SkyDecorLayer = dynamic(
@@ -105,10 +106,11 @@ function PortfolioContent() {
       <SiteVariantShell>
         {!mobileSkyLabMode ? (
           <StationDeckShell>
+            <NavScrollSentinel />
             <SiteNav />
             <Hero />
             <HomeHubSection />
-            <LazySection minHeight="min(56vh, 640px)">
+            <LazySection minHeight="min(56vh, 640px)" anchorId="engine">
               <ProjectsSection />
             </LazySection>
             <LazySection minHeight="min(40vh, 520px)">
@@ -123,10 +125,10 @@ function PortfolioContent() {
             <LazySection minHeight="min(48vh, 560px)">
               <WebStackSection />
             </LazySection>
-            <LazySection minHeight="min(32vh, 420px)">
+            <LazySection minHeight="min(32vh, 420px)" anchorId="faq">
               <FaqSection />
             </LazySection>
-            <LazySection minHeight="min(40vh, 480px)">
+            <LazySection minHeight="min(40vh, 480px)" anchorId="contact">
               <ContactSection />
             </LazySection>
             <SiteFooter />
