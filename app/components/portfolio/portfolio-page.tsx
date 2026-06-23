@@ -1,11 +1,12 @@
 'use client'
 
+import { useDeviceProfile } from './device-profile'
+import { MobileStaticPortfolio } from './mobile-static-portfolio'
 import dynamic from 'next/dynamic'
 import { useEffect } from 'react'
 import { BackgroundFx } from './background-fx'
 import { ConstellationProvider, useConstellationChrome } from './constellation-context'
 import { CornerToolsDock } from './corner-tools-dock'
-import { useDeviceProfile } from './device-profile'
 import { resolveSkyLabFx } from './sky-lab-fx'
 import { useVisualFxPreferences } from './visual-fx-preferences'
 import { Hero } from './hero'
@@ -87,10 +88,10 @@ const WebStackSection = dynamic(
   }
 )
 
-function PortfolioContent() {
+function DesktopPortfolioContent() {
   const { variant } = useSiteVariant()
-  const { constellationLabEnabled, skyViewMode, mobileSkyLabMode } = useConstellationChrome()
-  const { mobilePerfCut, fxLite } = useDeviceProfile()
+  const { constellationLabEnabled, mobileSkyLabMode } = useConstellationChrome()
+  const { fxLite } = useDeviceProfile()
   const { showScreenFx, isReduced } = useVisualFxPreferences()
   const { skyLabFxTier } = resolveSkyLabFx(showScreenFx, isReduced, fxLite)
 
@@ -130,13 +131,13 @@ function PortfolioContent() {
 
   return (
     <>
-      {!mobilePerfCut ? <HeroVisibilityBridge /> : null}
+      <HeroVisibilityBridge />
       <BackgroundFx />
 
       <SiteVariantShell>
         {!mobileSkyLabMode ? (
           <StationDeckShell>
-            {!mobilePerfCut ? <NavScrollSentinel /> : null}
+            <NavScrollSentinel />
             <SiteNav />
             <Hero />
             <LazySection minHeight="min(36vh, 420px)" anchorId="explore">
@@ -170,17 +171,23 @@ function PortfolioContent() {
         ) : null}
       </SiteVariantShell>
 
-      {!mobilePerfCut ? <CornerToolsDock /> : null}
-      {constellationLabEnabled && !mobilePerfCut ? <SkyDecorLayer /> : null}
+      <CornerToolsDock />
+      {constellationLabEnabled ? <SkyDecorLayer /> : null}
       {!mobileSkyLabMode && constellationLabEnabled ? <ConstellationPanel /> : null}
     </>
   )
 }
 
 export function PortfolioPage() {
+  const { mobilePerfCut } = useDeviceProfile()
+
+  if (mobilePerfCut) {
+    return <MobileStaticPortfolio />
+  }
+
   return (
     <ConstellationProvider>
-      <PortfolioContent />
+      <DesktopPortfolioContent />
     </ConstellationProvider>
   )
 }

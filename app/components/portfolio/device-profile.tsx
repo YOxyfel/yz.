@@ -203,6 +203,7 @@ export function DeviceProfileProvider({ children }: { children: ReactNode }) {
     root.dataset.coarsePointer = profile.isCoarsePointer ? 'on' : 'off'
     root.dataset.fxLite = profile.fxLite ? 'on' : 'off'
     root.dataset.mobilePerfCut = profile.mobilePerfCut ? 'on' : 'off'
+    root.dataset.mobileStatic = profile.mobilePerfCut ? 'on' : 'off'
     root.dataset.perfTier = profile.performanceTier
     root.dataset.perfHardware = profile.hardwareTier
     root.dataset.deviceReady = 'on'
@@ -217,14 +218,18 @@ export function DeviceProfileProvider({ children }: { children: ReactNode }) {
 
   return (
     <DeviceProfileContext.Provider value={profile}>
-      <PerformanceAdaptiveMonitor
-        performanceTier={profile.performanceTier}
-        onAdaptiveTier={handleAdaptiveTier}
-      />
-      <ScrollPerformanceMonitor
-        performanceTier={profile.performanceTier}
-        onAdaptiveTier={handleAdaptiveTier}
-      />
+      {!profile.mobilePerfCut ? (
+        <>
+          <PerformanceAdaptiveMonitor
+            performanceTier={profile.performanceTier}
+            onAdaptiveTier={handleAdaptiveTier}
+          />
+          <ScrollPerformanceMonitor
+            performanceTier={profile.performanceTier}
+            onAdaptiveTier={handleAdaptiveTier}
+          />
+        </>
+      ) : null}
       {children}
     </DeviceProfileContext.Provider>
   )
