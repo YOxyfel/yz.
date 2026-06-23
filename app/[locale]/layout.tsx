@@ -1,5 +1,6 @@
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages, setRequestLocale } from 'next-intl/server'
+import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 import { routing, type AppLocale } from '../../i18n/routing'
 import { SetHtmlLang } from '../components/portfolio/set-html-lang'
@@ -23,6 +24,32 @@ export default async function LocaleLayout({ children, params }: Props) {
   }
 
   setRequestLocale(locale)
+
+  const headerStore = await headers()
+  const mobile = headerStore.get('x-mobile-static') === '1'
+
+  if (mobile) {
+    const isMobileHome = headerStore.get('x-mobile-home') === '1'
+
+    if (isMobileHome) {
+      return (
+        <>
+          <JsonLd data={[buildPersonSchema(locale), buildWebSiteSchema(locale)]} />
+          {children}
+        </>
+      )
+    }
+
+    const messages = await getMessages()
+
+    return (
+      <NextIntlClientProvider locale={locale} messages={messages}>
+        <JsonLd data={[buildPersonSchema(locale), buildWebSiteSchema(locale)]} />
+        {children}
+      </NextIntlClientProvider>
+    )
+  }
+
   const messages = await getMessages()
 
   return (

@@ -1,0 +1,39 @@
+import { Space_Grotesk, JetBrains_Mono } from 'next/font/google'
+import { ConditionalAnalyticsScripts } from './components/portfolio/conditional-analytics-scripts'
+import { ConditionalAnalytics } from './components/portfolio/conditional-analytics'
+import { DEVICE_BOOTSTRAP_SCRIPT, HOME_SCROLL_BOOTSTRAP_SCRIPT } from './components/portfolio/breakpoints'
+import './globals.css'
+
+const spaceGrotesk = Space_Grotesk({
+  variable: '--font-sans',
+  subsets: ['latin'],
+  display: 'swap',
+  weight: ['400', '500', '600', '700'],
+})
+
+const jetbrainsMono = JetBrains_Mono({
+  variable: '--font-mono',
+  subsets: ['latin'],
+  display: 'swap',
+  weight: ['400', '500', '600'],
+})
+
+export function FullRootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html
+      lang="en"
+      className={`dark ${spaceGrotesk.variable} ${jetbrainsMono.variable} bg-background`}
+      suppressHydrationWarning
+    >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: DEVICE_BOOTSTRAP_SCRIPT }} />
+        <script dangerouslySetInnerHTML={{ __html: HOME_SCROLL_BOOTSTRAP_SCRIPT }} />
+      </head>
+      <body className="font-sans antialiased">
+        {children}
+        <ConditionalAnalyticsScripts />
+        <ConditionalAnalytics />
+      </body>
+    </html>
+  )
+}

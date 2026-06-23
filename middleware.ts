@@ -13,6 +13,14 @@ export default function middleware(request: NextRequest) {
 
   response.headers.set('x-mobile-static', isMobile ? '1' : '0')
 
+  const localeMatch = request.nextUrl.pathname.match(/^\/(en|bg)(\/|$)/)
+  if (localeMatch) {
+    response.headers.set('x-locale', localeMatch[1])
+  }
+
+  const isMobileHome = /^\/(en|bg)$/.test(request.nextUrl.pathname)
+  response.headers.set('x-mobile-home', isMobile && isMobileHome ? '1' : '0')
+
   if (isMobile) {
     response.cookies.set('mobile-static', '1', { path: '/', maxAge: 86_400, sameSite: 'lax' })
   } else {

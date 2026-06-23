@@ -15,7 +15,7 @@ function variantScrollHint(variant: 'minimal' | 'station' | 'futuristic') {
   return 'Shift + scroll left for Station'
 }
 
-export function SiteVariantShell({ children }: { children: ReactNode }) {
+function SiteVariantShellInner({ children }: { children: ReactNode }) {
   const { variant, scrollProgress, isTransitioning, setVariant } = useSiteVariant()
   const { isCoarsePointer, isNarrow, isTablet } = useDeviceProfile()
   const [showHint, setShowHint] = useState(false)
@@ -178,4 +178,24 @@ export function SiteVariantShell({ children }: { children: ReactNode }) {
       ) : null}
     </>
   )
+}
+
+export function SiteVariantShell({ children }: { children: ReactNode }) {
+  const { mobilePerfCut } = useDeviceProfile()
+
+  if (mobilePerfCut) {
+    return (
+      <div className="site-variant-viewport">
+        <div
+          className="site-variant-root"
+          data-site-variant="station"
+          data-variant-transition="flat"
+        >
+          {children}
+        </div>
+      </div>
+    )
+  }
+
+  return <SiteVariantShellInner>{children}</SiteVariantShellInner>
 }
