@@ -239,7 +239,7 @@
       linear-gradient(to right, var(--station-grid-line) 1px, transparent 1px),
       linear-gradient(to bottom, var(--station-grid-line) 1px, transparent 1px);
     background-size: var(--station-grid-size) var(--station-grid-size);
-    background-attachment: fixed;
+    background-attachment: scroll;
   }
 
   html[data-narrow='on'] .station-sky-backdrop-grid,
@@ -332,8 +332,9 @@
     position: absolute;
     inset: 0;
     opacity: 0.82;
-    background-attachment: fixed;
-    transition: opacity 2.8s cubic-bezier(0.12, 1, 0.28, 1);
+    background-attachment: scroll;
+    contain: paint;
+    transition: opacity 14s cubic-bezier(0.12, 1, 0.28, 1);
     mask-image: linear-gradient(180deg, black 0%, black calc(100% - 5rem), transparent 100%);
     -webkit-mask-image: linear-gradient(180deg, black 0%, black calc(100% - 5rem), transparent 100%);
   }
@@ -342,10 +343,28 @@
     position: absolute;
     inset: 0;
     opacity: 0.96;
-    background-attachment: fixed;
-    transition: opacity 2.8s cubic-bezier(0.12, 1, 0.28, 1);
+    background-attachment: scroll;
+    contain: paint;
+    transition: opacity 14s cubic-bezier(0.12, 1, 0.28, 1);
     mask-image: linear-gradient(180deg, black 0%, black calc(100% - 4rem), transparent 100%);
     -webkit-mask-image: linear-gradient(180deg, black 0%, black calc(100% - 4rem), transparent 100%);
+  }
+
+  .station-sky-backdrop[data-station-backdrop-active='off'] .station-sky-backdrop-particles,
+  .station-sky-backdrop[data-station-backdrop-active='off'] .station-sky-backdrop-nebula {
+    content-visibility: hidden;
+    visibility: hidden;
+    opacity: 0 !important;
+    animation-play-state: paused !important;
+  }
+
+  .station-sky-backdrop[data-station-backdrop-active='off'] .station-sky-backdrop-ripples {
+    display: none;
+  }
+
+  html[data-scroll-busy='on'] .station-sky-backdrop-particles,
+  html[data-scroll-busy='on'] .station-sky-backdrop-nebula {
+    animation-play-state: paused !important;
   }
 
   .station-section {
@@ -2428,7 +2447,7 @@ html[data-scroll-busy='on'] .starship-warp-flare {
 /* Scroll idle: rich cosmic returns very slowly */
 .cosmic-scroll-fx-stack[data-cosmic-idle='on'] .cosmic-scroll-fx-crossfade--idle {
   opacity: 1;
-  transition: opacity 2.8s cubic-bezier(0.12, 1, 0.28, 1);
+  transition: opacity 14s cubic-bezier(0.12, 1, 0.28, 1);
 }
 
 .cosmic-scroll-fx-stack[data-cosmic-idle='on'] .cosmic-scroll-fx-crossfade--scroll {

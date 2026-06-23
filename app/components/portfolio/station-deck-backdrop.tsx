@@ -4,7 +4,6 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useDeviceProfile } from './device-profile'
 import { generateSkyBackdropFx, type SkyBackdropFx } from './station-sky-backdrop-fx'
-import { getScrollIdle, subscribeScrollIdle } from './use-scroll-idle'
 import { useVisualFxPreferences } from './visual-fx-preferences'
 
 type PondRipple = {
@@ -28,25 +27,50 @@ function useGridRipplesEnabled() {
   )
 }
 
+function isScrollBusy() {
+  if (typeof document === 'undefined') return false
+  return document.documentElement.dataset.scrollBusy === 'on'
+}
+
 export function StationDeckBackdrop() {
+  const backdropRef = useRef<HTMLDivElement>(null)
   const [mounted, setMounted] = useState(false)
   const [fx, setFx] = useState<SkyBackdropFx | null>(null)
   const [ripples, setRipples] = useState<PondRipple[]>([])
   const rippleIdRef = useRef(0)
   const lastSpawnRef = useRef<{ x: number; y: number } | null>(null)
-  const scrollIdleRef = useRef(getScrollIdle())
   const ripplesEnabled = useGridRipplesEnabled()
-
-  useEffect(() => {
-    return subscribeScrollIdle(() => {
-      scrollIdleRef.current = getScrollIdle()
-    })
-  }, [])
 
   useEffect(() => {
     setMounted(true)
     setFx(generateSkyBackdropFx())
   }, [])
+
+  /** Single IO on the page shell — never per particle/layer. */
+  useEffect(() => {
+    if (!mounted) return
+
+    const deck = document.querySelector('.station-deck')
+    const root = backdropRef.current
+    if (!deck || !root) return
+
+    const syncActive = (intersecting: boolean) => {
+      root.dataset.stationBackdropActive = intersecting ? 'on' : 'off'
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => syncActive(Boolean(entry?.isIntersecting)),
+      { threshold: 0, rootMargin: '0px' }
+    )
+
+    observer.observe(deck)
+    syncActive(true)
+
+    return () => {
+      observer.disconnect()
+      delete root.dataset.stationBackdropActive
+    }
+  }, [mounted])
 
   useEffect(() => {
     document.documentElement.dataset.gridRipples = ripplesEnabled ? 'on' : 'off'
@@ -77,7 +101,9 @@ export function StationDeckBackdrop() {
     }
 
     const onMove = (event: MouseEvent) => {
-      if (!scrollIdleRef.current) return
+      if (isScrollBusy()) return
+      if (backdropRef.current?.dataset.stationBackdropActive === 'off') return
+
       cancelAnimationFrame(raf)
       raf = requestAnimationFrame(() => {
         const { clientX: x, clientY: y } = event
@@ -111,7 +137,13 @@ export function StationDeckBackdrop() {
   if (!mounted || !fx) return null
 
   return createPortal(
-    <div className="station-sky-backdrop" data-station-sky-backdrop aria-hidden>
+    <div
+      ref={backdropRef}
+      className="station-sky-backdrop"
+      data-station-sky-backdrop
+      data-station-backdrop-active="on"
+      aria-hidden
+    >
       <div className="station-sky-backdrop-grid" />
       {ripplesEnabled ? (
         <div className="station-sky-backdrop-ripples" aria-hidden>
