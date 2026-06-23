@@ -243,9 +243,19 @@
   }
 
   html[data-narrow='on'] .station-sky-backdrop-grid,
-  html[data-coarse-pointer='on'] .station-sky-backdrop-grid,
-  html[data-tablet='on'] .station-sky-backdrop-grid {
+  html[data-tablet='on'] .station-sky-backdrop-grid,
+  html[data-coarse-pointer='on'] .station-sky-backdrop-grid {
     background-attachment: scroll;
+    opacity: 0.24;
+  }
+
+  html[data-narrow='on'] .station-sky-backdrop-nebula,
+  html[data-tablet='on'] .station-sky-backdrop-nebula,
+  html[data-coarse-pointer='on'] .station-sky-backdrop-nebula,
+  html[data-narrow='on'] .station-sky-backdrop-particles,
+  html[data-tablet='on'] .station-sky-backdrop-particles,
+  html[data-coarse-pointer='on'] .station-sky-backdrop-particles {
+    display: none !important;
   }
 
   .station-sky-backdrop-ripples {

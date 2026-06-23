@@ -39,6 +39,15 @@ export function PerformanceAdaptiveMonitor({
 
   useEffect(() => {
     if (!pageVisible || isPerfBenchmarkDone()) return
+    if (typeof window !== 'undefined') {
+      const mobile =
+        window.matchMedia('(max-width: 767px)').matches ||
+        window.matchMedia('(pointer: coarse)').matches
+      if (mobile) {
+        markPerfBenchmarkDone()
+        return
+      }
+    }
 
     let cancelled = false
 

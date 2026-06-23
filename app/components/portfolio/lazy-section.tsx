@@ -1,8 +1,14 @@
 'use client'
 
 import { useInView } from 'framer-motion'
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from 'react'
+import { useDeviceProfile } from './device-profile'
 import { hashMatchesAnchor, hashTargetId, SITE_HASH_NAV_EVENT } from './hash-scroll'
+import { getScrollIdle, subscribeScrollIdle } from './use-scroll-idle'
+
+function useScrollIdleSnapshot() {
+  return useSyncExternalStore(subscribeScrollIdle, getScrollIdle, () => true)
+}
 
 type LazySectionProps = {
   children: ReactNode
@@ -22,12 +28,20 @@ export function LazySection({
   placeholder = null,
   anchorId,
 }: LazySectionProps) {
+  const { isNarrow, isTablet, isCoarsePointer, fxLite } = useDeviceProfile()
+  const scrollIdle = useScrollIdleSnapshot()
+  const deferMountWhileScrolling = isNarrow || isTablet || isCoarsePointer || fxLite
+  const effectiveRootMargin = deferMountWhileScrolling ? '160px 0px' : rootMargin
+
   const [hashForced, setHashForced] = useState(() => {
     if (typeof window === 'undefined' || !anchorId) return false
     return hashTargetId(window.location.hash) === anchorId
   })
   const ref = useRef<HTMLDivElement | null>(null)
-  const inView = useInView(ref, { once: true, margin: rootMargin as `${number}px ${number}px` })
+  const inView = useInView(ref, {
+    once: true,
+    margin: effectiveRootMargin as `${number}px ${number}px`,
+  })
 
   useEffect(() => {
     if (!anchorId) return
@@ -52,7 +66,7 @@ export function LazySection({
     }
   }, [anchorId])
 
-  const shouldMount = inView || hashForced
+  const shouldMount = hashForced || (inView && (!deferMountWhileScrolling || scrollIdle))
 
   return (
     <div
