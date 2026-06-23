@@ -17,7 +17,7 @@ type LazySectionProps = {
 export function LazySection({
   children,
   className,
-  rootMargin = '240px 0px',
+  rootMargin = '420px 0px',
   minHeight = '1px',
   placeholder = null,
   anchorId,

@@ -144,6 +144,14 @@ export function VisualFxPreferencesProvider({ children }: { children: ReactNode 
     }
   }, [hydrated, mode, prefersReducedMotion, screenFxLive, setMode, toggleScreenFxLive])
 
+  useEffect(() => {
+    if (!hydrated) return
+    document.documentElement.dataset.fxMode = mode
+    return () => {
+      delete document.documentElement.dataset.fxMode
+    }
+  }, [hydrated, mode])
+
   return (
     <VisualFxPreferencesContext.Provider value={value}>
       {children}

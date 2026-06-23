@@ -2,7 +2,7 @@
 
 import { useSyncExternalStore } from 'react'
 
-const DEFAULT_IDLE_MS = 180
+const DEFAULT_IDLE_MS = 220
 
 let scrollIdle = true
 let idleMs = DEFAULT_IDLE_MS

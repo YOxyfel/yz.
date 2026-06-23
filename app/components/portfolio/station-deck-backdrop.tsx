@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useDeviceProfile } from './device-profile'
 import { generateSkyBackdropFx, type SkyBackdropFx } from './station-sky-backdrop-fx'
+import { getScrollIdle, subscribeScrollIdle } from './use-scroll-idle'
 import { useVisualFxPreferences } from './visual-fx-preferences'
 
 type PondRipple = {
@@ -17,11 +18,12 @@ const MIN_SPAWN_PX = 10
 
 function useGridRipplesEnabled() {
   const { mode } = useVisualFxPreferences()
-  const { isNarrow, prefersReducedMotion } = useDeviceProfile()
+  const { isNarrow, prefersReducedMotion, performanceTier } = useDeviceProfile()
 
   return (
     !isNarrow &&
     !prefersReducedMotion &&
+    performanceTier === 'high' &&
     (mode === 'full' || mode === 'reduced')
   )
 }
@@ -32,7 +34,14 @@ export function StationDeckBackdrop() {
   const [ripples, setRipples] = useState<PondRipple[]>([])
   const rippleIdRef = useRef(0)
   const lastSpawnRef = useRef<{ x: number; y: number } | null>(null)
+  const scrollIdleRef = useRef(getScrollIdle())
   const ripplesEnabled = useGridRipplesEnabled()
+
+  useEffect(() => {
+    return subscribeScrollIdle(() => {
+      scrollIdleRef.current = getScrollIdle()
+    })
+  }, [])
 
   useEffect(() => {
     setMounted(true)
@@ -68,6 +77,7 @@ export function StationDeckBackdrop() {
     }
 
     const onMove = (event: MouseEvent) => {
+      if (!scrollIdleRef.current) return
       cancelAnimationFrame(raf)
       raf = requestAnimationFrame(() => {
         const { clientX: x, clientY: y } = event

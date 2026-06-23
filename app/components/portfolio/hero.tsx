@@ -8,8 +8,9 @@ import { scrollToHashTarget } from './hash-scroll-bridge'
 import { StationButton, StationChip, StationLed } from './station-console'
 
 export function Hero() {
-  const { isNarrow, prefersReducedMotion } = useDeviceProfile()
+  const { isNarrow, prefersReducedMotion, performanceTier, isDesktop } = useDeviceProfile()
   const reducedMotion = useReducedMotion() || prefersReducedMotion || isNarrow
+  const showHeroBlob = isDesktop && performanceTier === 'high' && !reducedMotion
   const t = useTranslations('Hero')
 
   return (
@@ -19,16 +20,10 @@ export function Hero() {
       className="station-section station-section--bridge relative flex min-h-[calc(100svh-var(--site-nav-spacer-height))] scroll-mt-[5.5rem] flex-col items-center justify-center !py-0"
     >
       <div className="station-sector-backdrop" aria-hidden />
-      {!isNarrow ? (
-        <motion.div
+      {!isNarrow && showHeroBlob ? (
+        <div
           aria-hidden
-          className="bg-fx-soft-blob bg-fx-soft-blob-cyan absolute left-1/3 top-1/3 -z-10 h-56 w-56"
-          animate={reducedMotion ? { opacity: 0.3 } : { opacity: [0.25, 0.4, 0.25] }}
-          transition={
-            reducedMotion
-              ? { duration: 0 }
-              : { duration: 10, repeat: Infinity, ease: 'easeInOut' }
-          }
+          className="hero-ambient-blob bg-fx-soft-blob bg-fx-soft-blob-cyan absolute left-1/3 top-1/3 -z-10 h-56 w-56 animate-breathe"
         />
       ) : null}
 

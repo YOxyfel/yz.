@@ -1,15 +1,13 @@
 'use client'
 
 import dynamic from 'next/dynamic'
-import { useEffect, useState } from 'react'
-import { ClickConstellations } from './click-constellations'
 import { CosmicScrollFx } from './cosmic-scroll-fx'
+import { ClickConstellations } from './click-constellations'
 import { useConstellationChrome } from './constellation-context'
 import { useDeviceProfile } from './device-profile'
-import { isHeroInView } from './hero-visibility-bridge'
 import { useDeferredFxMount } from './use-deferred-fx-mount'
+import { isCosmicScrollDegraded, resolveCosmicIdleMode, useFxRuntime } from './fx-runtime'
 import { usePageVisible } from './use-page-visible'
-import { useScrollIdle } from './use-scroll-idle'
 import { useVisualFxPreferences } from './visual-fx-preferences'
 import type { PerformanceTier } from './performance-tier'
 
@@ -27,160 +25,98 @@ function StaticBackdrop() {
   )
 }
 
-type CosmicScrollRouterProps = {
-  cosmicLite: boolean
+type BackgroundFxLayerProps = {
+  fxLite: boolean
+  isReduced: boolean
   fxMedium: boolean
   performanceTier: PerformanceTier
   mode: string
-}
-
-function CosmicScrollRouter({ cosmicLite, fxMedium, performanceTier, mode }: CosmicScrollRouterProps) {
-  const scrollIdle = useScrollIdle()
-  const [heroInView, setHeroInView] = useState(true)
-
-  useEffect(() => {
-    const sync = () => setHeroInView(isHeroInView())
-    sync()
-    const observer = new MutationObserver(sync)
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['data-hero-in-view'],
-    })
-    return () => observer.disconnect()
-  }, [])
-
-  const cinematicCosmic =
-    !cosmicLite &&
-    !fxMedium &&
-    performanceTier === 'high' &&
-    mode === 'full' &&
-    scrollIdle &&
-    heroInView
-  const cosmicMedium = !cosmicLite && !cinematicCosmic
-
-  return <CosmicScrollFx lite={cosmicLite || !heroInView} medium={cosmicMedium} tier={performanceTier} />
-}
-type ScrollGatedBlurBlobsProps = {
-  enabled: boolean
-}
-
-function ScrollGatedBlurBlobs({ enabled }: ScrollGatedBlurBlobsProps) {
-  const scrollIdle = useScrollIdle()
-  if (!enabled || !scrollIdle) return null
-
-  return (
-    <>
-      <div className="bg-fx-soft-blob bg-fx-soft-blob-cyan animate-breathe absolute -left-32 top-1/4 h-[42rem] w-[42rem] max-md:hidden" />
-      <div className="bg-fx-soft-blob bg-fx-soft-blob-violet animate-breathe-slow absolute -right-40 top-1/2 h-[40rem] w-[40rem] max-md:hidden" />
-    </>
-  )
-}
-
-type ScrollGatedStarshipsProps = {
-  showMobileSkyLabStarships: boolean
-  showAmbientStarships: boolean
-  performanceTier: PerformanceTier
-  mobileSkyLab: boolean
-  pageVisible: boolean
-}
-
-function ScrollGatedStarships({
-  showMobileSkyLabStarships,
-  showAmbientStarships,
-  performanceTier,
-  mobileSkyLab,
-  pageVisible,
-}: ScrollGatedStarshipsProps) {
-  const scrollIdle = useScrollIdle()
-  const [heroInView, setHeroInView] = useState(true)
-
-  useEffect(() => {
-    const sync = () => setHeroInView(isHeroInView())
-    sync()
-    const observer = new MutationObserver(sync)
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['data-hero-in-view'],
-    })
-    return () => observer.disconnect()
-  }, [])
-
-  const showStarship = showMobileSkyLabStarships || (showAmbientStarships && heroInView)
-  const pauseStarshipMotion = (!scrollIdle && !showMobileSkyLabStarships) || !heroInView
-
-  if (!showStarship) return null
-
-  return (
-    <StarshipTraffic
-      enabled
-      liteMode={performanceTier !== 'high' || mobileSkyLab}
-      pauseSpawning={!pageVisible || pauseStarshipMotion}
-      pauseMotion={pauseStarshipMotion}
-    />
-  )
-}
-
-type ScrollGatedHeavyExtrasProps = {
+  userFullMode: boolean
   showHeavyFx: boolean
   enableHeavyBackgroundFx: boolean
   pageVisible: boolean
-  performanceTier: PerformanceTier
-  mode: string
-  cosmicLite: boolean
-  fxMedium: boolean
+  showMobileSkyLabStarships: boolean
+  showAmbientStarships: boolean
+  mobileSkyLab: boolean
 }
 
-function ScrollGatedHeavyExtras({
+function BackgroundFxLayer({
+  fxLite,
+  isReduced,
+  fxMedium,
+  performanceTier,
+  mode,
+  userFullMode,
   showHeavyFx,
   enableHeavyBackgroundFx,
   pageVisible,
-  performanceTier,
-  mode,
-  cosmicLite,
-  fxMedium,
-}: ScrollGatedHeavyExtrasProps) {
-  const scrollIdle = useScrollIdle()
-  const [heroInView, setHeroInView] = useState(true)
+  showMobileSkyLabStarships,
+  showAmbientStarships,
+  mobileSkyLab,
+}: BackgroundFxLayerProps) {
+  const { scrollIdle, heroInView } = useFxRuntime()
 
-  useEffect(() => {
-    const sync = () => setHeroInView(isHeroInView())
-    sync()
-    const observer = new MutationObserver(sync)
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['data-hero-in-view'],
-    })
-    return () => observer.disconnect()
-  }, [])
+  const idleCosmicMode = resolveCosmicIdleMode({
+    hardwareLite: fxLite,
+    isReduced,
+    fxMedium,
+    performanceTier,
+    mode,
+    userFullMode,
+  })
+  const scrollDegraded = isCosmicScrollDegraded(scrollIdle, heroInView)
 
-  const cinematicCosmic =
-    !cosmicLite &&
-    !fxMedium &&
-    performanceTier === 'high' &&
-    mode === 'full' &&
-    scrollIdle &&
-    heroInView
+  const cinematicCosmic = idleCosmicMode === 'cinematic' && !scrollDegraded
   const heavyExtrasReady = useDeferredFxMount(
     showHeavyFx && enableHeavyBackgroundFx && pageVisible && cinematicCosmic
   )
   const showHighTierExtras = showHeavyFx && enableHeavyBackgroundFx && heavyExtrasReady
 
-  return <ScrollGatedBlurBlobs enabled={showHighTierExtras} />
+  const showStarship =
+    showMobileSkyLabStarships || (showAmbientStarships && heroInView)
+  const pauseStarshipMotion =
+    (!scrollIdle && !showMobileSkyLabStarships) || !heroInView
+
+  return (
+    <>
+      <CosmicScrollFx
+        idleMode={idleCosmicMode}
+        scrollDegraded={scrollDegraded}
+        tier={performanceTier}
+      />
+
+      {showHighTierExtras ? (
+        <>
+          <div className="bg-fx-soft-blob bg-fx-soft-blob-cyan animate-breathe absolute -left-32 top-1/4 h-[42rem] w-[42rem] max-md:hidden" />
+          <div className="bg-fx-soft-blob bg-fx-soft-blob-violet animate-breathe-slow absolute -right-40 top-1/2 h-[40rem] w-[40rem] max-md:hidden" />
+        </>
+      ) : null}
+
+      {showStarship ? (
+        <StarshipTraffic
+          enabled
+          liteMode={performanceTier !== 'high' || mobileSkyLab}
+          pauseSpawning={!pageVisible || pauseStarshipMotion}
+          pauseMotion={pauseStarshipMotion}
+        />
+      ) : null}
+    </>
+  )
 }
 
 export function BackgroundFx() {
   const { constellationLabEnabled, mobileSkyLabMode } = useConstellationChrome()
   const deviceProfile = useDeviceProfile()
-  const { fxLite, fxMedium, performanceTier, enableHeavyBackgroundFx } = deviceProfile
+  const { fxLite, fxMedium, performanceTier, enableHeavyBackgroundFx, isDesktop } = deviceProfile
   const { showScreenFx, isReduced, mode } = useVisualFxPreferences()
   const pageVisible = usePageVisible()
 
   const mobileSkyLab = mobileSkyLabMode
   const skyLabOpen = constellationLabEnabled || mobileSkyLab
   const skyLabLite = isReduced || fxLite
+  const userFullMode = mode === 'full' && !isReduced
 
-  const cosmicLite = fxLite || isReduced || !pageVisible || !showScreenFx
-  const showHeavyFx = showScreenFx && pageVisible && !isReduced && !fxLite && mode === 'full'
+  const showHeavyFx = showScreenFx && pageVisible && userFullMode
   const showMobileSkyLabStarships = mobileSkyLab && skyLabOpen && showScreenFx && pageVisible && !isReduced
   const showAmbientStarships =
     showScreenFx &&
@@ -188,7 +124,8 @@ export function BackgroundFx() {
     !isReduced &&
     !mobileSkyLab &&
     !skyLabOpen &&
-    performanceTier !== 'low'
+    isDesktop &&
+    performanceTier === 'high'
   const showClickConstellations = showScreenFx && (skyLabOpen || mobileSkyLab)
   const constellationLite = skyLabLite || mobileSkyLab
 
@@ -201,29 +138,19 @@ export function BackgroundFx() {
       aria-hidden
       className="device-profile-gated pointer-events-none fixed inset-0 z-0 overflow-hidden"
     >
-      <CosmicScrollRouter
-        cosmicLite={cosmicLite}
+      <BackgroundFxLayer
+        fxLite={fxLite}
+        isReduced={isReduced}
         fxMedium={fxMedium}
         performanceTier={performanceTier}
         mode={mode}
-      />
-
-      <ScrollGatedHeavyExtras
+        userFullMode={userFullMode}
         showHeavyFx={showHeavyFx}
         enableHeavyBackgroundFx={enableHeavyBackgroundFx}
         pageVisible={pageVisible}
-        performanceTier={performanceTier}
-        mode={mode}
-        cosmicLite={cosmicLite}
-        fxMedium={fxMedium}
-      />
-
-      <ScrollGatedStarships
         showMobileSkyLabStarships={showMobileSkyLabStarships}
         showAmbientStarships={showAmbientStarships}
-        performanceTier={performanceTier}
         mobileSkyLab={mobileSkyLab}
-        pageVisible={pageVisible}
       />
 
       {showClickConstellations ? (

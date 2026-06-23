@@ -3,7 +3,6 @@
 import { ArrowUpRight, ChevronLeft, ChevronRight, ExternalLink, Globe } from 'lucide-react'
 import Image from 'next/image'
 import { useCallback, useRef, useState } from 'react'
-import { OffscreenAnimationFreeze } from './offscreen-animation-freeze'
 import { SectionHeading } from './section-heading'
 import { StationChip, StationPanel, StationScreen, StationSection } from './station-console'
 import { useDeviceProfile } from './device-profile'
@@ -241,7 +240,6 @@ function GitHubShowcaseCard() {
 
 export function WebStackSection() {
   const { isNarrow } = useDeviceProfile()
-  const items = [...stack, ...stack]
 
   return (
     <StationSection id="stack" tone="stack">
@@ -265,16 +263,14 @@ export function WebStackSection() {
 
       <GitHubShowcaseCard />
 
-      <OffscreenAnimationFreeze className="relative mt-14 overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)]">
-        <div className="flex w-max animate-marquee gap-3">
-          {items.map((item, index) => (
-            <StationChip key={`${item}-${index}`} className="whitespace-nowrap !px-5 !py-2.5 !text-xs">
-              <span className="station-led station-led-cyan station-led-on" />
-              {item}
-            </StationChip>
-          ))}
-        </div>
-      </OffscreenAnimationFreeze>
+      <div className="mt-14 flex flex-wrap justify-center gap-3">
+        {stack.map((item) => (
+          <StationChip key={item} className="whitespace-nowrap !px-5 !py-2.5 !text-xs">
+            <span className="station-led station-led-cyan station-led-on" />
+            {item}
+          </StationChip>
+        ))}
+      </div>
     </StationSection>
   )
 }

@@ -242,6 +242,12 @@
     background-attachment: fixed;
   }
 
+  html[data-narrow='on'] .station-sky-backdrop-grid,
+  html[data-coarse-pointer='on'] .station-sky-backdrop-grid,
+  html[data-tablet='on'] .station-sky-backdrop-grid {
+    background-attachment: scroll;
+  }
+
   .station-sky-backdrop-ripples {
     position: absolute;
     inset: 0;
@@ -327,6 +333,7 @@
     inset: 0;
     opacity: 0.82;
     background-attachment: fixed;
+    transition: opacity 2.8s cubic-bezier(0.12, 1, 0.28, 1);
     mask-image: linear-gradient(180deg, black 0%, black calc(100% - 5rem), transparent 100%);
     -webkit-mask-image: linear-gradient(180deg, black 0%, black calc(100% - 5rem), transparent 100%);
   }
@@ -336,6 +343,7 @@
     inset: 0;
     opacity: 0.96;
     background-attachment: fixed;
+    transition: opacity 2.8s cubic-bezier(0.12, 1, 0.28, 1);
     mask-image: linear-gradient(180deg, black 0%, black calc(100% - 4rem), transparent 100%);
     -webkit-mask-image: linear-gradient(180deg, black 0%, black calc(100% - 4rem), transparent 100%);
   }
@@ -1891,6 +1899,14 @@
   background: radial-gradient(circle, oklch(0.55 0.24 295 / 0.09) 0%, transparent 68%);
 }
 
+html[data-perf-tier='mid'] .bg-fx-soft-blob-cyan {
+  background: radial-gradient(circle, oklch(0.84 0.16 200 / 0.09) 0%, transparent 78%);
+}
+
+html[data-perf-tier='mid'] .bg-fx-soft-blob-violet {
+  background: radial-gradient(circle, oklch(0.55 0.24 295 / 0.07) 0%, transparent 78%);
+}
+
 .content-deferred-section {
   content-visibility: auto;
   contain-intrinsic-size: auto 480px;
@@ -2279,6 +2295,12 @@
   pointer-events: none;
 }
 
+html[data-perf-tier='low'] .starship-warp-trail,
+html[data-perf-tier='mid'] .starship-warp-trail,
+html[data-scroll-busy='on'] .starship-warp-trail {
+  filter: none;
+}
+
 .starship-warp-flare {
   position: absolute;
   left: 50%;
@@ -2295,6 +2317,13 @@
   filter: blur(9px);
   opacity: 0.8;
   pointer-events: none;
+}
+
+html[data-perf-tier='low'] .starship-warp-flare,
+html[data-perf-tier='mid'] .starship-warp-flare,
+html[data-scroll-busy='on'] .starship-warp-flare {
+  filter: none;
+  opacity: 0.55;
 }
 
 @keyframes cosmic-star-twinkle {
@@ -2365,6 +2394,54 @@
 
 .cosmic-nebula-b {
   animation: cosmic-nebula-drift 31s ease-in-out infinite reverse;
+}
+
+.cosmic-nebula-static {
+  animation: none !important;
+}
+
+.cosmic-nebula-static-b {
+  opacity: 0.85;
+}
+
+.cosmic-scroll-fx-stack {
+  isolation: isolate;
+}
+
+.cosmic-scroll-fx-crossfade {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+
+/* Scroll degrade: rich cosmic fades out quickly */
+.cosmic-scroll-fx-stack[data-cosmic-scroll='on'] .cosmic-scroll-fx-crossfade--idle {
+  opacity: 0;
+  transition: opacity 0.22s ease-in;
+}
+
+.cosmic-scroll-fx-stack[data-cosmic-scroll='on'] .cosmic-scroll-fx-crossfade--scroll {
+  opacity: 1;
+  transition: opacity 0.22s ease-out;
+}
+
+/* Scroll idle: rich cosmic returns very slowly */
+.cosmic-scroll-fx-stack[data-cosmic-idle='on'] .cosmic-scroll-fx-crossfade--idle {
+  opacity: 1;
+  transition: opacity 2.8s cubic-bezier(0.12, 1, 0.28, 1);
+}
+
+.cosmic-scroll-fx-stack[data-cosmic-idle='on'] .cosmic-scroll-fx-crossfade--scroll {
+  opacity: 0;
+  transition: opacity 0.22s ease-in;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cosmic-scroll-fx-crossfade,
+  .station-sky-backdrop-nebula,
+  .station-sky-backdrop-particles {
+    transition: none !important;
+  }
 }
 
 .cosmic-nebula-c {
@@ -2883,6 +2960,7 @@
   .cosmic-nebula-a,
   .cosmic-nebula-b,
   .cosmic-nebula-c,
+  .hero-ambient-blob,
   .cosmic-sun,
   .cosmic-planet-orbit,
   .cosmic-crash-shock,
@@ -4764,8 +4842,7 @@ html[data-fx-lite='on'] .site-variant-hint-card p {
 }
 
 html[data-perf-tier='mid'] .bg-fx-soft-blob {
-  opacity: 0.55;
-  filter: blur(64px);
+  opacity: 0.62;
 }
 
 html[data-perf-tier='low'] .animate-grid-pan,
@@ -4788,6 +4865,7 @@ html[data-animations-frozen='on'] .cosmic-star-twinkle,
 html[data-animations-frozen='on'] .cosmic-nebula-a,
 html[data-animations-frozen='on'] .cosmic-nebula-b,
 html[data-animations-frozen='on'] .bg-fx-soft-blob,
+html[data-animations-frozen='on'] .hero-ambient-blob,
 html[data-animations-frozen='on'] .animate-breathe,
 html[data-animations-frozen='on'] .animate-breathe-slow,
 html[data-animations-frozen='on'] .animate-grid-pan,
@@ -4819,15 +4897,53 @@ html[data-animations-frozen='on'] .corner-dock-glow,
 html[data-scroll-busy='on'] .cosmic-star-twinkle,
 html[data-scroll-busy='on'] .cosmic-nebula-a,
 html[data-scroll-busy='on'] .cosmic-nebula-b,
+html[data-scroll-busy='on'] .cosmic-nebula-c,
 html[data-scroll-busy='on'] .bg-fx-soft-blob,
+html[data-scroll-busy='on'] .hero-ambient-blob,
 html[data-scroll-busy='on'] .animate-breathe,
 html[data-scroll-busy='on'] .animate-breathe-slow,
+html[data-scroll-busy='on'] .animate-grid-pan,
+html[data-scroll-busy='on'] .animate-marquee,
+html[data-scroll-busy='on'] .station-led-pulse,
+html[data-scroll-busy='on'] .station-grid-pond-ripple,
+html[data-scroll-busy='on'] .station-grid-pond-ripple::before,
+html[data-scroll-busy='on'] .station-grid-pond-ripple::after,
+html[data-scroll-busy='on'] .starship-flight,
+html[data-scroll-busy='on'] .corner-dock-glow,
+html[data-scroll-busy='on'] .hero-bridge-scroll-icon,
 html[data-scroll-busy='on'] .cosmic-scroll-nebula-layer .cosmic-nebula-a,
-html[data-scroll-busy='on'] .cosmic-scroll-nebula-layer .cosmic-nebula-b {
+html[data-scroll-busy='on'] .cosmic-scroll-nebula-layer .cosmic-nebula-b,
+html[data-scroll-busy='on'] .art-orbit-ring,
+html[data-scroll-busy='on'] .art-orbit-orb,
+html[data-scroll-busy='on'] .art-halo-pulse,
+html[data-scroll-busy='on'] .art-qi-orb,
+html[data-scroll-busy='on'] .art-spark,
+html[data-scroll-busy='on'] .art-mist {
   animation-play-state: paused !important;
 }
 
+html[data-scroll-busy='on'] .starship-traffic-layer,
+html[data-scroll-busy='on'] .starship-warp-trail,
+html[data-scroll-busy='on'] .starship-warp-flare {
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+html[data-scroll-busy='on'] .cosmic-scroll-meteor,
+html[data-scroll-busy='on'] .cosmic-scroll-rift,
+html[data-scroll-busy='on'] .cosmic-scroll-crash {
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
 html[data-scroll-busy='on'] .cosmic-scroll-fx-root,
-html[data-scroll-busy='on'] .cosmic-scroll-nebula-layer {
+html[data-scroll-busy='on'] .cosmic-scroll-nebula-layer,
+html[data-scroll-busy='on'] .station-sky-backdrop {
   contain: strict;
+}
+
+html[data-scroll-busy='on'] .station-sky-backdrop-nebula,
+html[data-scroll-busy='on'] .station-sky-backdrop-particles {
+  opacity: 0.48;
+  transition: opacity 0.22s ease-in;
 }
