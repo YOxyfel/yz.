@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import type { ReactNode } from 'react'
+import { useDeviceProfile } from './device-profile'
 import { fadeUp } from './motion'
 
 type RevealProps = {
@@ -11,6 +12,12 @@ type RevealProps = {
 }
 
 export function Reveal({ children, className, delay = 0 }: RevealProps) {
+  const { mobilePerfCut } = useDeviceProfile()
+
+  if (mobilePerfCut) {
+    return <div className={className}>{children}</div>
+  }
+
   return (
     <motion.div
       className={className}

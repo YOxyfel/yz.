@@ -36,6 +36,8 @@ export type DeviceProfile = {
   enablePropViewer3d: boolean
   enablePanelFlip: boolean
   maxSkyConstellations: number
+  /** Phone, tablet, or coarse pointer — aggressive static UI + no screen FX. */
+  mobilePerfCut: boolean
 }
 
 const DEFAULT_PROFILE: DeviceProfile = {
@@ -53,6 +55,7 @@ const DEFAULT_PROFILE: DeviceProfile = {
   enablePropViewer3d: true,
   enablePanelFlip: false,
   maxSkyConstellations: 10,
+  mobilePerfCut: false,
 }
 
 type ViewportSnapshot = Pick<
@@ -142,14 +145,21 @@ function buildDeviceProfile(
   performanceTier: PerformanceTier,
   hardwareTier: PerformanceTier
 ): DeviceProfile {
-  const fxLite = performanceTier === 'low' || viewport.prefersReducedMotion
+  const mobilePerfCut =
+    viewport.isNarrow || viewport.isTablet || viewport.isCoarsePointer
+  const fxLite = mobilePerfCut || performanceTier === 'low' || viewport.prefersReducedMotion
   const fxMedium = performanceTier === 'mid' && !fxLite
-  const enableOrbitHitboxes = !viewport.isCoarsePointer && performanceTier !== 'low'
-  const enableHeavyBackgroundFx = performanceTier === 'high' && !viewport.prefersReducedMotion
-  const enablePropViewer3d = performanceTier !== 'low'
+  const enableOrbitHitboxes =
+    !mobilePerfCut && !viewport.isCoarsePointer && performanceTier !== 'low'
+  const enableHeavyBackgroundFx =
+    !mobilePerfCut && performanceTier === 'high' && !viewport.prefersReducedMotion
+  const enablePropViewer3d = !mobilePerfCut && performanceTier !== 'low'
   const enablePanelFlip =
-    performanceTier !== 'low' && viewport.isDesktop && !viewport.isCoarsePointer
-  const maxSkyConstellations = 10
+    !mobilePerfCut &&
+    performanceTier !== 'low' &&
+    viewport.isDesktop &&
+    !viewport.isCoarsePointer
+  const maxSkyConstellations = mobilePerfCut ? 4 : 10
 
   return {
     ...viewport,
@@ -162,6 +172,7 @@ function buildDeviceProfile(
     enablePropViewer3d,
     enablePanelFlip,
     maxSkyConstellations,
+    mobilePerfCut,
   }
 }
 
@@ -191,6 +202,7 @@ export function DeviceProfileProvider({ children }: { children: ReactNode }) {
     root.dataset.tablet = profile.isTablet ? 'on' : 'off'
     root.dataset.coarsePointer = profile.isCoarsePointer ? 'on' : 'off'
     root.dataset.fxLite = profile.fxLite ? 'on' : 'off'
+    root.dataset.mobilePerfCut = profile.mobilePerfCut ? 'on' : 'off'
     root.dataset.perfTier = profile.performanceTier
     root.dataset.perfHardware = profile.hardwareTier
     root.dataset.deviceReady = 'on'

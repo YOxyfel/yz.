@@ -1,13 +1,44 @@
 'use client'
 
-import { useInView } from 'framer-motion'
-import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode, type RefObject } from 'react'
 import { useDeviceProfile } from './device-profile'
 import { hashMatchesAnchor, hashTargetId, SITE_HASH_NAV_EVENT } from './hash-scroll'
+import {
+  resetStaggeredIdleMounts,
+  scheduleStaggeredIdleMount,
+} from './staggered-idle-mount'
 import { getScrollIdle, subscribeScrollIdle } from './use-scroll-idle'
 
 function useScrollIdleSnapshot() {
   return useSyncExternalStore(subscribeScrollIdle, getScrollIdle, () => true)
+}
+
+function useNativeInViewOnce(
+  ref: RefObject<HTMLDivElement | null>,
+  rootMargin: string
+) {
+  const [inView, setInView] = useState(false)
+
+  useEffect(() => {
+    if (inView) return
+    const node = ref.current
+    if (!node) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          setInView(true)
+          observer.disconnect()
+        }
+      },
+      { rootMargin }
+    )
+
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [inView, ref, rootMargin])
+
+  return inView
 }
 
 type LazySectionProps = {
@@ -28,20 +59,18 @@ export function LazySection({
   placeholder = null,
   anchorId,
 }: LazySectionProps) {
-  const { isNarrow, isTablet, isCoarsePointer, fxLite } = useDeviceProfile()
+  const { mobilePerfCut, fxLite } = useDeviceProfile()
   const scrollIdle = useScrollIdleSnapshot()
-  const deferMountWhileScrolling = isNarrow || isTablet || isCoarsePointer || fxLite
-  const effectiveRootMargin = deferMountWhileScrolling ? '160px 0px' : rootMargin
+  const deferMountWhileScrolling = mobilePerfCut || fxLite
+  const effectiveRootMargin = deferMountWhileScrolling ? '120px 0px' : rootMargin
 
   const [hashForced, setHashForced] = useState(() => {
     if (typeof window === 'undefined' || !anchorId) return false
     return hashTargetId(window.location.hash) === anchorId
   })
+  const [contentMounted, setContentMounted] = useState(false)
   const ref = useRef<HTMLDivElement | null>(null)
-  const inView = useInView(ref, {
-    once: true,
-    margin: effectiveRootMargin as `${number}px ${number}px`,
-  })
+  const inView = useNativeInViewOnce(ref, effectiveRootMargin)
 
   useEffect(() => {
     if (!anchorId) return
@@ -66,7 +95,35 @@ export function LazySection({
     }
   }, [anchorId])
 
-  const shouldMount = hashForced || (inView && (!deferMountWhileScrolling || scrollIdle))
+  useEffect(() => {
+    if (deferMountWhileScrolling && !scrollIdle) {
+      resetStaggeredIdleMounts()
+    }
+  }, [deferMountWhileScrolling, scrollIdle])
+
+  const pendingMount =
+    hashForced || (inView && (!deferMountWhileScrolling || scrollIdle))
+
+  useEffect(() => {
+    if (!pendingMount) {
+      setContentMounted(false)
+      return
+    }
+
+    if (hashForced || !deferMountWhileScrolling) {
+      setContentMounted(true)
+      return
+    }
+
+    let cancelled = false
+    scheduleStaggeredIdleMount().then(() => {
+      if (!cancelled) setContentMounted(true)
+    })
+
+    return () => {
+      cancelled = true
+    }
+  }, [pendingMount, hashForced, deferMountWhileScrolling])
 
   return (
     <div
@@ -74,7 +131,7 @@ export function LazySection({
       className={`perf-deferred-section content-deferred-section ${className ?? ''}`.trim()}
       style={{ minHeight, contentVisibility: 'auto' }}
     >
-      {shouldMount ? children : placeholder}
+      {contentMounted ? children : placeholder}
     </div>
   )
 }

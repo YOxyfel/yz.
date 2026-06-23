@@ -7,7 +7,7 @@ import { Menu, Sparkles, X, Eye, EyeOff } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useTranslations } from 'next-intl'
-import { useCompactNavLayout, useCornerDockVisible } from './device-profile'
+import { useCompactNavLayout, useCornerDockVisible, useDeviceProfile } from './device-profile'
 import { useConstellationChrome } from './constellation-context'
 import { useNavScrolled } from './use-nav-scrolled'
 import { SiteFxControls } from './site-fx-controls'
@@ -43,6 +43,7 @@ function useNavHref() {
 
 export function SiteNav() {
   const scrolled = useNavScrolled()
+  const { mobilePerfCut } = useDeviceProfile()
   const [menuOpen, setMenuOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
   const compactNav = useCompactNavLayout()
@@ -208,7 +209,7 @@ export function SiteNav() {
         href={home}
         className="flex shrink-0 items-center gap-2 font-heading text-sm font-bold tracking-widest"
       >
-        <StationLed active pulse />
+        <StationLed active pulse={!mobilePerfCut} />
         YZ<span className="text-cyan">.</span>
       </a>
 
@@ -252,7 +253,14 @@ export function SiteNav() {
     </nav>
   )
 
-  const navHeader = (
+  const navHeader = mobilePerfCut ? (
+    <header
+      data-portfolio-chrome
+      className={`site-nav-header ${scrolled ? 'site-nav-header-scrolled' : ''}`}
+    >
+      <div className="site-nav-header-inner">{navBar}</div>
+    </header>
+  ) : (
     <motion.header
       data-portfolio-chrome
       className={`site-nav-header ${scrolled ? 'site-nav-header-scrolled' : ''}`}

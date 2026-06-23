@@ -189,11 +189,16 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
   const manualMinimizeRef = useRef(false)
   const expandedAtRef = useRef(0)
   const playbackSnapshotRef = useRef<{ time: number; playing: boolean } | null>(null)
-  const inView = useInView(rootRef, { once: false, margin: '-10%' })
-  const reduceMotion = useReducedMotion()
-  const { skyViewMode } = useConstellationChrome()
   const deviceProfile = useDeviceProfile()
+  const mobilePerfCut = deviceProfile.mobilePerfCut
+  const inViewTracked = useInView(rootRef, {
+    once: mobilePerfCut,
+    margin: mobilePerfCut ? '0px' : '-10%',
+  })
+  const reduceMotion = useReducedMotion() || mobilePerfCut
+  const inView = mobilePerfCut ? true : inViewTracked
   const isMobileVideo = isMobileSkyLabViewport(deviceProfile)
+  const { skyViewMode } = useConstellationChrome()
 
   const [phase, setPhase] = useState<PromoPhase>('intro')
   const [showVideo, setShowVideo] = useState(false)
@@ -968,7 +973,7 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
   const promoShell = (
     <motion.div
       key="promo-shell"
-      layout={!isTheater}
+      layout={!isTheater && !mobilePerfCut}
       data-portfolio-chrome={isTheater ? true : undefined}
       className={`group/promo overflow-hidden border bg-black shadow-[0_0_100px_-28px_oklch(0.84_0.16_200/0.45)] ${
         isTheater ? theaterShellClass : 'relative w-full rounded-[1.75rem] border-white/10'

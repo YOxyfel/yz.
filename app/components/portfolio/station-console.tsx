@@ -8,6 +8,7 @@ import {
   FLIP_OUT_DURATION,
 } from './motion'
 import { useSiteVariant } from './site-variant-context'
+import { useDeviceProfile } from './device-profile'
 
 function mergeClass(...parts: Array<string | false | undefined>) {
   return parts.filter(Boolean).join(' ')
@@ -83,6 +84,8 @@ function StationFlipPanel({
   ...props
 }: StationFlipPanelProps) {
   const reduceMotion = useReducedMotion()
+  const { mobilePerfCut } = useDeviceProfile()
+  const staticFlip = reduceMotion || mobilePerfCut
   const sceneRef = useRef<HTMLDivElement>(null)
   const isInView = useInView(sceneRef, {
     amount: 0.38,
@@ -91,7 +94,7 @@ function StationFlipPanel({
   const [showFront, setShowFront] = useState(false)
 
   useEffect(() => {
-    if (reduceMotion) {
+    if (staticFlip) {
       setShowFront(true)
       return
     }
@@ -104,7 +107,7 @@ function StationFlipPanel({
     const holdMs = FLIP_BACK_HOLD_MS + flipDelay * 1000
     const timer = window.setTimeout(() => setShowFront(true), holdMs)
     return () => window.clearTimeout(timer)
-  }, [flipDelay, isInView, reduceMotion])
+  }, [flipDelay, isInView, staticFlip])
 
   const panelClass = mergeClass(
     variantMap[variant],
@@ -132,7 +135,7 @@ function StationFlipPanel({
     className
   )
 
-  if (!flipOnView || reduceMotion) {
+  if (!flipOnView || staticFlip) {
     return (
       <div ref={sceneRef} className={sceneClass} {...props}>
         <div className="station-flip-card station-flip-card-ready">{faces}</div>

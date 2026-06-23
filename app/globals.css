@@ -4976,3 +4976,49 @@ html[data-scroll-busy='on'] .station-sky-backdrop-particles {
   opacity: 0.48;
   transition: opacity 0.22s ease-in;
 }
+
+/* Mobile perf cut — static scroll-first UI (phone, tablet, coarse pointer). */
+html[data-mobile-perf-cut='on'] .cosmic-scroll-fx-root,
+html[data-mobile-perf-cut='on'] .bg-fx-soft-blob,
+html[data-mobile-perf-cut='on'] .hero-ambient-blob,
+html[data-mobile-perf-cut='on'] .station-sky-backdrop-nebula,
+html[data-mobile-perf-cut='on'] .station-sky-backdrop-particles,
+html[data-mobile-perf-cut='on'] .starship-traffic-layer,
+html[data-mobile-perf-cut='on'] .click-constellations-root {
+  display: none !important;
+}
+
+html[data-mobile-perf-cut='on'] .station-sky-backdrop-grid {
+  opacity: 0.14;
+}
+
+html[data-mobile-perf-cut='on'] .station-sector-backdrop {
+  opacity: 0.32;
+}
+
+html[data-mobile-perf-cut='on'] .animate-breathe,
+html[data-mobile-perf-cut='on'] .animate-breathe-slow,
+html[data-mobile-perf-cut='on'] .animate-grid-pan,
+html[data-mobile-perf-cut='on'] .animate-marquee,
+html[data-mobile-perf-cut='on'] .cosmic-star-twinkle,
+html[data-mobile-perf-cut='on'] .cosmic-nebula-a,
+html[data-mobile-perf-cut='on'] .cosmic-nebula-b,
+html[data-mobile-perf-cut='on'] .cosmic-nebula-c,
+html[data-mobile-perf-cut='on'] .station-led-pulse,
+html[data-mobile-perf-cut='on'] .hero-bridge-scroll-icon,
+html[data-mobile-perf-cut='on'] .starship-flight,
+html[data-mobile-perf-cut='on'] .corner-dock-glow,
+html[data-mobile-perf-cut='on'] .art-orbit-ring,
+html[data-mobile-perf-cut='on'] .art-orbit-orb,
+html[data-mobile-perf-cut='on'] .art-halo-pulse {
+  animation: none !important;
+}
+
+html[data-mobile-perf-cut='on'] .station-flip-card {
+  transform: none !important;
+}
+
+html[data-mobile-perf-cut='on'] .station-section,
+html[data-mobile-perf-cut='on'] .perf-deferred-section {
+  contain: layout style paint;
+}

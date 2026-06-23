@@ -10,7 +10,7 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import { MOBILE_MAX_PX } from './breakpoints'
+import { MOBILE_MAX_PX, MEDIA_COARSE_POINTER, MEDIA_TABLET, isMobilePerfCutViewport } from './breakpoints'
 import { getHardwareTier } from './performance-tier'
 
 export type VisualFxMode = 'full' | 'reduced' | 'off'
@@ -19,9 +19,9 @@ const STORAGE_KEY = 'portfolio-visual-fx-mode'
 const STORAGE_EXPLICIT_KEY = 'portfolio-visual-fx-mode-explicit'
 const MEDIA_MOBILE = `(max-width: ${MOBILE_MAX_PX}px)` as const
 
-/** Phone-width viewports — default site FX off unless the user picks otherwise. */
-function isMobileFxViewport() {
-  return window.matchMedia(MEDIA_MOBILE).matches
+/** Phone/tablet/coarse — screen FX forced off for scroll performance. */
+function isMobilePerfCutFxViewport() {
+  return isMobilePerfCutViewport()
 }
 
 function readExplicitFxChoice() {
@@ -34,7 +34,7 @@ function markExplicitFxChoice() {
 
 /** Default site FX mode when the user has not picked one explicitly. */
 function defaultFxModeForViewport(): VisualFxMode {
-  if (isMobileFxViewport()) return 'off'
+  if (isMobilePerfCutFxViewport()) return 'off'
   const hardware = getHardwareTier()
   if (hardware === 'high') return 'full'
   if (hardware === 'mid') return 'reduced'
@@ -102,9 +102,16 @@ export function VisualFxPreferencesProvider({ children }: { children: ReactNode 
     setHydrated(true)
 
     const mobileMedia = window.matchMedia(MEDIA_MOBILE)
-    mobileMedia.addEventListener('change', syncMode)
+    const tabletMedia = window.matchMedia(MEDIA_TABLET)
+    const coarseMedia = window.matchMedia(MEDIA_COARSE_POINTER)
+    const onViewportChange = () => syncMode()
+    mobileMedia.addEventListener('change', onViewportChange)
+    tabletMedia.addEventListener('change', onViewportChange)
+    coarseMedia.addEventListener('change', onViewportChange)
     return () => {
-      mobileMedia.removeEventListener('change', syncMode)
+      mobileMedia.removeEventListener('change', onViewportChange)
+      tabletMedia.removeEventListener('change', onViewportChange)
+      coarseMedia.removeEventListener('change', onViewportChange)
     }
   }, [])
 
@@ -130,7 +137,8 @@ export function VisualFxPreferencesProvider({ children }: { children: ReactNode 
 
   const value = useMemo<VisualFxPreferencesValue>(() => {
     const reduced = mode === 'reduced' || prefersReducedMotion
-    const showScreenFx = hydrated && mode !== 'off' && screenFxLive
+    const mobilePerfCut = isMobilePerfCutFxViewport()
+    const showScreenFx = hydrated && !mobilePerfCut && mode !== 'off' && screenFxLive
     return {
       mode,
       screenFxLive,

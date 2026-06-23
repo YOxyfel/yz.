@@ -34,6 +34,7 @@ function isScrollBusy() {
 
 export function StationDeckBackdrop() {
   const backdropRef = useRef<HTMLDivElement>(null)
+  const { mobilePerfCut } = useDeviceProfile()
   const [mounted, setMounted] = useState(false)
   const [fx, setFx] = useState<SkyBackdropFx | null>(null)
   const [ripples, setRipples] = useState<PondRipple[]>([])
@@ -43,8 +44,10 @@ export function StationDeckBackdrop() {
 
   useEffect(() => {
     setMounted(true)
-    setFx(generateSkyBackdropFx())
-  }, [])
+    if (!mobilePerfCut) {
+      setFx(generateSkyBackdropFx())
+    }
+  }, [mobilePerfCut])
 
   /** Single IO on the page shell — never per particle/layer. */
   useEffect(() => {
@@ -134,7 +137,24 @@ export function StationDeckBackdrop() {
     }
   }, [mounted, ripplesEnabled])
 
-  if (!mounted || !fx) return null
+  if (!mounted) return null
+
+  if (mobilePerfCut) {
+    return createPortal(
+      <div
+        ref={backdropRef}
+        className="station-sky-backdrop"
+        data-station-sky-backdrop
+        data-station-backdrop-active="on"
+        aria-hidden
+      >
+        <div className="station-sky-backdrop-grid" />
+      </div>,
+      document.body
+    )
+  }
+
+  if (!fx) return null
 
   return createPortal(
     <div

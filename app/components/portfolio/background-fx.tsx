@@ -107,9 +107,14 @@ function BackgroundFxLayer({
 export function BackgroundFx() {
   const { constellationLabEnabled, mobileSkyLabMode } = useConstellationChrome()
   const deviceProfile = useDeviceProfile()
-  const { fxLite, fxMedium, performanceTier, enableHeavyBackgroundFx, isDesktop } = deviceProfile
+  const { fxLite, fxMedium, performanceTier, enableHeavyBackgroundFx, isDesktop, mobilePerfCut } =
+    deviceProfile
   const { showScreenFx, isReduced, mode } = useVisualFxPreferences()
   const pageVisible = usePageVisible()
+
+  if (mobilePerfCut || !showScreenFx) {
+    return <StaticBackdrop />
+  }
 
   const mobileSkyLab = mobileSkyLabMode
   const skyLabOpen = constellationLabEnabled || mobileSkyLab
@@ -128,10 +133,6 @@ export function BackgroundFx() {
     performanceTier === 'high'
   const showClickConstellations = showScreenFx && (skyLabOpen || mobileSkyLab)
   const constellationLite = skyLabLite || mobileSkyLab
-
-  if (!showScreenFx) {
-    return <StaticBackdrop />
-  }
 
   return (
     <div

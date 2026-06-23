@@ -43,9 +43,16 @@ export function HeroVisibilityBridge() {
     const hero = document.getElementById('top')
     if (!hero) return
 
+    const isMobilePerfCut =
+      window.matchMedia('(max-width: 767px)').matches ||
+      window.matchMedia('(pointer: coarse)').matches
+
     const observer = new IntersectionObserver(
       ([entry]) => setHeroInView(Boolean(entry?.isIntersecting)),
-      { threshold: 0, rootMargin: '0px 0px -35% 0px' }
+      {
+        threshold: 0,
+        rootMargin: isMobilePerfCut ? '0px 0px -8% 0px' : '0px 0px -35% 0px',
+      }
     )
 
     observer.observe(hero)
