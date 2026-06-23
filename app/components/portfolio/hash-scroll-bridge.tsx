@@ -2,10 +2,12 @@
 
 import { usePathname } from 'next/navigation'
 import { useEffect } from 'react'
+import { isMobilePerfCutViewport } from './breakpoints'
 import { hashTargetId, requestHashSectionMount } from './hash-scroll'
 
 const INTRO_ONLY_HASH = '#explore'
 const HASH_SCROLL_MAX_RETRIES = 32
+const HASH_SCROLL_MAX_RETRIES_MOBILE = 8
 
 export function scrollToHashTarget(hash: string, behavior: ScrollBehavior = 'smooth') {
   const id = hashTargetId(hash)
@@ -19,15 +21,21 @@ export function scrollToHashTarget(hash: string, behavior: ScrollBehavior = 'smo
   return true
 }
 
+function maxHashRetries() {
+  return isMobilePerfCutViewport() ? HASH_SCROLL_MAX_RETRIES_MOBILE : HASH_SCROLL_MAX_RETRIES
+}
+
 function scrollToHashTargetWithRetry(hash: string, behavior: ScrollBehavior = 'smooth') {
   const id = hashTargetId(hash)
   if (!id) return
 
   requestHashSectionMount(id)
+  const mobile = isMobilePerfCutViewport()
+  const scrollBehavior: ScrollBehavior = mobile ? 'auto' : behavior
 
   const attempt = (retries = 0) => {
-    if (scrollToHashTarget(hash, behavior)) return
-    if (retries < HASH_SCROLL_MAX_RETRIES) {
+    if (scrollToHashTarget(hash, scrollBehavior)) return
+    if (retries < maxHashRetries()) {
       requestAnimationFrame(() => attempt(retries + 1))
     }
   }
@@ -67,9 +75,11 @@ function landOnIntro(pathname: string) {
   }
 
   scrollToTop('auto')
-  requestAnimationFrame(() => scrollToTop('auto'))
-  window.setTimeout(() => scrollToTop('auto'), 50)
-  window.setTimeout(() => scrollToTop('auto'), 250)
+  if (!isMobilePerfCutViewport()) {
+    requestAnimationFrame(() => scrollToTop('auto'))
+    window.setTimeout(() => scrollToTop('auto'), 50)
+    window.setTimeout(() => scrollToTop('auto'), 250)
+  }
 }
 
 export function HashScrollBridge() {
@@ -108,8 +118,8 @@ export function HashScrollBridge() {
 
       const attempt = (retries = 0) => {
         requestHashSectionMount(hashTargetId(hash))
-        if (scrollToHashTarget(hash)) return
-        if (retries < HASH_SCROLL_MAX_RETRIES) {
+        if (scrollToHashTarget(hash, isMobilePerfCutViewport() ? 'auto' : 'smooth')) return
+        if (retries < maxHashRetries()) {
           requestAnimationFrame(() => attempt(retries + 1))
         }
       }

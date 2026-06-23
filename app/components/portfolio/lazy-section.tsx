@@ -1,17 +1,12 @@
 'use client'
 
-import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode, type RefObject } from 'react'
+import { useEffect, useRef, useState, type ReactNode, type RefObject } from 'react'
 import { useDeviceProfile } from './device-profile'
 import { hashMatchesAnchor, hashTargetId, SITE_HASH_NAV_EVENT } from './hash-scroll'
 import {
   resetStaggeredIdleMounts,
   scheduleStaggeredIdleMount,
 } from './staggered-idle-mount'
-import { getScrollIdle, subscribeScrollIdle } from './use-scroll-idle'
-
-function useScrollIdleSnapshot() {
-  return useSyncExternalStore(subscribeScrollIdle, getScrollIdle, () => true)
-}
 
 function useNativeInViewOnce(
   ref: RefObject<HTMLDivElement | null>,
@@ -59,16 +54,15 @@ export function LazySection({
   placeholder = null,
   anchorId,
 }: LazySectionProps) {
-  const { mobilePerfCut, fxLite } = useDeviceProfile()
-  const scrollIdle = useScrollIdleSnapshot()
-  const deferMountWhileScrolling = mobilePerfCut || fxLite
-  const effectiveRootMargin = deferMountWhileScrolling ? '120px 0px' : rootMargin
+  const { mobilePerfCut } = useDeviceProfile()
+  const effectiveRootMargin = mobilePerfCut ? '0px 0px' : rootMargin
 
   const [hashForced, setHashForced] = useState(() => {
     if (typeof window === 'undefined' || !anchorId) return false
     return hashTargetId(window.location.hash) === anchorId
   })
   const [contentMounted, setContentMounted] = useState(false)
+  const everMountedRef = useRef(false)
   const ref = useRef<HTMLDivElement | null>(null)
   const inView = useNativeInViewOnce(ref, effectiveRootMargin)
 
@@ -95,35 +89,31 @@ export function LazySection({
     }
   }, [anchorId])
 
-  useEffect(() => {
-    if (deferMountWhileScrolling && !scrollIdle) {
-      resetStaggeredIdleMounts()
-    }
-  }, [deferMountWhileScrolling, scrollIdle])
-
-  const pendingMount =
-    hashForced || (inView && (!deferMountWhileScrolling || scrollIdle))
+  const pendingMount = hashForced || inView
 
   useEffect(() => {
-    if (!pendingMount) {
-      setContentMounted(false)
-      return
-    }
+    if (!pendingMount) return
+    if (everMountedRef.current) return
 
-    if (hashForced || !deferMountWhileScrolling) {
+    if (hashForced || !mobilePerfCut) {
       setContentMounted(true)
+      everMountedRef.current = true
       return
     }
 
     let cancelled = false
     scheduleStaggeredIdleMount().then(() => {
-      if (!cancelled) setContentMounted(true)
+      if (!cancelled) {
+        setContentMounted(true)
+        everMountedRef.current = true
+      }
     })
 
     return () => {
       cancelled = true
+      resetStaggeredIdleMounts()
     }
-  }, [pendingMount, hashForced, deferMountWhileScrolling])
+  }, [pendingMount, hashForced, mobilePerfCut])
 
   return (
     <div

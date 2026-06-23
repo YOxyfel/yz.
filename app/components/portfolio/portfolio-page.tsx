@@ -8,21 +8,49 @@ import { CornerToolsDock } from './corner-tools-dock'
 import { useDeviceProfile } from './device-profile'
 import { resolveSkyLabFx } from './sky-lab-fx'
 import { useVisualFxPreferences } from './visual-fx-preferences'
-import { FaqSection } from './faq-section'
 import { Hero } from './hero'
-import { HomeHubSection } from './home-hub-section'
-import { ProjectsSection } from './projects-section'
-import { ContactSection } from './contact-section'
-import { SiteFooter } from './site-footer'
 import { SiteNav } from './site-nav'
-import { SocialProofSection } from './social-proof-section'
-import { TestimonialsSection } from './testimonials-section'
 import { SiteVariantShell } from './site-variant-shell'
 import { useSiteVariant } from './site-variant-context'
 import { HeroVisibilityBridge } from './hero-visibility-bridge'
 import { LazySection } from './lazy-section'
 import { NavScrollSentinel } from './nav-scroll-sentinel'
 import { StationDeckShell } from './station-deck-shell'
+
+const HomeHubSection = dynamic(
+  () => import('./home-hub-section').then((mod) => ({ default: mod.HomeHubSection })),
+  { ssr: true }
+)
+
+const ProjectsSection = dynamic(
+  () => import('./projects-section').then((mod) => ({ default: mod.ProjectsSection })),
+  { ssr: true }
+)
+
+const SocialProofSection = dynamic(
+  () => import('./social-proof-section').then((mod) => ({ default: mod.SocialProofSection })),
+  { ssr: true }
+)
+
+const TestimonialsSection = dynamic(
+  () => import('./testimonials-section').then((mod) => ({ default: mod.TestimonialsSection })),
+  { ssr: true }
+)
+
+const FaqSection = dynamic(
+  () => import('./faq-section').then((mod) => ({ default: mod.FaqSection })),
+  { ssr: true }
+)
+
+const ContactSection = dynamic(
+  () => import('./contact-section').then((mod) => ({ default: mod.ContactSection })),
+  { ssr: true }
+)
+
+const SiteFooter = dynamic(
+  () => import('./site-footer').then((mod) => ({ default: mod.SiteFooter })),
+  { ssr: true }
+)
 
 const SkyDecorLayer = dynamic(
   () => import('./sky-decor-layer').then((mod) => ({ default: mod.SkyDecorLayer })),
@@ -62,9 +90,9 @@ const WebStackSection = dynamic(
 function PortfolioContent() {
   const { variant } = useSiteVariant()
   const { constellationLabEnabled, skyViewMode, mobileSkyLabMode } = useConstellationChrome()
-  const deviceProfile = useDeviceProfile()
+  const { mobilePerfCut, fxLite } = useDeviceProfile()
   const { showScreenFx, isReduced } = useVisualFxPreferences()
-  const { skyLabFxTier } = resolveSkyLabFx(showScreenFx, isReduced, deviceProfile.fxLite)
+  const { skyLabFxTier } = resolveSkyLabFx(showScreenFx, isReduced, fxLite)
 
   useEffect(() => {
     document.documentElement.dataset.siteVariant = variant
@@ -102,16 +130,18 @@ function PortfolioContent() {
 
   return (
     <>
-      <HeroVisibilityBridge />
+      {!mobilePerfCut ? <HeroVisibilityBridge /> : null}
       <BackgroundFx />
 
       <SiteVariantShell>
         {!mobileSkyLabMode ? (
           <StationDeckShell>
-            <NavScrollSentinel />
+            {!mobilePerfCut ? <NavScrollSentinel /> : null}
             <SiteNav />
             <Hero />
-            <HomeHubSection />
+            <LazySection minHeight="min(36vh, 420px)" anchorId="explore">
+              <HomeHubSection />
+            </LazySection>
             <LazySection minHeight="min(56vh, 640px)" anchorId="engine">
               <ProjectsSection />
             </LazySection>
@@ -133,14 +163,16 @@ function PortfolioContent() {
             <LazySection minHeight="min(40vh, 480px)" anchorId="contact">
               <ContactSection />
             </LazySection>
-            <SiteFooter />
+            <LazySection minHeight="min(24vh, 320px)">
+              <SiteFooter />
+            </LazySection>
           </StationDeckShell>
         ) : null}
       </SiteVariantShell>
 
-      <CornerToolsDock />
-      <SkyDecorLayer />
-      {!mobileSkyLabMode ? <ConstellationPanel /> : null}
+      {!mobilePerfCut ? <CornerToolsDock /> : null}
+      {constellationLabEnabled && !mobilePerfCut ? <SkyDecorLayer /> : null}
+      {!mobileSkyLabMode && constellationLabEnabled ? <ConstellationPanel /> : null}
     </>
   )
 }

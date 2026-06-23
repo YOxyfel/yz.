@@ -2,11 +2,16 @@
 
 import dynamic from 'next/dynamic'
 import { useCallback, useState } from 'react'
-import { AudioArchitecture } from './audio-architecture'
+import { useDeviceProfile } from './device-profile'
 import { ArsenalChamberNav } from './arsenal-chamber-nav'
 import { arsenalChambers, type ArsenalChamberId } from './arsenal-chambers'
 import { SectionHeading } from './section-heading'
 import { StationConsoleFrame, StationSection } from './station-console'
+
+const AudioArchitecture = dynamic(
+  () => import('./audio-architecture').then((mod) => ({ default: mod.AudioArchitecture })),
+  { ssr: false }
+)
 
 const ArsenalPromoHero = dynamic(
   () => import('./arsenal-promo-hero').then((mod) => ({ default: mod.ArsenalPromoHero })),
@@ -42,6 +47,7 @@ const ArtShowcaseLab = dynamic(
 )
 
 export function ArsenalSection() {
+  const { mobilePerfCut } = useDeviceProfile()
   const [activeChamber, setActiveChamber] = useState<ArsenalChamberId>('spotlight')
 
   const goChamber = useCallback(
@@ -53,6 +59,25 @@ export function ArsenalSection() {
     },
     [activeChamber]
   )
+
+  if (mobilePerfCut) {
+    return (
+      <StationSection id="arsenal" tone="arsenal">
+        <StationConsoleFrame>
+          <SectionHeading
+            tone="arsenal"
+            eyebrow="04 — Arsenal Bay"
+            title="The Arsenal"
+            description="Art, audio, props, and spotlight reels — open on desktop for the full interactive labs."
+          />
+          <p className="mt-6 text-sm leading-relaxed text-muted-foreground">
+            UE5 props, stylized art pipelines, audio-reactive systems, and character spotlight work.
+            Full chamber labs are desktop-only to keep mobile scroll fast.
+          </p>
+        </StationConsoleFrame>
+      </StationSection>
+    )
+  }
 
   return (
     <StationSection id="arsenal" tone="arsenal">

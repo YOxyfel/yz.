@@ -1,17 +1,25 @@
 'use client'
 
+import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import { ArrowUpRight } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
+import { useDeviceProfile } from './device-profile'
 import { PageCtaPanel } from './page-cta-panel'
-import { ProjectModal } from './project-modal'
+import type { Project } from './projects-data'
 import { projects } from './projects-data'
 import { SectionHeading } from './section-heading'
 import { StationChip, StationPanel, StationScreen, StationSection } from './station-console'
 
+const ProjectModal = dynamic(
+  () => import('./project-modal').then((mod) => ({ default: mod.ProjectModal })),
+  { ssr: false }
+)
+
 export function ProjectsSection() {
   const t = useTranslations('Projects')
+  const { mobilePerfCut } = useDeviceProfile()
   const [selectedProject, setSelectedProject] =
     useState<(typeof projects)[number] | null>(null)
 
@@ -40,7 +48,8 @@ export function ProjectsSection() {
                   src={project.image}
                   alt={`${project.title} key art`}
                   fill
-                  priority={index === 0}
+                  priority={!mobilePerfCut && index === 0}
+                  loading={mobilePerfCut && index > 0 ? 'lazy' : undefined}
                   sizes="(max-width: 768px) 100vw, (max-width: 1024px) 100vw, 50vw"
                   className="relative z-[1] object-cover"
                 />
@@ -72,10 +81,9 @@ export function ProjectsSection() {
 
       <PageCtaPanel className="mt-12" backLabel="SCOPE" />
 
-      <ProjectModal
-        project={selectedProject}
-        onClose={() => setSelectedProject(null)}
-      />
+      {selectedProject ? (
+        <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} />
+      ) : null}
     </StationSection>
   )
 }

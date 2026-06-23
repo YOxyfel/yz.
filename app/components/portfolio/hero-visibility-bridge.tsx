@@ -1,5 +1,6 @@
 'use client'
 
+import { useDeviceProfile } from './device-profile'
 import { useEffect } from 'react'
 
 let heroInView = true
@@ -39,20 +40,17 @@ export function isHeroInView() {
 
 /** Freezes document-level ambient FX when the hero leaves the viewport. */
 export function HeroVisibilityBridge() {
+  const { mobilePerfCut } = useDeviceProfile()
+
   useEffect(() => {
+    if (mobilePerfCut) return
+
     const hero = document.getElementById('top')
     if (!hero) return
 
-    const isMobilePerfCut =
-      window.matchMedia('(max-width: 767px)').matches ||
-      window.matchMedia('(pointer: coarse)').matches
-
     const observer = new IntersectionObserver(
       ([entry]) => setHeroInView(Boolean(entry?.isIntersecting)),
-      {
-        threshold: 0,
-        rootMargin: isMobilePerfCut ? '0px 0px -8% 0px' : '0px 0px -35% 0px',
-      }
+      { threshold: 0, rootMargin: '0px 0px -35% 0px' }
     )
 
     observer.observe(hero)
@@ -65,7 +63,7 @@ export function HeroVisibilityBridge() {
       delete document.documentElement.dataset.animationsFrozen
       emit()
     }
-  }, [])
+  }, [mobilePerfCut])
 
   return null
 }

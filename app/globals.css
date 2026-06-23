@@ -5022,3 +5022,36 @@ html[data-mobile-perf-cut='on'] .station-section,
 html[data-mobile-perf-cut='on'] .perf-deferred-section {
   contain: layout style paint;
 }
+
+html[data-mobile-perf-cut='on'] .station-sector-backdrop,
+html[data-mobile-perf-cut='on'] .station-sector-rail {
+  display: none !important;
+}
+
+html[data-mobile-perf-cut='on'] .station-sky-backdrop {
+  display: none !important;
+}
+
+html[data-mobile-perf-cut='on'] .station-panel,
+html[data-mobile-perf-cut='on'] .station-nav-bar,
+html[data-mobile-perf-cut='on'] .station-chip,
+html[data-mobile-perf-cut='on'] .station-button {
+  transition: none !important;
+  box-shadow: none !important;
+}
+
+html[data-mobile-perf-cut='on'] .station-panel-interactive:hover {
+  transform: none !important;
+}
+
+html[data-mobile-perf-cut='on'] .site-nav-header-scrolled .station-nav-bar {
+  box-shadow: none !important;
+}
+
+html[data-mobile-perf-cut='on'] .station-screen-vignette {
+  opacity: 0.35;
+}
+
+html[data-mobile-perf-cut='on'] * {
+  scroll-behavior: auto !important;
+}

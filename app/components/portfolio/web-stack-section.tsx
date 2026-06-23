@@ -239,7 +239,7 @@ function GitHubShowcaseCard() {
 }
 
 export function WebStackSection() {
-  const { isNarrow } = useDeviceProfile()
+  const { mobilePerfCut, isNarrow } = useDeviceProfile()
 
   return (
     <StationSection id="stack" tone="stack">
@@ -251,7 +251,13 @@ export function WebStackSection() {
         description="When I'm not in the engine, I ship fast, polished web experiences — from client WordPress builds to custom frontends."
       />
 
-      {isNarrow ? (
+      {mobilePerfCut ? (
+        <div className="mt-14 grid gap-6">
+          {webProjects.map((project) => (
+            <WebProjectCard key={project.id} project={project} flipDelay={0} />
+          ))}
+        </div>
+      ) : isNarrow ? (
         <WebProjectsCarousel />
       ) : (
         <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">

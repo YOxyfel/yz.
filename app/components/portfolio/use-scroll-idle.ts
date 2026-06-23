@@ -3,6 +3,16 @@
 import { useSyncExternalStore } from 'react'
 
 const DEFAULT_IDLE_MS = 220
+const MOBILE_IDLE_MS = 480
+
+function isMobilePerfCutDom() {
+  if (typeof document === 'undefined') return false
+  return document.documentElement.dataset.mobilePerfCut === 'on'
+}
+
+function activeIdleMs() {
+  return isMobilePerfCutDom() ? MOBILE_IDLE_MS : idleMs
+}
 
 let scrollIdle = true
 let idleMs = DEFAULT_IDLE_MS
@@ -17,20 +27,21 @@ function emit() {
 function setScrollIdle(next: boolean) {
   if (scrollIdle === next) return
   scrollIdle = next
-  if (typeof document !== 'undefined') {
+  if (typeof document !== 'undefined' && !isMobilePerfCutDom()) {
     document.documentElement.dataset.scrollBusy = next ? 'off' : 'on'
   }
   emit()
 }
 
 function onScroll() {
+  if (isMobilePerfCutDom()) return
   setScrollIdle(false)
   if (idleTimer) window.clearTimeout(idleTimer)
-  idleTimer = window.setTimeout(() => setScrollIdle(true), idleMs)
+  idleTimer = window.setTimeout(() => setScrollIdle(true), activeIdleMs())
 }
 
 function ensureScrollListener() {
-  if (listenerBound || typeof window === 'undefined') return
+  if (listenerBound || typeof window === 'undefined' || isMobilePerfCutDom()) return
   listenerBound = true
   window.addEventListener('scroll', onScroll, { passive: true })
 }
