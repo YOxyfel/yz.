@@ -1,10 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { Menu, X } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { usePathname } from 'next/navigation'
-import { useState } from 'react'
 
 const pageLinks = [
   { href: '/about', key: 'about' as const },
@@ -34,7 +32,6 @@ function useNavHref() {
 }
 
 export function MobileStaticNav() {
-  const [open, setOpen] = useState(false)
   const t = useTranslations('Nav')
   const locale = useLocale()
   const navHref = useNavHref()
@@ -47,41 +44,24 @@ export function MobileStaticNav() {
           <Link href={home} className="font-heading text-sm font-bold tracking-widest">
             YZ<span className="text-cyan">.</span>
           </Link>
-          <button
-            type="button"
-            className="mobile-static-nav-trigger"
-            aria-expanded={open}
-            aria-label={open ? t('menuClose') : t('menuOpen')}
-            onClick={() => setOpen((value) => !value)}
-          >
-            {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-          </button>
+          <details className="mobile-static-menu">
+            <summary className="mobile-static-nav-trigger" aria-label={t('menuOpen')}>
+              Menu
+            </summary>
+            <nav className="mobile-static-nav-panel">
+              {[...pageLinks, ...homeLinks].map((link) => (
+                <Link key={link.key} href={navHref(link.href)} className="mobile-static-nav-link">
+                  {t(link.key)}
+                </Link>
+              ))}
+              <Link href={navHref('#contact')} className="mobile-static-btn mobile-static-btn-primary mt-3">
+                {t('hireMe')}
+              </Link>
+            </nav>
+          </details>
         </div>
       </header>
       <div className="site-nav-spacer" aria-hidden />
-      {open ? (
-        <div className="mobile-static-nav-menu" role="dialog" aria-modal="true">
-          <nav className="flex flex-col gap-2 p-6 pt-16">
-            {[...pageLinks, ...homeLinks].map((link) => (
-              <Link
-                key={link.key}
-                href={navHref(link.href)}
-                className="mobile-static-nav-link"
-                onClick={() => setOpen(false)}
-              >
-                {t(link.key)}
-              </Link>
-            ))}
-            <Link
-              href={navHref('#contact')}
-              className="mobile-static-btn mobile-static-btn-primary mt-4 text-center"
-              onClick={() => setOpen(false)}
-            >
-              {t('hireMe')}
-            </Link>
-          </nav>
-        </div>
-      ) : null}
     </>
   )
 }

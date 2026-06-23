@@ -5232,8 +5232,43 @@ html[data-mobile-static='on'] .bg-fx-soft-blob {
 
 .mobile-static-details summary {
   list-style: none;
+  cursor: pointer;
 }
 
 .mobile-static-details summary::-webkit-details-marker {
   display: none;
+}
+
+.mobile-static-menu {
+  position: relative;
+}
+
+.mobile-static-nav-panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.5rem);
+  z-index: 60;
+  min-width: 12rem;
+  border-radius: 0.75rem;
+  border: 1px solid oklch(1 0 0 / 0.12);
+  background: oklch(0.1 0.012 270);
+  padding: 0.75rem;
+}
+
+.mobile-static-menu[open] .mobile-static-nav-trigger {
+  border-color: oklch(0.84 0.16 200 / 0.45);
+  color: var(--cyan);
+}
+
+.mobile-static-footer {
+  padding: 2rem 1rem 3rem;
+  max-width: 40rem;
+  margin: 0 auto;
+}
+
+html[data-mobile-static='on'] .station-deck,
+html[data-mobile-static='on'] .cosmic-scroll-fx-root,
+html[data-mobile-static='on'] .device-profile-gated,
+html[data-mobile-static='on'] [data-portfolio-chrome] {
+  display: none !important;
 }

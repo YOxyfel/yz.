@@ -1,7 +1,7 @@
-import { Analytics } from '@vercel/analytics/next'
 import type { Metadata } from 'next'
 import { Space_Grotesk, JetBrains_Mono } from 'next/font/google'
-import { AnalyticsScripts } from './components/portfolio/analytics-scripts'
+import { ConditionalAnalyticsScripts } from './components/portfolio/conditional-analytics-scripts'
+import { ConditionalAnalytics } from './components/portfolio/conditional-analytics'
 import { DEVICE_BOOTSTRAP_SCRIPT, HOME_SCROLL_BOOTSTRAP_SCRIPT } from './components/portfolio/breakpoints'
 import './globals.css'
 
@@ -49,8 +49,8 @@ export default function RootLayout({
       </head>
       <body className="font-sans antialiased">
         {children}
-        <AnalyticsScripts />
-        {process.env.NODE_ENV === 'production' && <Analytics />}
+        <ConditionalAnalyticsScripts />
+        <ConditionalAnalytics />
       </body>
     </html>
   )
