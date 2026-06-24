@@ -401,5 +401,9 @@ export function ClickConstellations({
   lite?: boolean
   hideLabels?: boolean
 }) {
-  return <ConstellationCanvas lite={lite} hideLabels={hideLabels} />
+  return (
+    <div className="click-constellations-root pointer-events-none absolute inset-0">
+      <ConstellationCanvas lite={lite} hideLabels={hideLabels} />
+    </div>
+  )
 }

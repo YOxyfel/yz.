@@ -16,15 +16,6 @@ const StarshipTraffic = dynamic(
   { ssr: false }
 )
 
-function StaticBackdrop() {
-  return (
-    <div
-      aria-hidden
-      className="pointer-events-none fixed inset-0 z-0 overflow-hidden bg-[oklch(0.08_0.012_270)]"
-    />
-  )
-}
-
 type BackgroundFxLayerProps = {
   fxLite: boolean
   isReduced: boolean
@@ -112,10 +103,6 @@ export function BackgroundFx() {
   const { showScreenFx, isReduced, mode } = useVisualFxPreferences()
   const pageVisible = usePageVisible()
 
-  if (mobilePerfCut || !showScreenFx) {
-    return <StaticBackdrop />
-  }
-
   const mobileSkyLab = mobileSkyLabMode
   const skyLabOpen = constellationLabEnabled || mobileSkyLab
   const skyLabLite = isReduced || fxLite
@@ -133,26 +120,29 @@ export function BackgroundFx() {
     performanceTier === 'high'
   const showClickConstellations = showScreenFx && (skyLabOpen || mobileSkyLab)
   const constellationLite = skyLabLite || mobileSkyLab
+  const showFxLayer = !mobilePerfCut && showScreenFx
 
   return (
     <div
       aria-hidden
-      className="device-profile-gated pointer-events-none fixed inset-0 z-0 overflow-hidden"
+      className="device-profile-gated pointer-events-none fixed inset-0 z-[4] overflow-hidden"
     >
-      <BackgroundFxLayer
-        fxLite={fxLite}
-        isReduced={isReduced}
-        fxMedium={fxMedium}
-        performanceTier={performanceTier}
-        mode={mode}
-        userFullMode={userFullMode}
-        showHeavyFx={showHeavyFx}
-        enableHeavyBackgroundFx={enableHeavyBackgroundFx}
-        pageVisible={pageVisible}
-        showMobileSkyLabStarships={showMobileSkyLabStarships}
-        showAmbientStarships={showAmbientStarships}
-        mobileSkyLab={mobileSkyLab}
-      />
+      {showFxLayer ? (
+        <BackgroundFxLayer
+          fxLite={fxLite}
+          isReduced={isReduced}
+          fxMedium={fxMedium}
+          performanceTier={performanceTier}
+          mode={mode}
+          userFullMode={userFullMode}
+          showHeavyFx={showHeavyFx}
+          enableHeavyBackgroundFx={enableHeavyBackgroundFx}
+          pageVisible={pageVisible}
+          showMobileSkyLabStarships={showMobileSkyLabStarships}
+          showAmbientStarships={showAmbientStarships}
+          mobileSkyLab={mobileSkyLab}
+        />
+      ) : null}
 
       {showClickConstellations ? (
         <ClickConstellations

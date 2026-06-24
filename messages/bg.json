@@ -36,7 +36,11 @@
     "positioning": "UE5 gameplay systems for studios and indie teams—modular architecture, designer-ready surfaces, and milestone-scoped partnerships.",
     "ctaWork": "View My Work",
     "ctaContact": "Get in Touch",
-    "scrollLabel": "Scroll to explore"
+    "scrollLabel": "Scroll to explore",
+    "videoAudioOn": "Turn alien audio on",
+    "videoAudioOff": "Mute alien audio",
+    "videoVolume": "Alien video volume",
+    "videoNoAudio": "Add alien-audio.m4a to public/HeaderVideo to enable sound"
   },
   "HomeHub": {
     "eyebrow": "00 — Station map",

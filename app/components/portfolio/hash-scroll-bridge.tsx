@@ -63,23 +63,10 @@ function shouldLandOnIntro(hash: string) {
   return !hash || hash === INTRO_ONLY_HASH
 }
 
-function scrollToTop(behavior: ScrollBehavior = 'auto') {
-  window.scrollTo({ top: 0, left: 0, behavior })
-}
-
-function landOnIntro(pathname: string) {
+function stripIntroHash(pathname: string) {
   if (!isHomePath(pathname)) return
-
-  if (window.location.hash === INTRO_ONLY_HASH) {
-    window.history.replaceState(null, '', `${pathname}${window.location.search}`)
-  }
-
-  scrollToTop('auto')
-  if (!isMobilePerfCutViewport()) {
-    requestAnimationFrame(() => scrollToTop('auto'))
-    window.setTimeout(() => scrollToTop('auto'), 50)
-    window.setTimeout(() => scrollToTop('auto'), 250)
-  }
+  if (window.location.hash !== INTRO_ONLY_HASH) return
+  window.history.replaceState(null, '', `${pathname}${window.location.search}`)
 }
 
 export function HashScrollBridge() {
@@ -90,14 +77,20 @@ export function HashScrollBridge() {
 
     history.scrollRestoration = 'manual'
 
-    if (shouldLandOnIntro(window.location.hash)) {
-      landOnIntro(pathname)
+    const lockTop = () => {
+      if (!isHomePath(pathname)) return
+      if (window.location.hash) {
+        window.history.replaceState(null, '', `${pathname}${window.location.search}`)
+      }
+      window.scrollTo(0, 0)
     }
 
+    lockTop()
+
     const onPageShow = (event: PageTransitionEvent) => {
-      if (!shouldLandOnIntro(window.location.hash)) return
+      if (!isHomePath(pathname)) return
       if (!event.persisted && window.location.hash === INTRO_ONLY_HASH) return
-      landOnIntro(pathname)
+      lockTop()
     }
 
     window.addEventListener('pageshow', onPageShow)
@@ -108,28 +101,14 @@ export function HashScrollBridge() {
   }, [pathname])
 
   useEffect(() => {
-    const run = () => {
+    const onHashChange = () => {
       const hash = window.location.hash
-
       if (shouldLandOnIntro(hash)) {
-        landOnIntro(pathname)
+        stripIntroHash(pathname)
         return
       }
-
-      const attempt = (retries = 0) => {
-        requestHashSectionMount(hashTargetId(hash))
-        if (scrollToHashTarget(hash, isMobilePerfCutViewport() ? 'auto' : 'smooth')) return
-        if (retries < maxHashRetries()) {
-          requestAnimationFrame(() => attempt(retries + 1))
-        }
-      }
-
-      attempt()
+      scrollToHashTargetWithRetry(hash)
     }
-
-    run()
-
-    const onHashChange = () => run()
 
     const onClick = (event: MouseEvent) => {
       if (event.defaultPrevented) return

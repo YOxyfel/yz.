@@ -90,6 +90,7 @@
 
   --station-grid-size: 56px;
   --station-grid-line: oklch(1 0 0 / 0.028);
+  --station-sky-grid-line: oklch(0.84 0.12 200 / 0.09);
 
   --chart-1: oklch(0.84 0.16 200);
   --chart-2: oklch(0.55 0.24 295);
@@ -223,30 +224,74 @@
     z-index: 1;
   }
 
-  /* Portaled to body — grid, nebula clouds, and star field (outside 3D viewport + sky-view chrome) */
+  /* Portaled to body — photo, star field, scrim, and grid (below FX layer at z-index 3). */
   .station-sky-backdrop {
     position: fixed;
     inset: 0;
-    z-index: 4;
+    z-index: 2;
     pointer-events: none;
+  }
+
+  .station-sky-backdrop-photo {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    display: block;
+    overflow: hidden;
+    background-color: oklch(0.08 0.012 270);
+    --station-sky-photo-opacity: 0.4;
+  }
+
+  .station-sky-backdrop-photo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 22%;
+    opacity: var(--station-sky-photo-opacity, 1);
+  }
+
+  .station-sky-backdrop-scrim {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background:
+      linear-gradient(
+        180deg,
+        oklch(0.08 0.012 270 / 0.58) 0%,
+        oklch(0.08 0.012 270 / 0.28) 38%,
+        oklch(0.08 0.012 270 / 0.42) 72%,
+        oklch(0.08 0.012 270 / 0.78) 100%
+      ),
+      radial-gradient(
+        ellipse 90% 70% at 18% 48%,
+        oklch(0.08 0.012 270 / 0.48) 0%,
+        transparent 68%
+      ),
+      radial-gradient(
+        ellipse 55% 45% at 88% 42%,
+        oklch(0.08 0.012 270 / 0.22) 0%,
+        transparent 72%
+      );
   }
 
   .station-sky-backdrop-grid {
     position: absolute;
     inset: 0;
-    opacity: 0.42;
+    z-index: 4;
+    opacity: 0.38;
     background-image:
-      linear-gradient(to right, var(--station-grid-line) 1px, transparent 1px),
-      linear-gradient(to bottom, var(--station-grid-line) 1px, transparent 1px);
+      linear-gradient(to right, var(--station-sky-grid-line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--station-sky-grid-line) 1px, transparent 1px);
     background-size: var(--station-grid-size) var(--station-grid-size);
     background-attachment: scroll;
+    mix-blend-mode: screen;
   }
 
   html[data-narrow='on'] .station-sky-backdrop-grid,
   html[data-tablet='on'] .station-sky-backdrop-grid,
   html[data-coarse-pointer='on'] .station-sky-backdrop-grid {
     background-attachment: scroll;
-    opacity: 0.24;
+    opacity: 0.28;
   }
 
   html[data-narrow='on'] .station-sky-backdrop-nebula,
@@ -261,6 +306,7 @@
   .station-sky-backdrop-ripples {
     position: absolute;
     inset: 0;
+    z-index: 5;
     pointer-events: none;
     overflow: visible;
   }
@@ -341,7 +387,9 @@
   .station-sky-backdrop-nebula {
     position: absolute;
     inset: 0;
-    opacity: 0.82;
+    z-index: 1;
+    opacity: 0.72;
+    mix-blend-mode: screen;
     background-attachment: scroll;
     contain: paint;
     transition: opacity 14s cubic-bezier(0.12, 1, 0.28, 1);
@@ -352,7 +400,9 @@
   .station-sky-backdrop-particles {
     position: absolute;
     inset: 0;
-    opacity: 0.96;
+    z-index: 3;
+    opacity: 1;
+    mix-blend-mode: screen;
     background-attachment: scroll;
     contain: paint;
     transition: opacity 14s cubic-bezier(0.12, 1, 0.28, 1);
@@ -1785,8 +1835,27 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    width: 100%;
     padding: 2.5rem 0 0.5rem;
     text-align: center;
+  }
+
+  .hero-bridge-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 48rem;
+    margin-inline: auto;
+  }
+
+  .station-section--bridge .station-section-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
   }
 
   @media (min-width: 640px) {
@@ -1795,8 +1864,47 @@
     }
   }
 
+  /* Intro without alien video — fully centered at all widths below 1500px. */
+  @media (max-width: 1499px) {
+    .station-section--bridge .station-section-inner {
+      max-width: var(--site-content-max, 56rem);
+    }
+
+    .station-section--bridge .hero-bridge,
+    .station-section--bridge .hero-bridge--with-video,
+    .station-section--bridge .hero-bridge--with-media {
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding-block: 0;
+      min-height: auto;
+    }
+
+    .station-section--bridge .hero-bridge-main {
+      align-items: center;
+      margin-inline: auto;
+    }
+
+    .station-section--bridge .hero-bridge-headline {
+      margin-inline: auto;
+      text-align: center;
+      max-width: 48rem;
+    }
+
+    .station-section--bridge .hero-bridge-readout {
+      margin-inline: auto;
+    }
+
+    .station-section--bridge .hero-bridge-stack,
+    .station-section--bridge .hero-bridge-actions {
+      justify-content: center;
+      align-items: center;
+    }
+  }
+
   .hero-bridge-readout {
     margin-top: 1.5rem;
+    margin-inline: auto;
     width: 100%;
     max-width: 36rem;
     border-radius: 0.45rem;
@@ -1852,6 +1960,136 @@
 
   .hero-bridge-scroll-icon {
     animation: hero-scroll-nudge 2.4s ease-in-out infinite;
+  }
+
+  .hero-bridge--with-media {
+    width: 100%;
+    display: grid;
+    gap: clamp(1.5rem, 4vw, 2.5rem);
+    align-items: center;
+  }
+
+  .hero-bridge-media {
+    position: relative;
+    width: 100%;
+    min-width: 0;
+    padding-bottom: 2.75rem;
+  }
+
+  @media (min-width: 768px) {
+    .hero-bridge--with-media:not(.hero-bridge--with-video) {
+      text-align: center;
+      align-items: center;
+    }
+
+    .hero-bridge--with-media:not(.hero-bridge--with-video) .hero-bridge-main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .hero-bridge--with-media .hero-bridge-headline {
+      margin-inline: auto;
+      max-width: 38ch;
+    }
+
+    .hero-bridge--with-media .hero-bridge-readout {
+      max-width: 38ch;
+      margin-inline: auto;
+    }
+
+    .hero-bridge--with-media .hero-bridge-stack {
+      justify-content: center;
+    }
+
+    .hero-bridge--with-media .hero-bridge-actions {
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .station-section--bridge:has(.hero-bridge--with-media) .station-section-inner {
+      max-width: 88rem;
+      overflow: visible;
+    }
+
+    .station-section--bridge:has(.hero-bridge--with-media) {
+      overflow: visible;
+      padding-inline: max(var(--site-content-gutter, 1rem), 1.25rem);
+    }
+  }
+
+  @media (min-width: 1500px) {
+    .hero-bridge.hero-bridge--with-video {
+      padding-block: 0;
+    }
+
+    .station-section--bridge:has(.hero-bridge--with-video) .station-section-inner {
+      max-width: 88rem;
+      overflow: visible;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: inherit;
+    }
+
+    .station-section--bridge:has(.hero-bridge--with-video) {
+      overflow: visible;
+      padding-inline: max(var(--site-content-gutter, 1rem), 1.25rem);
+      padding-block: clamp(1.5rem, 4vh, 3rem);
+    }
+
+    .hero-bridge--with-video {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-height: clamp(30rem, 68vh, 78rem);
+      padding-block: 0;
+      padding-inline: 0;
+      text-align: center;
+      overflow: visible;
+    }
+
+    .hero-bridge--with-video .hero-bridge-main {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 44rem;
+      isolation: isolate;
+      margin-inline: auto;
+    }
+
+    .hero-bridge--with-video h1,
+    .hero-bridge--with-video .hero-bridge-headline {
+      margin-inline: auto;
+      text-align: center;
+    }
+
+    .hero-bridge--with-video .hero-bridge-headline {
+      font-size: clamp(2rem, 3.4vw, 3.25rem);
+      line-height: 1.08;
+    }
+
+    .hero-bridge--with-video .hero-bridge-readout {
+      max-width: 42rem;
+      margin-inline: auto;
+    }
+
+    .hero-bridge--with-video .hero-bridge-stack {
+      justify-content: center;
+    }
+
+    .hero-bridge--with-video .hero-bridge-actions {
+      align-items: center;
+      justify-content: center;
+    }
   }
 
   @keyframes hero-scroll-nudge {
@@ -5028,7 +5266,7 @@ html[data-mobile-perf-cut='on'] .station-sector-rail {
   display: none !important;
 }
 
-html[data-mobile-perf-cut='on'] .station-sky-backdrop {
+html[data-mobile-perf-cut='on'] .station-sky-backdrop-ripples {
   display: none !important;
 }
 

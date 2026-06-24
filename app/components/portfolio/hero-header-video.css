@@ -1,0 +1,205 @@
+/**
+ * HERO ALIEN VIDEO — edit this file to tune placement, size, mask, and vignette.
+ * Path: app/components/portfolio/hero-header-video.css
+ *
+ * PLACEMENT (desktop ≥1500px): edit the block labeled "DESKTOP PLACEMENT" below.
+ *   Move RIGHT → decrease --hero-video-right (e.g. -8vw) OR increase --hero-video-shift-x
+ *   Move LEFT  → increase --hero-video-right (e.g. 2rem) OR decrease --hero-video-shift-x
+ * MASK: --hero-video-mask-image on .hero-header-video (black = visible, transparent = hidden)
+ * VIGNETTE: --hero-video-vignette-* on .hero-header-video
+ */
+
+.hero-header-video {
+  /* ── SIZE (height / inner width; desktop width is on .hero-bridge-media) ── */
+  --hero-video-max-height: min(70vh, 64rem);
+
+  /* ── MASK ── */
+  --hero-video-mask-image: radial-gradient(
+    ellipse 20% 66% at 52% 50%,
+    #000 0%,
+    #000 40%,
+    rgba(0, 0, 0, 0.2) 50%,
+    rgba(0, 0, 0, 0.2) 55%,
+    rgba(0, 0, 0, 0.6) 62%,
+    transparent 72%
+  );
+
+  /* ── VIGNETTE ── */
+  --hero-video-vignette-opacity: 1;
+  --hero-video-vignette-rx: 82%;
+  --hero-video-vignette-ry: 74%;
+  --hero-video-vignette-x: 72%;
+  --hero-video-vignette-y: 58%;
+  --hero-video-vignette-inner: 38%;
+  --hero-video-vignette-outer: 76%;
+  --hero-video-vignette-color: oklch(0.08 0.012 270);
+
+  position: relative;
+  width: 100%;
+  margin-inline: auto;
+  pointer-events: none;
+  user-select: none;
+}
+
+@media (max-width: 1499px) {
+  .hero-bridge--with-video .hero-bridge-media {
+    display: none !important;
+  }
+
+  .hero-bridge--with-video {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    min-height: auto;
+    padding-block: 0;
+  }
+
+  .hero-bridge--with-video .hero-bridge-main {
+    align-items: center;
+    max-width: none;
+    width: 100%;
+  }
+
+  .hero-bridge--with-video .hero-bridge-headline {
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .hero-bridge--with-video .hero-bridge-stack,
+  .hero-bridge--with-video .hero-bridge-actions {
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   DESKTOP PLACEMENT — vars live on .hero-bridge--with-video
+   (parent of .hero-bridge-media) so they actually apply.
+   ═══════════════════════════════════════════════════════════ */
+@media (min-width: 1500px) {
+  .hero-bridge--with-video {
+    --hero-video-width: min(78vw, 60rem);
+    --hero-video-max-height: min(85vh, 64rem);
+
+    /* position anchor */
+    --hero-video-top: 35%;
+    --hero-video-right: -6vw;
+    --hero-video-left: auto;
+    --hero-video-bottom: auto;
+    /* extra nudge after centering (positive = move right) */
+    --hero-video-shift-x: 0rem;
+    --hero-video-shift-y: 0rem;
+  }
+
+  .hero-bridge--with-video .hero-bridge-media {
+    position: absolute;
+    z-index: 0;
+    top: var(--hero-video-top);
+    right: var(--hero-video-right);
+    left: var(--hero-video-left);
+    bottom: var(--hero-video-bottom);
+    width: var(--hero-video-width);
+    max-width: none;
+    margin-inline: 0;
+    padding-bottom: 0;
+    pointer-events: none;
+    transform: translateX(var(--hero-video-shift-x))
+      translateY(calc(-50% + var(--hero-video-shift-y)));
+  }
+
+  .hero-bridge--with-video .hero-header-video {
+    width: 100%;
+    max-width: none;
+    margin-inline: 0;
+  }
+}
+
+@media (min-width: 1500px) and (max-width: 1679px) {
+  .hero-bridge--with-video {
+    --hero-video-width: min(72vw, 56rem);
+  }
+}
+
+@media (min-width: 1680px) {
+  .hero-bridge--with-video {
+    --hero-video-width: min(84vw, 60rem);
+    --hero-video-max-height: min(90vh, 78.4rem);
+  }
+}
+
+.hero-header-video__frame {
+  position: relative;
+  display: block;
+  width: 100%;
+  max-height: var(--hero-video-max-height);
+  line-height: 0;
+
+  -webkit-mask-image: var(--hero-video-mask-image);
+  mask-image: var(--hero-video-mask-image);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-mode: alpha;
+  mask-mode: alpha;
+}
+
+.hero-header-video__media,
+.hero-header-video__poster {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: var(--hero-video-max-height);
+  object-fit: contain;
+  object-position: center;
+}
+
+.hero-header-video__frame::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: var(--hero-video-vignette-opacity, 1);
+  background: radial-gradient(
+    ellipse var(--hero-video-vignette-rx, 78%) var(--hero-video-vignette-ry, 72%) at
+      var(--hero-video-vignette-x, 50%) var(--hero-video-vignette-y, 58%),
+    transparent 0%,
+    transparent var(--hero-video-vignette-inner, 42%),
+    var(--hero-video-vignette-color, oklch(0.08 0.012 270)) var(--hero-video-vignette-outer, 78%)
+  );
+}
+
+.hero-header-video--poster .hero-header-video__frame::after {
+  opacity: 0.92;
+}
+
+.hero-header-video__audio-toggle {
+  pointer-events: auto;
+  position: absolute;
+  right: 35%;
+  bottom: 0.65rem;
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: 9999px;
+  border: 1px solid oklch(0.84 0.16 200 / 0.4);
+  background: oklch(0.1 0.012 270 / 0.88);
+  color: oklch(0.84 0.16 200);
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 16px oklch(0.04 0.01 270 / 0.5);
+}
+
+.hero-header-video__audio-toggle:hover {
+  border-color: oklch(0.84 0.16 200 / 0.6);
+  background: oklch(0.14 0.014 270 / 0.94);
+}
+
+.hero-header-video__audio-icon {
+  width: 1.05rem;
+  height: 1.05rem;
+}

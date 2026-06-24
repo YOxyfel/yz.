@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useDeviceProfile } from './device-profile'
 import { generateSkyBackdropFx, type SkyBackdropFx } from './station-sky-backdrop-fx'
+import { SitePhotoBackdropLayers } from './site-photo-backdrop'
 import { useVisualFxPreferences } from './visual-fx-preferences'
 
 type PondRipple = {
@@ -34,22 +35,27 @@ function isScrollBusy() {
 
 export function StationDeckBackdrop() {
   const backdropRef = useRef<HTMLDivElement>(null)
-  const { mobilePerfCut } = useDeviceProfile()
   const [mounted, setMounted] = useState(false)
-  const [fx, setFx] = useState<SkyBackdropFx | null>(null)
   const [ripples, setRipples] = useState<PondRipple[]>([])
   const rippleIdRef = useRef(0)
   const lastSpawnRef = useRef<{ x: number; y: number } | null>(null)
   const ripplesEnabled = useGridRipplesEnabled()
+  const { mobilePerfCut } = useDeviceProfile()
+  const { showScreenFx } = useVisualFxPreferences()
+  const [skyFx, setSkyFx] = useState<SkyBackdropFx | null>(null)
 
   useEffect(() => {
     setMounted(true)
-    if (!mobilePerfCut) {
-      setFx(generateSkyBackdropFx())
-    }
-  }, [mobilePerfCut])
+  }, [])
 
-  /** Single IO on the page shell — never per particle/layer. */
+  useEffect(() => {
+    if (!showScreenFx || mobilePerfCut) {
+      setSkyFx(null)
+      return
+    }
+    setSkyFx(generateSkyBackdropFx())
+  }, [mobilePerfCut, showScreenFx])
+
   useEffect(() => {
     if (!mounted) return
 
@@ -139,23 +145,6 @@ export function StationDeckBackdrop() {
 
   if (!mounted) return null
 
-  if (mobilePerfCut) {
-    return createPortal(
-      <div
-        ref={backdropRef}
-        className="station-sky-backdrop"
-        data-station-sky-backdrop
-        data-station-backdrop-active="on"
-        aria-hidden
-      >
-        <div className="station-sky-backdrop-grid" />
-      </div>,
-      document.body
-    )
-  }
-
-  if (!fx) return null
-
   return createPortal(
     <div
       ref={backdropRef}
@@ -164,9 +153,9 @@ export function StationDeckBackdrop() {
       data-station-backdrop-active="on"
       aria-hidden
     >
-      <div className="station-sky-backdrop-grid" />
+      <SitePhotoBackdropLayers fx={skyFx} />
       {ripplesEnabled ? (
-        <div className="station-sky-backdrop-ripples" aria-hidden>
+        <div className="station-sky-backdrop-ripples">
           {ripples.map((ripple) => (
             <span
               key={ripple.id}
@@ -177,8 +166,6 @@ export function StationDeckBackdrop() {
           ))}
         </div>
       ) : null}
-      <div className="station-sky-backdrop-nebula" style={{ backgroundImage: fx.nebula }} />
-      <div className="station-sky-backdrop-particles" style={{ backgroundImage: fx.particles }} />
     </div>,
     document.body
   )
