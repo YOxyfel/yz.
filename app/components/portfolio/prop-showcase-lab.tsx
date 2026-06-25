@@ -1,70 +1,48 @@
 'use client'
 
-import { useMemo, useState } from 'react'
 import { Box } from 'lucide-react'
-import { propAssets } from './arsenal-props'
-import { CatalogStrip, LabShell, LabTransition } from './arsenal-lab-shell'
-import { PropViewer } from './prop-viewer'
+import { CharacterConfigurator } from './character-configurator'
+import { LabShell } from './arsenal-lab-shell'
 import { LabFxControls, LabFxPreferencesProvider } from './lab-fx-preferences'
 
 function PropShowcaseLabInner({ embedded = false }: { embedded?: boolean }) {
-  const [selectedId, setSelectedId] = useState(propAssets[0].id)
-
-  const selected = useMemo(
-    () => propAssets.find((asset) => asset.id === selectedId) ?? propAssets[0],
-    [selectedId]
-  )
-
-  const go = (step: number) => {
-    const index = propAssets.findIndex((asset) => asset.id === selectedId)
-    const next = propAssets[(index + step + propAssets.length) % propAssets.length]
-    setSelectedId(next.id)
-  }
-
   return (
     <LabShell
       embedded={embedded}
-      eyebrow="3D Art & Props · Blender"
-      title="Prop Forge"
-      description="Inspectable game-ready assets — orbit in real time, expose quad topology, and swipe between rendered and wireframe reads. Each slot in the carousel gets the full stage."
+      eyebrow="3D Character · Blender"
+      title="Character Forge"
+      description="A rigged character with swappable wearables and playable animations. Cycle each region — glasses, hat, hoodie, pants, shoes — with the side arrows, drag to reveal the wireframe under the render, and switch animation clips. Animations apply across every outfit."
       icon={Box}
       controls={<LabFxControls labName="props" />}
     >
-      <CatalogStrip
-        items={propAssets}
-        selectedId={selectedId}
-        onSelect={setSelectedId}
-        onPrev={() => go(-1)}
-        onNext={() => go(1)}
-      />
-
-      <LabTransition itemKey={selected.id}>
-        <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
-          <PropViewer asset={selected} />
-          <div className="flex flex-col justify-center space-y-5 rounded-2xl border border-white/10 bg-black/30 p-6">
-            <div>
-              <p className="font-mono text-[10px] uppercase tracking-[0.35em] text-cyan">
-                {selected.category}
-              </p>
-              <h4 className="font-heading mt-2 text-2xl font-bold tracking-tight">{selected.title}</h4>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{selected.description}</p>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {selected.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 font-mono text-[10px] uppercase tracking-wider text-muted-foreground"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-            <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-              Status · {selected.status === 'pipeline' ? 'In pipeline' : 'Production ready'}
+      <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
+        <CharacterConfigurator />
+        <div className="flex flex-col justify-center space-y-5 rounded-2xl border border-white/10 bg-black/30 p-6">
+          <div>
+            <p className="font-mono text-[10px] uppercase tracking-[0.35em] text-cyan">
+              Real-time 3D
+            </p>
+            <h4 className="font-heading mt-2 text-2xl font-bold tracking-tight">
+              Modular outfit rig
+            </h4>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              One skeleton drives the body and every wearable, so each animation plays cleanly no
+              matter which outfit is equipped. Toggle topology with the wireframe swipe to inspect
+              the game-ready mesh.
             </p>
           </div>
+          <div className="flex flex-wrap gap-2">
+            {['Rigged', 'Modular wearables', 'Animated', 'Blender', 'glTF'].map((tag) => (
+              <span
+                key={tag}
+                className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 font-mono text-[10px] uppercase tracking-wider text-muted-foreground"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
         </div>
-      </LabTransition>
+      </div>
     </LabShell>
   )
 }

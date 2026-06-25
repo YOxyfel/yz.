@@ -1,5 +1,41 @@
 # Release history
 
+## V3.0.0 (`v3.0.0`)
+
+**Saved:** interactive 3D character configurator in the Arsenal — outfits, animations, and wireframe inspection.
+
+| | |
+|---|---|
+| **Git tag** | `v3.0.0` |
+| **Production URL** | https://yanezhekov.dev |
+
+### What this version includes
+
+- Real-time 3D character rig (`@react-three/fiber`) with one skeleton driving every wearable
+- Swappable wearables via overlaid cycle rows — head (glasses/hat combos), hoodie, pants, shoes
+- Mandatory hoodie; Alien suit as a full-body solo replacement (hides body + all wearables)
+- Animations: Sit & Talk, plus a Walk built from raw FBX (auto-chained Walk_Start → Walk_Loop)
+- FBX → GLB pipeline (`scripts/build-walk.mjs`): converts, remaps Tripo node names to the clean rig, and merges the 3 walk clips into one file
+- Draco + WebP compression (`npm run compress:character`): sitting 79 MB → 11.7 MB, walk 67 MB → 7.9 MB
+- Wireframe view = solid clay fill + cyan wireframe overlay (not textured)
+- Wireframe-swipe reveal with a grab-only divider; rotate + right-click pan + zoom in every mode
+- Per-animation backgrounds; bone-based framing for the 0.01-scale CC armature
+- Only compressed `*.draco.glb` assets are committed; raw FBX/textures/GLBs are git-ignored
+
+### Revert to V3.0.0
+
+```powershell
+cd D:\999.Personal\Website\website
+git checkout v3.0.0 -- .
+git clean -fd -e .env.local -e node_modules -e .next -e .vercel
+npm install
+npm run build
+```
+
+Or hard reset: `git reset --hard v3.0.0`
+
+---
+
 ## V2.4.0 (`v2.4.0`)
 
 **Saved:** scroll performance, lazy sections, and smarter FX defaults.

@@ -37,6 +37,18 @@ yarn-error.log*
 # vercel
 .vercel
 
+# local scratch / audits (never commit)
+.tmp-*
+.tmp-lh/
+lighthouse-*.json
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# large 3D source assets — only the compressed *.draco.glb web files are committed
+public/arsenal/models/character/**/*.fbx
+public/arsenal/models/character/**/*.json
+public/arsenal/models/character/**/textures/
+public/arsenal/models/character/**/*.glb
+!public/arsenal/models/character/**/*.draco.glb
