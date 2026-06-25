@@ -280,7 +280,7 @@ function ArtShowcaseLabInner({ embedded = false }: { embedded?: boolean }) {
       title="Cultivation Gallery"
       description="Character sheets and gallery notes for Wang Cultivator—full write-up coming soon."
       icon={Sparkles}
-      controls={<LabFxControls labName="art" />}
+      controls={<LabFxControls />}
     >
       <CatalogStrip
         items={artPieces}

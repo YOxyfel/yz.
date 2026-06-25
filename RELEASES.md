@@ -1,5 +1,38 @@
 # Release history
 
+## V3.0.3 (`v3.0.3`)
+
+**Saved:** remove non-functional Lab FX controls from the 3D Props chamber.
+
+| | |
+|---|---|
+| **Git tag** | `v3.0.3` |
+| **Production URL** | https://yanezhekov.dev |
+
+### What this version includes
+
+- Removed the "Lab FX (Full/Reduced/Off)" + "Chamber FX" buttons from the 3D Props
+  (Character Forge) chamber — the character configurator never consumed those
+  prefs, so the controls did nothing. Its own controls (wireframe, swipe,
+  auto-spin, animation clips) remain.
+- Concept Art keeps the controls (they drive parallax / qi overlays); Audio keeps
+  its own FX toggle; Spotlight never had them.
+- Narrowed `LabFxControls` to the art lab (dropped the dead props branch).
+
+### Revert to V3.0.3
+
+```powershell
+cd D:\999.Personal\Website\website
+git checkout v3.0.3 -- .
+git clean -fd -e .env.local -e node_modules -e .next -e .vercel
+npm install
+npm run build
+```
+
+Or hard reset: `git reset --hard v3.0.3`
+
+---
+
 ## V3.0.2 (`v3.0.2`)
 
 **Saved:** fix 3D character viewer failing to load on some machines.

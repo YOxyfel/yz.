@@ -3,9 +3,8 @@
 import { Box } from 'lucide-react'
 import { CharacterConfigurator } from './character-configurator'
 import { LabShell } from './arsenal-lab-shell'
-import { LabFxControls, LabFxPreferencesProvider } from './lab-fx-preferences'
 
-function PropShowcaseLabInner({ embedded = false }: { embedded?: boolean }) {
+export function PropShowcaseLab({ embedded = false }: { embedded?: boolean }) {
   return (
     <LabShell
       embedded={embedded}
@@ -13,7 +12,6 @@ function PropShowcaseLabInner({ embedded = false }: { embedded?: boolean }) {
       title="Character Forge"
       description="A rigged character with swappable wearables and playable animations. Cycle each region — glasses, hat, hoodie, pants, shoes — with the side arrows, drag to reveal the wireframe under the render, and switch animation clips. Animations apply across every outfit."
       icon={Box}
-      controls={<LabFxControls labName="props" />}
     >
       <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
         <CharacterConfigurator />
@@ -44,13 +42,5 @@ function PropShowcaseLabInner({ embedded = false }: { embedded?: boolean }) {
         </div>
       </div>
     </LabShell>
-  )
-}
-
-export function PropShowcaseLab({ embedded = false }: { embedded?: boolean }) {
-  return (
-    <LabFxPreferencesProvider>
-      <PropShowcaseLabInner embedded={embedded} />
-    </LabFxPreferencesProvider>
   )
 }

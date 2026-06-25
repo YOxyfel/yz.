@@ -77,25 +77,14 @@ export function useLabFxPreferences() {
   return ctx
 }
 
-type LabFxControlsProps = {
-  labName: 'art' | 'props'
-}
-
-export function LabFxControls({ labName }: LabFxControlsProps) {
+export function LabFxControls() {
   const { mode, setMode, screenFxLive, toggleScreenFxLive } = useLabFxPreferences()
 
-  const description =
-    labName === 'art'
-      ? {
-          full: 'POV parallax, qi overlays, and ambient gallery motion in this chamber only.',
-          reduced: 'Static art reads — no parallax pulses or rapid POV transitions.',
-          off: 'Lab stage effects off. Images and controls stay usable.',
-        }
-      : {
-          full: 'Forge stage lighting and presentation polish in this chamber only.',
-          reduced: 'Cleaner prop reads with lighter stage treatment.',
-          off: 'Lab stage effects off. The 3D viewer and stills stay available.',
-        }
+  const description = {
+    full: 'POV parallax, qi overlays, and ambient gallery motion in this chamber only.',
+    reduced: 'Static art reads — no parallax pulses or rapid POV transitions.',
+    off: 'Lab stage effects off. Images and controls stay usable.',
+  }
 
   return (
     <div className="mt-6 space-y-3">
