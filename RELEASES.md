@@ -1,5 +1,39 @@
 # Release history
 
+## V3.0.2 (`v3.0.2`)
+
+**Saved:** fix 3D character viewer failing to load on some machines.
+
+| | |
+|---|---|
+| **Git tag** | `v3.0.2` |
+| **Production URL** | https://yanezhekov.dev |
+
+### What this version includes
+
+- Self-hosted the Draco decoder in `public/draco/` and pointed `useGLTF` at it,
+  instead of drei's default `gstatic.com` CDN (which can be blocked/unreachable
+  on some networks and left the `.draco.glb` models unable to decode → blank viewer)
+- Desktop opt-in: the "View in 3D" button now appears on any machine where the
+  viewer doesn't auto-mount (low-tier / integrated-GPU desktops, not just mobile)
+- Error boundary around the canvas with a "Retry" fallback (clears the loader
+  cache) instead of a silent blank on load failure
+- Hardened the legacy prop viewer with the same self-hosted decoder
+
+### Revert to V3.0.2
+
+```powershell
+cd D:\999.Personal\Website\website
+git checkout v3.0.2 -- .
+git clean -fd -e .env.local -e node_modules -e .next -e .vercel
+npm install
+npm run build
+```
+
+Or hard reset: `git reset --hard v3.0.2`
+
+---
+
 ## V3.0.1 (`v3.0.1`)
 
 **Saved:** Arsenal lab selector redesigned as a clear segmented tab bar.

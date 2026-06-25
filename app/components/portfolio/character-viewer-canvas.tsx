@@ -5,6 +5,21 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Suspense, useEffect, useMemo, useRef, type MutableRefObject } from 'react'
 import * as THREE from 'three'
 import { clone as cloneSkeleton } from 'three/examples/jsm/utils/SkeletonUtils.js'
+
+// Self-host the Draco decoder (public/draco/) instead of drei's default
+// gstatic.com CDN — the CDN can be blocked/unreachable on some networks, which
+// would leave the .draco.glb models unable to decode and the viewer blank.
+const DRACO_DECODER_PATH = '/draco/'
+useGLTF.setDecoderPath(DRACO_DECODER_PATH)
+
+/** Drop a model from the loader cache so a failed load can be retried. */
+export function clearCharacterGltf(url: string) {
+  try {
+    useGLTF.clear(url)
+  } catch {
+    /* no-op */
+  }
+}
 import {
   managedMeshNames,
   normalizeMeshName,
@@ -87,7 +102,7 @@ function CharacterModel({
   swipeRatioRef = null,
 }: CharacterModelProps) {
   const groupRef = useRef<THREE.Group>(null)
-  const { scene, animations } = useGLTF(url)
+  const { scene, animations } = useGLTF(url, DRACO_DECODER_PATH)
   const cloned = useMemo(() => cloneSkeleton(scene) as THREE.Object3D, [scene])
   const { actions, names, mixer } = useAnimations(animations, cloned)
   const { gl, scene: rootScene, camera, size } = useThree()

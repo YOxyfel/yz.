@@ -7,6 +7,10 @@ import * as THREE from 'three'
 import type { PropViewMode } from './arsenal-props'
 import type { PerformanceTier } from './performance-tier'
 
+// Self-host the Draco decoder rather than drei's gstatic.com CDN default.
+const DRACO_DECODER_PATH = '/draco/'
+useGLTF.setDecoderPath(DRACO_DECODER_PATH)
+
 type ModelProps = {
   glb: string
   viewMode: PropViewMode
@@ -36,7 +40,7 @@ function WebGLCleanup() {
 
 function Model({ glb, viewMode, showQuadMesh, autoRotate }: ModelProps) {
   const group = useRef<THREE.Group>(null)
-  const { scene } = useGLTF(glb)
+  const { scene } = useGLTF(glb, DRACO_DECODER_PATH)
   const clone = useMemo(() => scene.clone(true), [scene])
 
   useEffect(() => {

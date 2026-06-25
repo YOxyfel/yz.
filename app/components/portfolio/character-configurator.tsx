@@ -12,8 +12,9 @@ import {
   RotateCcw,
   Shirt,
   SplitSquareHorizontal,
+  TriangleAlert,
 } from 'lucide-react'
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { Component, useCallback, useMemo, useRef, useState, type ReactNode } from 'react'
 import { useDeviceProfile } from './device-profile'
 import {
   CHARACTER_POSTER_READY,
@@ -144,6 +145,26 @@ function ChamberButton({
   )
 }
 
+class ViewerErrorBoundary extends Component<
+  { fallback: ReactNode; onError?: (error: unknown) => void; children: ReactNode },
+  { hasError: boolean }
+> {
+  state = { hasError: false }
+
+  static getDerivedStateFromError() {
+    return { hasError: true }
+  }
+
+  componentDidCatch(error: unknown) {
+    console.error('[character-viewer] failed to load 3D assets:', error)
+    this.props.onError?.(error)
+  }
+
+  render() {
+    return this.state.hasError ? this.props.fallback : this.props.children
+  }
+}
+
 export function CharacterConfigurator() {
   const { isNarrow: isMobile, enablePropViewer3d, performanceTier } = useDeviceProfile()
 
@@ -154,6 +175,7 @@ export function CharacterConfigurator() {
   const [swipe, setSwipe] = useState(false)
   const [mobileExpanded, setMobileExpanded] = useState(false)
   const [dividerPct, setDividerPct] = useState(50)
+  const [viewerKey, setViewerKey] = useState(0)
 
   const swipeRatioRef = useRef(0.5)
   const swipeBoxRef = useRef<HTMLDivElement>(null)
@@ -215,11 +237,41 @@ export function CharacterConfigurator() {
   const loop = selectedAnimation?.loop ?? true
   const clips = selectedAnimation?.clips
 
-  // Mobile / low-power: live viewer is off — show poster with an opt-in expand.
-  const showCanvas = enablePropViewer3d && (!isMobile || mobileExpanded)
+  const retryViewer = useCallback(() => {
+    void import('./character-viewer-canvas').then((mod) => mod.clearCharacterGltf?.(url))
+    setViewerKey((key) => key + 1)
+    setMobileExpanded(true)
+  }, [url])
+
+  // Auto-mount the live viewer on capable desktops. Everyone else (mobile, or a
+  // machine detected as low-tier / integrated GPU) gets an explicit opt-in button
+  // so the 3D never silently fails to appear.
+  const showCanvas = (!isMobile && enablePropViewer3d) || mobileExpanded
+
+  const viewerErrorFallback = (
+    <div className="relative flex h-full w-full flex-col items-center justify-center gap-3 bg-gradient-to-br from-black via-card/60 to-black p-6 text-center">
+      <TriangleAlert className="h-7 w-7 text-amber-300/80" />
+      <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-amber-300/80">
+        3D viewer didn’t load
+      </p>
+      <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
+        Your browser or network may have blocked the 3D assets, or the GPU isn’t
+        supported. Try again or use a different browser.
+      </p>
+      <button
+        type="button"
+        onClick={retryViewer}
+        className="mt-1 inline-flex items-center gap-2 rounded-full border border-cyan/40 bg-black/70 px-4 py-2 font-mono text-xs uppercase tracking-wider text-cyan transition-transform hover:scale-105"
+      >
+        <RotateCcw className="h-4 w-4" />
+        Retry
+      </button>
+    </div>
+  )
 
   const viewerBody = showCanvas ? (
-    swipe ? (
+    <ViewerErrorBoundary key={viewerKey} fallback={viewerErrorFallback}>
+      {swipe ? (
       <div ref={swipeBoxRef} className="relative h-full w-full cursor-grab select-none active:cursor-grabbing">
         <CharacterViewerCanvas
           url={url}
@@ -275,7 +327,8 @@ export function CharacterConfigurator() {
         wireframe={wireframe}
         performanceTier={performanceTier}
       />
-    )
+      )}
+    </ViewerErrorBoundary>
   ) : (
     <div className="relative h-full w-full">
       {CHARACTER_POSTER_READY ? (
@@ -290,16 +343,14 @@ export function CharacterConfigurator() {
         <div className="absolute inset-0 bg-gradient-to-br from-black via-card/60 to-black" />
       )}
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-      {isMobile ? (
-        <button
-          type="button"
-          onClick={() => setMobileExpanded(true)}
-          className="mobile-solid-backdrop absolute inset-x-0 bottom-6 mx-auto flex w-fit items-center gap-2 rounded-full border border-cyan/40 bg-black/85 px-5 py-2.5 font-mono text-xs uppercase tracking-wider text-cyan transition-transform hover:scale-105"
-        >
-          <Maximize2 className="h-4 w-4" />
-          View in 3D
-        </button>
-      ) : null}
+      <button
+        type="button"
+        onClick={() => setMobileExpanded(true)}
+        className="mobile-solid-backdrop absolute inset-x-0 bottom-6 mx-auto flex w-fit items-center gap-2 rounded-full border border-cyan/40 bg-black/85 px-5 py-2.5 font-mono text-xs uppercase tracking-wider text-cyan transition-transform hover:scale-105"
+      >
+        <Maximize2 className="h-4 w-4" />
+        View in 3D
+      </button>
     </div>
   )
 
@@ -343,7 +394,7 @@ export function CharacterConfigurator() {
           </div>
         ) : null}
 
-        {isMobile && mobileExpanded ? (
+        {mobileExpanded ? (
           <button
             type="button"
             onClick={() => setMobileExpanded(false)}
