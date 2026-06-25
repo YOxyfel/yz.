@@ -1,5 +1,38 @@
 # Release history
 
+## V3.0.1 (`v3.0.1`)
+
+**Saved:** Arsenal lab selector redesigned as a clear segmented tab bar.
+
+| | |
+|---|---|
+| **Git tag** | `v3.0.1` |
+| **Production URL** | https://yanezhekov.dev |
+
+### What this version includes
+
+- Desktop Arsenal labs (Spotlight / 3D Props / Concept Art / Audio) rebuilt as
+  full-width segmented tabs with index + icon + label, so they read as navigation
+  instead of metadata badges
+- Strong active state (cyan fill + glow + underline indicator) and hover lift
+- "Select a lab · NN disciplines" cue; prev/next + counter moved beside the active
+  lab's title/description
+- Compact (mobile/tablet) carousel nav unchanged
+
+### Revert to V3.0.1
+
+```powershell
+cd D:\999.Personal\Website\website
+git checkout v3.0.1 -- .
+git clean -fd -e .env.local -e node_modules -e .next -e .vercel
+npm install
+npm run build
+```
+
+Or hard reset: `git reset --hard v3.0.1`
+
+---
+
 ## V3.0.0 (`v3.0.0`)
 
 **Saved:** interactive 3D character configurator in the Arsenal — outfits, animations, and wireframe inspection.

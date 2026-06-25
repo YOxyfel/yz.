@@ -3858,6 +3858,100 @@ html[data-narrow='on'] .site-nav-mobile-trigger {
   box-shadow: 0 0 16px -6px oklch(0.78 0.16 200 / 0.35);
 }
 
+/* Arsenal lab selector — full-width segmented tabs (reads as navigation, not badges). */
+.arsenal-lab-tab {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: 5.25rem;
+  padding: 0.85rem 0.6rem 0.95rem;
+  border-radius: 0.65rem;
+  border: 1px solid oklch(0.4 0.03 248 / 0.5);
+  background: linear-gradient(180deg, oklch(0.2 0.018 258), oklch(0.13 0.014 264));
+  color: var(--muted-foreground);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    background 0.18s ease,
+    box-shadow 0.18s ease;
+  box-shadow:
+    inset 0 1px 0 oklch(0.5 0.03 248 / 0.18),
+    0 2px 0 oklch(0.07 0.01 270 / 0.8);
+}
+
+.arsenal-lab-tab:hover {
+  transform: translateY(-2px);
+  border-color: oklch(0.58 0.09 210 / 0.65);
+  color: oklch(0.9 0.02 220);
+  box-shadow:
+    inset 0 1px 0 oklch(0.55 0.05 220 / 0.25),
+    0 0 18px -8px var(--cyan),
+    0 4px 0 oklch(0.07 0.01 270 / 0.8);
+}
+
+.arsenal-lab-tab:focus-visible {
+  outline: 2px solid oklch(0.7 0.12 200 / 0.7);
+  outline-offset: 2px;
+}
+
+.arsenal-lab-tab-index {
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  color: oklch(0.62 0.04 248 / 0.85);
+}
+
+.arsenal-lab-tab-icon {
+  height: 1.4rem;
+  width: 1.4rem;
+}
+
+.arsenal-lab-tab-label {
+  font-size: 0.74rem;
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.1;
+}
+
+.arsenal-lab-tab-active {
+  border-color: oklch(0.62 0.12 200 / 0.7);
+  color: var(--cyan);
+  background: linear-gradient(180deg, oklch(0.32 0.07 212 / 0.6), oklch(0.17 0.04 242 / 0.65));
+  box-shadow:
+    inset 0 1px 0 oklch(0.72 0.12 200 / 0.32),
+    0 0 24px -6px var(--cyan),
+    0 2px 0 oklch(0.07 0.01 270 / 0.8);
+}
+
+.arsenal-lab-tab-active:hover {
+  transform: translateY(-2px);
+}
+
+.arsenal-lab-tab-active .arsenal-lab-tab-index {
+  color: var(--cyan);
+}
+
+/* Active underline indicator — anchors the tab to the panel content below. */
+.arsenal-lab-tab-active::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -0.4rem;
+  width: 44%;
+  height: 2px;
+  transform: translateX(-50%);
+  background: var(--cyan);
+  border-radius: 2px;
+  box-shadow: 0 0 10px var(--cyan);
+}
+
 .sky-view-restore-toggle {
   bottom: max(1rem, env(safe-area-inset-bottom, 0px));
   backdrop-filter: none;
@@ -5273,6 +5367,7 @@ html[data-mobile-perf-cut='on'] .station-sky-backdrop-ripples {
 html[data-mobile-perf-cut='on'] .station-panel,
 html[data-mobile-perf-cut='on'] .station-nav-bar,
 html[data-mobile-perf-cut='on'] .station-chip,
+html[data-mobile-perf-cut='on'] .arsenal-lab-tab,
 html[data-mobile-perf-cut='on'] .station-button {
   transition: none !important;
   box-shadow: none !important;

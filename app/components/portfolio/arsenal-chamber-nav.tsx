@@ -81,9 +81,13 @@ export function ArsenalChamberNav({
           </div>
         ) : (
           <>
-            <div className="relative z-[1] flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-              <div className="arsenal-chamber-scroll flex flex-wrap gap-2">
-                {arsenalChambers.map((chamber) => {
+            <div className="relative z-[1]">
+              <p className="station-readout-label mb-3 flex items-center gap-2">
+                <StationLed active />
+                Select a lab · {String(arsenalChambers.length).padStart(2, '0')} disciplines
+              </p>
+              <div className="arsenal-lab-tabs grid grid-cols-2 gap-2 sm:grid-cols-4">
+                {arsenalChambers.map((chamber, chamberIndex) => {
                   const Icon = chamber.icon
                   const isActive = chamber.id === selectedId
                   return (
@@ -91,18 +95,37 @@ export function ArsenalChamberNav({
                       key={chamber.id}
                       type="button"
                       onClick={() => onSelect(chamber.id)}
-                      className={`station-chip inline-flex shrink-0 items-center gap-2 !px-3 !py-2 sm:!px-4 ${
-                        isActive ? 'station-chip-active' : ''
-                      }`}
+                      aria-pressed={isActive}
+                      aria-label={`Open ${chamber.title}`}
+                      className={`arsenal-lab-tab ${isActive ? 'arsenal-lab-tab-active' : ''}`}
                     >
-                      <Icon className="h-3.5 w-3.5 shrink-0" />
-                      <span>{chamber.shortTitle}</span>
+                      <span className="arsenal-lab-tab-index">
+                        {String(chamberIndex + 1).padStart(2, '0')}
+                      </span>
+                      <Icon className="arsenal-lab-tab-icon" />
+                      <span className="arsenal-lab-tab-label">{chamber.shortTitle}</span>
                     </button>
                   )
                 })}
               </div>
+            </div>
 
-              <div className="flex items-center gap-2 self-end lg:self-auto">
+            <div className="relative z-[1] mt-5 flex flex-col gap-4 border-t border-[var(--station-bezel)]/40 pt-5 lg:flex-row lg:items-start lg:justify-between">
+              <div className="min-w-0">
+                <p className="station-readout-label flex items-center gap-2">
+                  <ActiveIcon className="h-3.5 w-3.5" />
+                  <StationLed active />
+                  {active.eyebrow}
+                </p>
+                <h3 className="font-heading mt-2 text-xl font-bold tracking-tight sm:text-2xl">
+                  {active.title}
+                </h3>
+                <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">
+                  {active.description}
+                </p>
+              </div>
+
+              <div className="flex shrink-0 items-center gap-2 self-end lg:self-start">
                 <button
                   type="button"
                   onClick={onPrev}
@@ -123,20 +146,6 @@ export function ArsenalChamberNav({
                   <ChevronRight className="h-5 w-5" />
                 </button>
               </div>
-            </div>
-
-            <div className="relative z-[1] mt-4 border-t border-[var(--station-bezel)]/40 pt-4">
-              <p className="station-readout-label flex items-center gap-2">
-                <ActiveIcon className="h-3.5 w-3.5" />
-                <StationLed active />
-                {active.eyebrow}
-              </p>
-              <h3 className="font-heading mt-2 text-xl font-bold tracking-tight sm:text-2xl">
-                {active.title}
-              </h3>
-              <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">
-                {active.description}
-              </p>
             </div>
           </>
         )}
