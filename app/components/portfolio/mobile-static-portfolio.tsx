@@ -31,7 +31,6 @@ export function MobileStaticPortfolio() {
   const tHero = useTranslations('Hero')
   const tHub = useTranslations('HomeHub')
   const tProjects = useTranslations('Projects')
-  const tSocial = useTranslations('SocialProof')
   const tTestimonials = useTranslations('Testimonials')
   const tFaq = useTranslations('Faq')
   const tContact = useTranslations('Contact')
@@ -104,34 +103,12 @@ export function MobileStaticPortfolio() {
           </div>
         </Section>
 
-        <Section id="proof">
-          <Heading
-            eyebrow={tSocial('eyebrow')}
-            title={tSocial('title')}
-            description={tSocial('description')}
-          />
-          <p className="mt-6 text-sm text-muted-foreground">{tSocial('emptyPartnersBody')}</p>
-        </Section>
-
-        <Section>
-          <Heading
-            eyebrow={tTestimonials('eyebrow')}
-            title={tTestimonials('title')}
-            description={tTestimonials('description')}
-          />
-          <p className="mt-6 text-sm text-muted-foreground">{tTestimonials('emptyBody')}</p>
-        </Section>
-
         <Section id="arsenal">
           <Heading
-            eyebrow="04 — Arsenal"
+            eyebrow="02 — Arsenal"
             title="The Arsenal"
-            description="Full interactive labs are desktop-only."
+            description="Art, audio, props, spotlight reels, and the web stack. Full interactive labs are desktop-only."
           />
-        </Section>
-
-        <Section id="stack">
-          <Heading eyebrow="05 — Web Stack" title="The Full Stack Flex" />
           <ul className="mt-8 space-y-3">
             {webProjects.map((project) => (
               <li key={project.id}>
@@ -151,6 +128,15 @@ export function MobileStaticPortfolio() {
               </a>
             </li>
           </ul>
+        </Section>
+
+        <Section>
+          <Heading
+            eyebrow={tTestimonials('eyebrow')}
+            title={tTestimonials('title')}
+            description={tTestimonials('description')}
+          />
+          <p className="mt-6 text-sm text-muted-foreground">{tTestimonials('emptyBody')}</p>
         </Section>
 
         <Section id="faq">

@@ -40,7 +40,6 @@ export async function MobileStaticHome({ locale }: MobileStaticHomeProps) {
   const tHero = await getTranslations({ locale, namespace: 'Hero' })
   const tHub = await getTranslations({ locale, namespace: 'HomeHub' })
   const tProjects = await getTranslations({ locale, namespace: 'Projects' })
-  const tSocial = await getTranslations({ locale, namespace: 'SocialProof' })
   const tTestimonials = await getTranslations({ locale, namespace: 'Testimonials' })
   const tFaq = await getTranslations({ locale, namespace: 'Faq' })
   const tContact = await getTranslations({ locale, namespace: 'Contact' })
@@ -110,26 +109,8 @@ export async function MobileStaticHome({ locale }: MobileStaticHomeProps) {
           </div>
         </Section>
 
-        <Section id="proof">
-          <Heading
-            eyebrow={tSocial('eyebrow')}
-            title={tSocial('title')}
-            description={tSocial('description')}
-          />
-          <p className="mobile-static-muted-block">{tSocial('emptyPartnersBody')}</p>
-        </Section>
-
-        <Section>
-          <Heading
-            eyebrow={tTestimonials('eyebrow')}
-            title={tTestimonials('title')}
-            description={tTestimonials('description')}
-          />
-          <p className="mobile-static-muted-block">{tTestimonials('emptyBody')}</p>
-        </Section>
-
         <Section id="stack">
-          <Heading eyebrow="05 — Web Stack" title="The Full Stack Flex" />
+          <Heading eyebrow="02 — Web Stack" title="The Full Stack Flex" />
           <div className="mobile-static-stack">
             {webProjects.map((project) => (
               <a
@@ -146,6 +127,15 @@ export async function MobileStaticHome({ locale }: MobileStaticHomeProps) {
               {githubShowcase.title}
             </a>
           </div>
+        </Section>
+
+        <Section>
+          <Heading
+            eyebrow={tTestimonials('eyebrow')}
+            title={tTestimonials('title')}
+            description={tTestimonials('description')}
+          />
+          <p className="mobile-static-muted-block">{tTestimonials('emptyBody')}</p>
         </Section>
 
         <Section id="faq">

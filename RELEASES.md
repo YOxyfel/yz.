@@ -1,5 +1,51 @@
 # Release history
 
+## V3.2.0 (`v3.2.0`)
+
+**Saved:** parallax cosmos background, Journal / Timeline / Videos pages, pricing comparison, and nav restructuring.
+
+| | |
+|---|---|
+| **Git tag** | `v3.2.0` |
+| **Production URL** | https://yanezhekov.dev |
+
+### What this version includes
+
+- **Parallax cosmos backdrop**: replaced the static photo + procedural FX with a
+  multi-layer parallax cosmos — tileable starfield, three `screen`-blended nebula
+  layers, dark dust clouds (`multiply`) to carve negative space, and a near
+  particle drift — all driven by an idle-aware rAF loop (scroll + pointer).
+- **3D gas-giant hero**: lazy, tier-gated `@react-three/fiber` planet (Draco + WebP,
+  14.4 MB → 296 KB) with a cyan glow halo and rim light.
+- **CSS vignette + film grain** overlay for a cinematic edge falloff.
+- Optimized background art: PNG → WebP (~5.1 MB → ~205 KB).
+- **New pages**: Website Development Timeline (scroll-driven 3D ring tied to GitHub
+  versions), Journal blog (two-page book with flip VFX + fullscreen reader), and a
+  YouTube blog with timeline.
+- **Pricing redesign**: base price per tier with an expandable compare panel
+  (gains vs. the previous tier, locked items for the next).
+- **Nav restructuring**: Timeline/Journal/Videos collapsed into a "Logs" dropdown;
+  redundant homepage anchors removed; wider nav with responsive collapse.
+- **Homepage reorder**: dropped the redundant social-proof block, moved Arsenal after
+  Game Projects, and folded "Full Stack Flex" in as an Arsenal tab.
+- Robust hash navigation (cross-page scroll with force-mount + stabilization),
+  Sky Lab coachmark no longer overlaps the nav or blocks clicks, and fixed section
+  numbering.
+
+### Revert to V3.2.0
+
+```powershell
+cd D:\999.Personal\Website\website
+git checkout v3.2.0 -- .
+git clean -fd -e .env.local -e node_modules -e .next -e .vercel
+npm install
+npm run build
+```
+
+Or hard reset: `git reset --hard v3.2.0`
+
+---
+
 ## V3.0.3 (`v3.0.3`)
 
 **Saved:** remove non-functional Lab FX controls from the 3D Props chamber.

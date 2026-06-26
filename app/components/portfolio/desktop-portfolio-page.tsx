@@ -28,11 +28,6 @@ const ProjectsSection = dynamic(
   { ssr: true }
 )
 
-const SocialProofSection = dynamic(
-  () => import('./social-proof-section').then((mod) => ({ default: mod.SocialProofSection })),
-  { ssr: true }
-)
-
 const TestimonialsSection = dynamic(
   () => import('./testimonials-section').then((mod) => ({ default: mod.TestimonialsSection })),
   { ssr: true }
@@ -72,17 +67,6 @@ const ArsenalSection = dynamic(
         className="mx-auto flex min-h-[40vh] max-w-6xl items-center justify-center px-6 py-24 font-mono text-xs uppercase tracking-widest text-muted-foreground"
       >
         Loading arsenal bay…
-      </div>
-    ),
-  }
-)
-
-const WebStackSection = dynamic(
-  () => import('./web-stack-section').then((mod) => ({ default: mod.WebStackSection })),
-  {
-    loading: () => (
-      <div className="mx-auto flex min-h-[32vh] max-w-6xl items-center justify-center px-6 py-16 font-mono text-xs uppercase tracking-widest text-muted-foreground">
-        Loading stack…
       </div>
     ),
   }
@@ -146,17 +130,11 @@ function DesktopPortfolioContent() {
             <LazySection minHeight="min(56vh, 640px)" anchorId="engine">
               <ProjectsSection />
             </LazySection>
-            <LazySection minHeight="min(40vh, 520px)">
-              <SocialProofSection />
-            </LazySection>
-            <LazySection minHeight="min(36vh, 480px)">
-              <TestimonialsSection />
-            </LazySection>
             <LazySection minHeight="min(72vh, 720px)">
               <ArsenalSection />
             </LazySection>
-            <LazySection minHeight="min(48vh, 560px)">
-              <WebStackSection />
+            <LazySection minHeight="min(36vh, 480px)">
+              <TestimonialsSection />
             </LazySection>
             <LazySection minHeight="min(32vh, 420px)" anchorId="faq">
               <FaqSection />

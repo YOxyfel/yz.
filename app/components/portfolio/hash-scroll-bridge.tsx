@@ -3,11 +3,13 @@
 import { usePathname } from 'next/navigation'
 import { useEffect } from 'react'
 import { isMobilePerfCutViewport } from './breakpoints'
-import { hashTargetId, requestHashSectionMount } from './hash-scroll'
-
-const INTRO_ONLY_HASH = '#explore'
-const HASH_SCROLL_MAX_RETRIES = 32
-const HASH_SCROLL_MAX_RETRIES_MOBILE = 8
+import {
+  hashTargetId,
+  INTRO_ONLY_HASH,
+  isSectionHash,
+  requestAllSectionsMount,
+  requestHashSectionMount,
+} from './hash-scroll'
 
 export function scrollToHashTarget(hash: string, behavior: ScrollBehavior = 'smooth') {
   const id = hashTargetId(hash)
@@ -21,26 +23,88 @@ export function scrollToHashTarget(hash: string, behavior: ScrollBehavior = 'smo
   return true
 }
 
-function maxHashRetries() {
-  return isMobilePerfCutViewport() ? HASH_SCROLL_MAX_RETRIES_MOBILE : HASH_SCROLL_MAX_RETRIES
-}
-
+/**
+ * Reliable hash scrolling.
+ *
+ * Lazy sections between the viewport and the target expand past their
+ * placeholder heights as they mount, so a single smooth scroll lands short.
+ * To avoid that we (1) force every section to mount, (2) wait for the target's
+ * absolute document position to stabilise, (3) issue one smooth scroll, then
+ * (4) keep re-aligning for a short window in case late content (images, etc.)
+ * shifts the target again.
+ */
 function scrollToHashTargetWithRetry(hash: string, behavior: ScrollBehavior = 'smooth') {
   const id = hashTargetId(hash)
   if (!id) return
 
-  requestHashSectionMount(id)
   const mobile = isMobilePerfCutViewport()
   const scrollBehavior: ScrollBehavior = mobile ? 'auto' : behavior
+  const start = performance.now()
+  const settleMs = mobile ? 1100 : 2000
+  const stabilizeCapMs = mobile ? 320 : 520
+  const requiredStable = mobile ? 4 : 6
 
-  const attempt = (retries = 0) => {
-    if (scrollToHashTarget(hash, scrollBehavior)) return
-    if (retries < maxHashRetries()) {
-      requestAnimationFrame(() => attempt(retries + 1))
+  let phase: 'stabilize' | 'settle' = 'stabilize'
+  let lastDocTop = Number.NaN
+  let stableCount = 0
+  let requestedMounts = false
+
+  const docTopOf = (el: HTMLElement) =>
+    Math.round(el.getBoundingClientRect().top + window.scrollY)
+
+  const frame = () => {
+    // Fire on the first frame (not synchronously) so that on a fresh page load
+    // the lazy sections have already attached their mount listeners.
+    if (!requestedMounts) {
+      requestHashSectionMount(id)
+      requestAllSectionsMount()
+      requestedMounts = true
+    }
+
+    const target = document.getElementById(id)
+    const elapsed = performance.now() - start
+
+    if (!target) {
+      if (elapsed < settleMs) requestAnimationFrame(frame)
+      return
+    }
+
+    target.style.contentVisibility = 'visible'
+    const docTop = docTopOf(target)
+
+    if (phase === 'stabilize') {
+      if (!Number.isNaN(lastDocTop) && Math.abs(docTop - lastDocTop) <= 1) {
+        stableCount += 1
+      } else {
+        stableCount = 0
+      }
+      lastDocTop = docTop
+
+      if (stableCount >= 2 || elapsed >= stabilizeCapMs) {
+        target.scrollIntoView({ behavior: scrollBehavior, block: 'start' })
+        phase = 'settle'
+        stableCount = 0
+        lastDocTop = docTopOf(target)
+      }
+      requestAnimationFrame(frame)
+      return
+    }
+
+    // settle: realign instantly if the target drifted, otherwise count down.
+    if (Math.abs(docTop - lastDocTop) > 1) {
+      target.scrollIntoView({ behavior: 'auto', block: 'start' })
+      stableCount = 0
+    } else {
+      stableCount += 1
+    }
+    lastDocTop = docTop
+
+    if (stableCount < requiredStable && elapsed < settleMs) {
+      requestAnimationFrame(frame)
     }
   }
 
-  attempt()
+  requestAnimationFrame(frame)
 }
 
 function isSamePageHashLink(href: string, pathname: string) {
@@ -59,10 +123,6 @@ function isHomePath(pathname: string) {
   return pathname === '/' || /^\/[a-z]{2}$/.test(pathname)
 }
 
-function shouldLandOnIntro(hash: string) {
-  return !hash || hash === INTRO_ONLY_HASH
-}
-
 function stripIntroHash(pathname: string) {
   if (!isHomePath(pathname)) return
   if (window.location.hash !== INTRO_ONLY_HASH) return
@@ -77,19 +137,32 @@ export function HashScrollBridge() {
 
     history.scrollRestoration = 'manual'
 
+    const onHome = isHomePath(pathname)
+
     const lockTop = () => {
-      if (!isHomePath(pathname)) return
+      if (!onHome) return
       if (window.location.hash) {
         window.history.replaceState(null, '', `${pathname}${window.location.search}`)
       }
       window.scrollTo(0, 0)
     }
 
-    lockTop()
+    // Landed on the home page with a real section hash (e.g. came from a
+    // subpage via Work/FAQ/Contact) → scroll to that section instead of top.
+    if (onHome && isSectionHash(window.location.hash)) {
+      scrollToHashTargetWithRetry(window.location.hash, 'smooth')
+    } else {
+      lockTop()
+    }
 
     const onPageShow = (event: PageTransitionEvent) => {
-      if (!isHomePath(pathname)) return
-      if (!event.persisted && window.location.hash === INTRO_ONLY_HASH) return
+      if (!onHome) return
+      const hash = window.location.hash
+      if (isSectionHash(hash)) {
+        scrollToHashTargetWithRetry(hash, 'auto')
+        return
+      }
+      if (!event.persisted && hash === INTRO_ONLY_HASH) return
       lockTop()
     }
 
@@ -103,7 +176,7 @@ export function HashScrollBridge() {
   useEffect(() => {
     const onHashChange = () => {
       const hash = window.location.hash
-      if (shouldLandOnIntro(hash)) {
+      if (!isSectionHash(hash)) {
         stripIntroHash(pathname)
         return
       }
@@ -112,6 +185,9 @@ export function HashScrollBridge() {
 
     const onClick = (event: MouseEvent) => {
       if (event.defaultPrevented) return
+      if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+        return
+      }
 
       const anchor = (event.target as Element).closest('a[href*="#"]')
       if (!anchor) return
@@ -120,6 +196,8 @@ export function HashScrollBridge() {
       if (!href || !isSamePageHashLink(href, pathname)) return
 
       const hash = href.slice(href.indexOf('#'))
+      if (!isSectionHash(hash)) return
+
       event.preventDefault()
       window.history.pushState(null, '', hash)
       scrollToHashTargetWithRetry(hash)

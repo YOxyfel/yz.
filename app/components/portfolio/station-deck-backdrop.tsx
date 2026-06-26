@@ -1,11 +1,16 @@
 'use client'
 
+import dynamic from 'next/dynamic'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useDeviceProfile } from './device-profile'
-import { generateSkyBackdropFx, type SkyBackdropFx } from './station-sky-backdrop-fx'
 import { SitePhotoBackdropLayers } from './site-photo-backdrop'
 import { useVisualFxPreferences } from './visual-fx-preferences'
+
+const CosmosPlanetCanvas = dynamic(
+  () => import('./cosmos-planet-canvas').then((mod) => ({ default: mod.CosmosPlanetCanvas })),
+  { ssr: false }
+)
 
 type PondRipple = {
   id: number
@@ -40,21 +45,95 @@ export function StationDeckBackdrop() {
   const rippleIdRef = useRef(0)
   const lastSpawnRef = useRef<{ x: number; y: number } | null>(null)
   const ripplesEnabled = useGridRipplesEnabled()
-  const { mobilePerfCut } = useDeviceProfile()
+  const { mobilePerfCut, prefersReducedMotion, performanceTier } = useDeviceProfile()
   const { showScreenFx } = useVisualFxPreferences()
-  const [skyFx, setSkyFx] = useState<SkyBackdropFx | null>(null)
+  const [planetReady, setPlanetReady] = useState(false)
+
+  const parallaxOn = mounted && showScreenFx && !mobilePerfCut && !prefersReducedMotion
+  const planetOn = parallaxOn && performanceTier !== 'low'
 
   useEffect(() => {
     setMounted(true)
   }, [])
 
+  // Defer the (WebGL) planet until the browser is idle so it never competes
+  // with first paint or the hero.
   useEffect(() => {
-    if (!showScreenFx || mobilePerfCut) {
-      setSkyFx(null)
+    if (!planetOn) {
+      setPlanetReady(false)
       return
     }
-    setSkyFx(generateSkyBackdropFx())
-  }, [mobilePerfCut, showScreenFx])
+    const w = window as Window & {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number
+      cancelIdleCallback?: (handle: number) => void
+    }
+    if (typeof w.requestIdleCallback === 'function') {
+      const id = w.requestIdleCallback(() => setPlanetReady(true), { timeout: 2500 })
+      return () => w.cancelIdleCallback?.(id)
+    }
+    const t = window.setTimeout(() => setPlanetReady(true), 1200)
+    return () => window.clearTimeout(t)
+  }, [planetOn])
+
+  // Single rAF drives scroll + pointer parallax via CSS vars on the backdrop.
+  // The loop sleeps once values settle and re-arms on scroll / pointer move, so
+  // it costs nothing while the visitor is reading.
+  useEffect(() => {
+    const root = backdropRef.current
+    if (!root) return
+    if (!parallaxOn) {
+      root.style.setProperty('--cosmos-scroll', '0')
+      root.style.setProperty('--cosmos-px', '0')
+      root.style.setProperty('--cosmos-py', '0')
+      return
+    }
+
+    let raf = 0
+    let running = false
+    const target = { px: 0, py: 0 }
+    const cur = { px: 0, py: 0, scroll: window.scrollY }
+
+    const tick = () => {
+      const targetScroll = window.scrollY
+      cur.scroll += (targetScroll - cur.scroll) * 0.12
+      cur.px += (target.px - cur.px) * 0.05
+      cur.py += (target.py - cur.py) * 0.05
+      root.style.setProperty('--cosmos-scroll', cur.scroll.toFixed(1))
+      root.style.setProperty('--cosmos-px', cur.px.toFixed(3))
+      root.style.setProperty('--cosmos-py', cur.py.toFixed(3))
+
+      const settled =
+        Math.abs(targetScroll - cur.scroll) < 0.3 &&
+        Math.abs(target.px - cur.px) < 0.002 &&
+        Math.abs(target.py - cur.py) < 0.002
+      if (settled) {
+        running = false
+        return
+      }
+      raf = requestAnimationFrame(tick)
+    }
+
+    const wake = () => {
+      if (running) return
+      running = true
+      raf = requestAnimationFrame(tick)
+    }
+
+    const onPointer = (event: PointerEvent) => {
+      target.px = (event.clientX / window.innerWidth) * 2 - 1
+      target.py = (event.clientY / window.innerHeight) * 2 - 1
+      wake()
+    }
+
+    window.addEventListener('pointermove', onPointer, { passive: true })
+    window.addEventListener('scroll', wake, { passive: true })
+    wake()
+    return () => {
+      cancelAnimationFrame(raf)
+      window.removeEventListener('pointermove', onPointer)
+      window.removeEventListener('scroll', wake)
+    }
+  }, [parallaxOn])
 
   useEffect(() => {
     if (!mounted) return
@@ -153,7 +232,7 @@ export function StationDeckBackdrop() {
       data-station-backdrop-active="on"
       aria-hidden
     >
-      <SitePhotoBackdropLayers fx={skyFx} />
+      <SitePhotoBackdropLayers planet={planetReady ? <CosmosPlanetCanvas /> : null} />
       {ripplesEnabled ? (
         <div className="station-sky-backdrop-ripples">
           {ripples.map((ripple) => (

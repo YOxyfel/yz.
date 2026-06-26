@@ -9,6 +9,10 @@
     "pricing": "Pricing",
     "caseStudies": "Case Studies",
     "resources": "Resources",
+    "timeline": "Timeline",
+    "journal": "Journal",
+    "videos": "Videos",
+    "logs": "Logs",
     "work": "Work",
     "faq": "FAQ",
     "contact": "Contact",
@@ -216,7 +220,7 @@
     "codeSampleTitle": "Code sample"
   },
   "Contact": {
-    "eyebrow": "07 — Comms channel open",
+    "eyebrow": "05 — Comms channel open",
     "title": "Let's scope your next milestone",
     "titleAccent": "together",
     "body": "Studios and indie teams: tell me where you are stuck—systems, architecture, or player feel—and I will reply with an honest fit and a scoped path forward in UE5.",
@@ -341,56 +345,83 @@
     "footerBody": "Not sure which tier fits? Send your milestone constraints and I will recommend the smallest scoped path that still de-risks your gameplay goals.",
     "footerPrimary": "Request a scope call",
     "footerSecondary": "Explore services",
+    "baseLabel": "Base",
+    "compareLabel": "Compare tiers",
+    "compareHide": "Hide comparison",
+    "compareGain": "More than",
+    "compareMiss": "Step up for",
+    "compareNote": "Base figures are starting points—final numbers follow scoping, never a generic rate card.",
     "takeawaysTitle": "Key takeaways",
     "takeaways": [
       "Discovery call is complimentary—fit and milestone outline before any quote",
       "Fixed-scope slices beat open-ended hourly work for gameplay systems",
-      "Final numbers always follow scoping, never a generic rate card"
+      "Base figures are starting points—final numbers always follow scoping"
     ],
     "tiers": [
       {
         "title": "Discovery & scope",
         "price": "Complimentary intro",
+        "basePrice": "Free",
         "body": "30-minute fit call to map your milestone, pipeline, and where gameplay is stuck—before any commitment.",
         "includes": [
           "Honest fit assessment for UE5 systems work",
           "Milestone outline and risk flags",
           "Recommended engagement tier"
         ],
+        "addsOverPrev": [],
         "cta": "Book a scope call"
-      },
-      {
-        "title": "Milestone slice",
-        "price": "Scoped quote",
-        "body": "Fixed-scope delivery for one gameplay vertical—combat loop, GAS foundation, progression slice, or similar.",
-        "includes": [
-          "Defined deliverables and handoff criteria",
-          "Designer-ready surfaces where applicable",
-          "Direct updates from the engineer building it"
-        ],
-        "cta": "Scope a milestone slice"
-      },
-      {
-        "title": "Co-dev block",
-        "price": "Multi-week partnership",
-        "body": "Embedded co-development across a sprint block—architecture, implementation, and iteration with your team.",
-        "includes": [
-          "Weekly milestone-focused sync",
-          "Systems built for your pipeline and content scale",
-          "Documentation aligned to handoff or continuation"
-        ],
-        "cta": "Plan a co-dev block"
       },
       {
         "title": "Architecture review",
         "price": "Scoped quote",
+        "basePrice": "From €1,200",
         "body": "Targeted audit or refactor plan before debt compounds—boundaries, data surfaces, and a prioritized fix path.",
         "includes": [
           "Stack and milestone context review",
           "Modularity and designer-readiness assessment",
           "Prioritized recommendations—not a generic checklist"
         ],
+        "addsOverPrev": [
+          "A written audit of your stack and milestone",
+          "Modularity and designer-readiness assessment",
+          "A prioritized, actionable fix path"
+        ],
         "cta": "Request an architecture review"
+      },
+      {
+        "title": "Milestone slice",
+        "price": "Scoped quote",
+        "basePrice": "From €2,500",
+        "body": "Fixed-scope delivery for one gameplay vertical—combat loop, GAS foundation, progression slice, or similar.",
+        "includes": [
+          "Defined deliverables and handoff criteria",
+          "Designer-ready surfaces where applicable",
+          "Direct updates from the engineer building it"
+        ],
+        "addsOverPrev": [
+          "Hands-on implementation, not just recommendations",
+          "A shippable gameplay vertical delivered",
+          "Defined deliverables and handoff criteria"
+        ],
+        "cta": "Scope a milestone slice"
+      },
+      {
+        "title": "Co-dev block",
+        "price": "Multi-week partnership",
+        "basePrice": "From €5,000 / week",
+        "body": "Embedded co-development across a sprint block—architecture, implementation, and iteration with your team.",
+        "includes": [
+          "Weekly milestone-focused sync",
+          "Systems built for your pipeline and content scale",
+          "Documentation aligned to handoff or continuation"
+        ],
+        "addsOverPrev": [
+          "Ongoing embedded co-development across a sprint block",
+          "Weekly milestone-focused syncs with your team",
+          "Systems scaled to your full content pipeline",
+          "Handoff or continuation documentation"
+        ],
+        "cta": "Plan a co-dev block"
       }
     ]
   },
@@ -418,7 +449,7 @@
     "caseStudyLink": "check back soon"
   },
   "Faq": {
-    "eyebrow": "06 — Mission FAQ",
+    "eyebrow": "04 — Mission FAQ",
     "title": "Common briefing questions",
     "description": "Straight answers for studios and indie teams evaluating a UE5 gameplay partner—structured for search, snippets, and AI summaries.",
     "items": [

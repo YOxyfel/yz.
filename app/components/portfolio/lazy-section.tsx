@@ -2,7 +2,12 @@
 
 import { useEffect, useRef, useState, type ReactNode, type RefObject } from 'react'
 import { useDeviceProfile } from './device-profile'
-import { hashMatchesAnchor, hashTargetId, SITE_HASH_NAV_EVENT } from './hash-scroll'
+import {
+  hashMatchesAnchor,
+  hashTargetId,
+  SITE_HASH_MOUNT_ALL_EVENT,
+  SITE_HASH_NAV_EVENT,
+} from './hash-scroll'
 import {
   resetStaggeredIdleMounts,
   scheduleStaggeredIdleMount,
@@ -88,6 +93,15 @@ export function LazySection({
       window.removeEventListener(SITE_HASH_NAV_EVENT, onHashNav)
     }
   }, [anchorId])
+
+  useEffect(() => {
+    const onMountAll = () => {
+      everMountedRef.current = true
+      setContentMounted(true)
+    }
+    window.addEventListener(SITE_HASH_MOUNT_ALL_EVENT, onMountAll)
+    return () => window.removeEventListener(SITE_HASH_MOUNT_ALL_EVENT, onMountAll)
+  }, [])
 
   const pendingMount = hashForced || inView
 

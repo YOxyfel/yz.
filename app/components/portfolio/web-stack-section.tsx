@@ -238,8 +238,50 @@ function GitHubShowcaseCard() {
   )
 }
 
-export function WebStackSection() {
+type WebStackSectionProps = {
+  /** Render without the outer StationSection + heading (used as an Arsenal tab). */
+  embedded?: boolean
+}
+
+export function WebStackSection({ embedded = false }: WebStackSectionProps = {}) {
   const { mobilePerfCut, isNarrow } = useDeviceProfile()
+
+  const projectsGrid = mobilePerfCut ? (
+    <div className={`${embedded ? 'mt-2' : 'mt-14'} grid gap-6`}>
+      {webProjects.map((project) => (
+        <WebProjectCard key={project.id} project={project} flipDelay={0} />
+      ))}
+    </div>
+  ) : isNarrow ? (
+    <WebProjectsCarousel />
+  ) : (
+    <div className={`${embedded ? 'mt-2' : 'mt-14'} grid gap-6 sm:grid-cols-2 lg:grid-cols-4`}>
+      {webProjects.map((project, index) => (
+        <WebProjectCard key={project.id} project={project} flipDelay={index * 0.08} />
+      ))}
+    </div>
+  )
+
+  const stackChips = (
+    <div className="mt-14 flex flex-wrap justify-center gap-3">
+      {stack.map((item) => (
+        <StationChip key={item} className="whitespace-nowrap !px-5 !py-2.5 !text-xs">
+          <span className="station-led station-led-cyan station-led-on" />
+          {item}
+        </StationChip>
+      ))}
+    </div>
+  )
+
+  if (embedded) {
+    return (
+      <div className="web-stack-embedded">
+        {projectsGrid}
+        <GitHubShowcaseCard />
+        {stackChips}
+      </div>
+    )
+  }
 
   return (
     <StationSection id="stack" tone="stack">
@@ -251,32 +293,11 @@ export function WebStackSection() {
         description="When I'm not in the engine, I ship fast, polished web experiences — from client WordPress builds to custom frontends."
       />
 
-      {mobilePerfCut ? (
-        <div className="mt-14 grid gap-6">
-          {webProjects.map((project) => (
-            <WebProjectCard key={project.id} project={project} flipDelay={0} />
-          ))}
-        </div>
-      ) : isNarrow ? (
-        <WebProjectsCarousel />
-      ) : (
-        <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {webProjects.map((project, index) => (
-            <WebProjectCard key={project.id} project={project} flipDelay={index * 0.08} />
-          ))}
-        </div>
-      )}
+      {projectsGrid}
 
       <GitHubShowcaseCard />
 
-      <div className="mt-14 flex flex-wrap justify-center gap-3">
-        {stack.map((item) => (
-          <StationChip key={item} className="whitespace-nowrap !px-5 !py-2.5 !text-xs">
-            <span className="station-led station-led-cyan station-led-on" />
-            {item}
-          </StationChip>
-        ))}
-      </div>
+      {stackChips}
     </StationSection>
   )
 }

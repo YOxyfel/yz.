@@ -15,13 +15,13 @@ const PARTICLE_TONES: OklchTone[] = [
 ]
 
 const NEBULA_TONES: OklchTone[] = [
-  { l: 0.55, c: 0.1, h: 200 },
-  { l: 0.58, c: 0.12, h: 290 },
-  { l: 0.72, c: 0.14, h: 55 },
-  { l: 0.62, c: 0.12, h: 350 },
-  { l: 0.65, c: 0.16, h: 35 },
-  { l: 0.62, c: 0.1, h: 180 },
-  { l: 0.55, c: 0.1, h: 230 },
+  { l: 0.58, c: 0.15, h: 200 },
+  { l: 0.6, c: 0.18, h: 290 },
+  { l: 0.74, c: 0.18, h: 55 },
+  { l: 0.64, c: 0.17, h: 350 },
+  { l: 0.66, c: 0.2, h: 35 },
+  { l: 0.64, c: 0.15, h: 180 },
+  { l: 0.58, c: 0.15, h: 230 },
 ]
 
 function rand(min: number, max: number) {
@@ -52,14 +52,14 @@ export function generateSkyBackdropFx(): SkyBackdropFx {
     return `radial-gradient(circle at ${x.toFixed(1)}% ${y.toFixed(1)}%, ${oklch(pick(PARTICLE_TONES), alpha)} 0 ${size.toFixed(2)}px, transparent ${fade.toFixed(2)}px)`
   }).join(', ')
 
-  const nebulaCount = 8 + Math.floor(Math.random() * 3)
+  const nebulaCount = 10 + Math.floor(Math.random() * 3)
   const nebula = Array.from({ length: nebulaCount }, () => {
-    const width = rand(34, 76)
-    const height = rand(32, 64)
+    const width = rand(36, 80)
+    const height = rand(34, 68)
     const x = rand(5, 95)
     const y = rand(5, 93)
-    const fade = rand(54, 70)
-    const alpha = rand(0.08, 0.19)
+    const fade = rand(58, 74)
+    const alpha = rand(0.18, 0.36)
     return `radial-gradient(ellipse ${width.toFixed(1)}% ${height.toFixed(1)}% at ${x.toFixed(1)}% ${y.toFixed(1)}%, ${oklch(pick(NEBULA_TONES), alpha)}, transparent ${fade.toFixed(1)}%)`
   }).join(', ')
 

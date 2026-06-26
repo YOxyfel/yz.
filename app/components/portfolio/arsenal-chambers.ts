@@ -1,6 +1,6 @@
-import { Box, Clapperboard, Sparkles, Waves, type LucideIcon } from 'lucide-react'
+import { Box, Clapperboard, Globe, Sparkles, Waves, type LucideIcon } from 'lucide-react'
 
-export type ArsenalChamberId = 'spotlight' | 'props' | 'art' | 'audio'
+export type ArsenalChamberId = 'spotlight' | 'props' | 'art' | 'audio' | 'web'
 
 export type ArsenalChamber = {
   id: ArsenalChamberId
@@ -47,5 +47,14 @@ export const arsenalChambers: ArsenalChamber[] = [
     description:
       'Found, recorded, and AI-assisted sources layered in Reaper — select a cue to inspect the pipeline and hear it.',
     icon: Waves,
+  },
+  {
+    id: 'web',
+    title: 'The Full Stack Flex',
+    shortTitle: 'Web Stack',
+    eyebrow: 'Web stack · WordPress → custom',
+    description:
+      "When I'm not in the engine, I ship fast, polished web experiences — client WordPress builds, custom frontends, and an open-source uplink.",
+    icon: Globe,
   },
 ]

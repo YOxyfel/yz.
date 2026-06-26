@@ -12,6 +12,12 @@ const pageLinks = [
   { href: '/resources', key: 'resources' as const },
 ] as const
 
+const logLinks = [
+  { href: '/timeline', key: 'timeline' as const },
+  { href: '/journal', key: 'journal' as const },
+  { href: '/videos', key: 'videos' as const },
+] as const
+
 const homeLinks = [
   { href: '#engine', key: 'work' as const },
   { href: '#faq', key: 'faq' as const },
@@ -54,6 +60,19 @@ export function SiteFooter() {
           <p className="site-footer-nav-title">{t('pagesTitle')}</p>
           <ul>
             {pageLinks.map((link) => (
+              <li key={link.key}>
+                <Link href={footerHref(link.href)} className="site-footer-link">
+                  {tNav(link.key)}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <nav className="site-footer-nav" aria-label="Logs">
+          <p className="site-footer-nav-title">Logs</p>
+          <ul>
+            {logLinks.map((link) => (
               <li key={link.key}>
                 <Link href={footerHref(link.href)} className="site-footer-link">
                   {tNav(link.key)}

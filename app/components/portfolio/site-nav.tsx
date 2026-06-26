@@ -3,9 +3,27 @@
 import { useLocale } from 'next-intl'
 import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Menu, Sparkles, X, Eye, EyeOff } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { Menu, Sparkles, X, Eye, EyeOff, ChevronDown } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+
+/** Width at which all inline desktop nav links fit without overlapping the CTA.
+ *  Lowered after collapsing the content pages into a single "Logs" dropdown. */
+const NAV_INLINE_MIN_PX = 1100
+
+function useMinWidth(px: number) {
+  const [match, setMatch] = useState(() =>
+    typeof window !== 'undefined' ? window.matchMedia(`(min-width: ${px}px)`).matches : false
+  )
+  useEffect(() => {
+    const mq = window.matchMedia(`(min-width: ${px}px)`)
+    const onChange = () => setMatch(mq.matches)
+    onChange()
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [px])
+  return match
+}
 import { useTranslations } from 'next-intl'
 import { useCompactNavLayout, useCornerDockVisible, useDeviceProfile } from './device-profile'
 import { useConstellationChrome } from './constellation-context'
@@ -22,11 +40,106 @@ const pageLinks = [
   { href: '/resources', key: 'resources' as const },
 ] as const
 
+// Build-in-public content pages, grouped under a single "Logs" dropdown to keep
+// the top bar uncluttered.
+const logLinks = [
+  { href: '/timeline', key: 'timeline' as const },
+  { href: '/journal', key: 'journal' as const },
+  { href: '/videos', key: 'videos' as const },
+] as const
+
+// Homepage section anchors. Kept out of the desktop top bar (reachable via footer
+// and the "Hire me" CTA) but still listed in the mobile menu.
 const homeLinks = [
   { href: '#engine', key: 'work' as const },
   { href: '#faq', key: 'faq' as const },
   { href: '#contact', key: 'contact' as const },
 ] as const
+
+function NavDropdown({
+  label,
+  links,
+  navHref,
+  t,
+}: {
+  label: string
+  links: ReadonlyArray<{ href: string; key: string }>
+  navHref: (href: string) => string
+  t: (key: string) => string
+}) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLLIElement>(null)
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    if (!open) return
+    const onPointerDown = (event: PointerEvent) => {
+      if (ref.current && !ref.current.contains(event.target as Node)) setOpen(false)
+    }
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setOpen(false)
+    }
+    document.addEventListener('pointerdown', onPointerDown)
+    document.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown)
+      document.removeEventListener('keydown', onKeyDown)
+    }
+  }, [open])
+
+  useEffect(() => {
+    return () => {
+      if (closeTimer.current) clearTimeout(closeTimer.current)
+    }
+  }, [])
+
+  const cancelClose = () => {
+    if (closeTimer.current) {
+      clearTimeout(closeTimer.current)
+      closeTimer.current = null
+    }
+  }
+  const scheduleClose = () => {
+    cancelClose()
+    closeTimer.current = setTimeout(() => setOpen(false), 140)
+  }
+
+  return (
+    <li
+      ref={ref}
+      className="station-nav-dropdown"
+      onMouseEnter={() => {
+        cancelClose()
+        setOpen(true)
+      }}
+      onMouseLeave={scheduleClose}
+    >
+      <button
+        type="button"
+        className={`station-nav-link station-nav-dropdown-trigger ${open ? 'is-open' : ''}`}
+        aria-haspopup="true"
+        aria-expanded={open}
+        onClick={() => setOpen((prev) => !prev)}
+      >
+        {label}
+        <ChevronDown className="station-nav-dropdown-caret h-3 w-3" aria-hidden />
+      </button>
+      <div className="station-nav-dropdown-panel" role="menu" data-open={open ? 'true' : 'false'}>
+        {links.map((link) => (
+          <a
+            key={link.key}
+            href={navHref(link.href)}
+            role="menuitem"
+            className="station-nav-dropdown-item"
+            onClick={() => setOpen(false)}
+          >
+            {t(link.key)}
+          </a>
+        ))}
+      </div>
+    </li>
+  )
+}
 
 function useNavHref() {
   const locale = useLocale()
@@ -47,9 +160,12 @@ export function SiteNav() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
   const compactNav = useCompactNavLayout()
+  const wideNav = useMinWidth(NAV_INLINE_MIN_PX)
+  // Below the wide breakpoint the full link set won't fit inline, so it lives in the menu.
+  const linksInMenu = !wideNav
   const cornerDockVisible = useCornerDockVisible()
   const toolsInMenu = !cornerDockVisible
-  const showMenuTrigger = compactNav || toolsInMenu
+  const showMenuTrigger = linksInMenu || toolsInMenu
   const { constellationLabEnabled, toggleConstellationLab, skyViewMode, toggleSkyViewMode } =
     useConstellationChrome()
   const t = useTranslations('Nav')
@@ -57,7 +173,8 @@ export function SiteNav() {
   const navHref = useNavHref()
   const home = `/${locale}`
 
-  const allLinks = [...pageLinks, ...homeLinks]
+  // Mobile menu has vertical room, so it lists every destination flat.
+  const allLinks = [...pageLinks, ...logLinks, ...homeLinks]
 
   useEffect(() => {
     setMounted(true)
@@ -88,7 +205,7 @@ export function SiteNav() {
   }, [menuOpen])
 
   const mobileTools = (
-    <div className={compactNav ? 'site-nav-mobile-tools mt-6 border-t border-[var(--station-bezel)]/35 pt-5' : 'site-nav-mobile-tools'}>
+    <div className={linksInMenu ? 'site-nav-mobile-tools mt-6 border-t border-[var(--station-bezel)]/35 pt-5' : 'site-nav-mobile-tools'}>
       <SiteFxControls embedded />
 
       <div className="mt-4">
@@ -167,7 +284,7 @@ export function SiteNav() {
                 <X className="h-4 w-4" />
               </button>
               <nav className="flex flex-col items-stretch gap-2 px-6 pb-8 pt-16">
-                {compactNav ? (
+                {linksInMenu ? (
                   <>
                     {allLinks.map((link) => (
                       <a
@@ -215,16 +332,17 @@ export function SiteNav() {
 
       <ul
         className={`site-nav-desktop-links min-w-0 items-center gap-0.5 ${
-          compactNav ? 'hidden' : 'flex'
+          wideNav ? 'flex' : 'hidden'
         }`}
       >
-        {allLinks.map((link) => (
+        {pageLinks.map((link) => (
           <li key={link.key}>
             <a href={navHref(link.href)} className="station-nav-link">
               {t(link.key)}
             </a>
           </li>
         ))}
+        <NavDropdown label={t('logs')} links={logLinks} navHref={navHref} t={t} />
       </ul>
 
       <div className="flex shrink-0 items-center gap-2">
@@ -232,7 +350,7 @@ export function SiteNav() {
           href={navHref('#contact')}
           variant="ghost"
           className={`site-nav-desktop-hire !px-3.5 !py-1.5 !text-[10px] !uppercase !tracking-[0.18em] text-cyan ${
-            compactNav ? 'hidden' : 'inline-flex'
+            wideNav ? 'inline-flex' : 'hidden'
           }`}
         >
           {t('hireMe')}
@@ -242,7 +360,7 @@ export function SiteNav() {
           <button
             type="button"
             className="site-nav-menu-trigger station-button station-button-secondary !h-10 !w-10 !p-0"
-            aria-label={menuOpen ? t('menuClose') : compactNav ? t('menuOpen') : t('interactiveTools')}
+            aria-label={menuOpen ? t('menuClose') : linksInMenu ? t('menuOpen') : t('interactiveTools')}
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((open) => !open)}
           >

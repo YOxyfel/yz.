@@ -294,6 +294,203 @@
     opacity: 0.28;
   }
 
+  /* ── Parallax cosmos (layered art, screen-blended over black) ── */
+  .cosmos-layer {
+    position: absolute;
+    pointer-events: none;
+    contain: paint;
+  }
+
+  /* Deepest base: tileable star field, barely parallaxes (loops via bg-position) */
+  .cosmos-starfield {
+    inset: 0;
+    z-index: 0;
+    background-color: #04050a;
+    background-image: url('/Background/StarField.webp');
+    background-repeat: repeat;
+    background-size: 1024px 1024px;
+    background-position:
+      calc(var(--cosmos-px, 0) * 6px)
+      calc(var(--cosmos-scroll, 0) * -0.03px + var(--cosmos-py, 0) * 6px);
+    will-change: background-position;
+  }
+
+  /* Nebula sheets: not tileable, so they drift on transform. Black vanishes
+     under screen blend, so revealing the edge just shows the stars behind. */
+  .cosmos-nebula {
+    left: 50%;
+    top: 50%;
+    width: 150%;
+    height: 150%;
+    z-index: 1;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    mix-blend-mode: screen;
+    transform: translate3d(
+      calc(-50% + var(--cosmos-px, 0) * var(--depth, 1) * 16px),
+      calc(
+        -50% + var(--cosmos-scroll, 0) * var(--depth, 1) * -0.05px +
+          var(--cosmos-py, 0) * var(--depth, 1) * 16px
+      ),
+      0
+    );
+    will-change: transform;
+  }
+
+  .cosmos-nebula-blue {
+    --depth: 0.55;
+    background-image: url('/Background/NebulaBlue.webp');
+    opacity: 0.6;
+  }
+
+  .cosmos-nebula-purple {
+    --depth: 0.85;
+    background-image: url('/Background/NebulaPurple.webp');
+    opacity: 0.44;
+  }
+
+  .cosmos-nebula-red {
+    --depth: 1.15;
+    background-image: url('/Background/NebulaRed.webp');
+    opacity: 0.58;
+  }
+
+  /* Dark dust clouds — multiply over the nebula to carve out calmer negative
+     space so the gas reads as clouds, not a full-screen wash. */
+  .cosmos-darkspots {
+    left: 50%;
+    top: 50%;
+    width: 150%;
+    height: 150%;
+    z-index: 1;
+    --depth: 0.7;
+    background-repeat: no-repeat;
+    background-image:
+      radial-gradient(38% 40% at 20% 26%, rgba(1, 2, 7, 0.95), transparent 62%),
+      radial-gradient(44% 44% at 80% 70%, rgba(1, 2, 7, 0.9), transparent 64%),
+      radial-gradient(40% 50% at 52% 88%, rgba(1, 2, 7, 0.85), transparent 60%),
+      radial-gradient(42% 40% at 90% 16%, rgba(2, 2, 9, 0.85), transparent 60%),
+      radial-gradient(34% 38% at 8% 70%, rgba(1, 2, 7, 0.85), transparent 60%);
+    mix-blend-mode: multiply;
+    transform: translate3d(
+      calc(-50% + var(--cosmos-px, 0) * var(--depth) * 16px),
+      calc(
+        -50% + var(--cosmos-scroll, 0) * var(--depth) * -0.05px +
+          var(--cosmos-py, 0) * var(--depth) * 16px
+      ),
+      0
+    );
+    will-change: transform;
+  }
+
+  /* Nearest layer: tileable bright motes with the strongest parallax */
+  .cosmos-particles {
+    inset: 0;
+    z-index: 3;
+    background-image: url('/Background/Particles.webp');
+    background-repeat: repeat;
+    background-size: 760px 760px;
+    background-position:
+      calc(var(--cosmos-px, 0) * 14px)
+      calc(var(--cosmos-scroll, 0) * -0.08px + var(--cosmos-py, 0) * 14px);
+    mix-blend-mode: screen;
+    opacity: 0.20;
+    will-change: background-position;
+  }
+
+  /* 3D gas-giant hero — sits behind the scrim so text stays legible */
+  .cosmos-planet {
+    position: absolute;
+    z-index: 3;
+    top: 1%;
+    right: 55%;
+    width: clamp(340px, 40vw, 720px);
+    aspect-ratio: 1 / 1;
+    pointer-events: none;
+    opacity: 1;
+    transform: translate3d(
+      calc(var(--cosmos-px, 0) * -12px),
+      calc(var(--cosmos-scroll, 0) * -0.05px + var(--cosmos-py, 0) * -12px),
+      0
+    );
+    will-change: transform;
+  }
+
+  /* Soft luminous halo so the planet glows out of the dark */
+  .cosmos-planet::before {
+    content: '';
+    position: absolute;
+    inset: -6%;
+    z-index: 0;
+    background: radial-gradient(
+      circle at 52% 46%,
+      color-mix(in oklab, var(--cyan) 42%, transparent) 0%,
+      color-mix(in oklab, #6aa3ff 24%, transparent) 34%,
+      transparent 64%
+    );
+    filter: blur(26px);
+    mix-blend-mode: screen;
+    pointer-events: none;
+  }
+
+  .cosmos-planet canvas {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+    filter: brightness(1.22) saturate(1.12)
+      drop-shadow(0 0 22px color-mix(in oklab, var(--cyan) 45%, transparent));
+  }
+
+  /* Edge vignette focuses the centre; ::after adds fine film grain. */
+  .cosmos-vignette {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+    background: radial-gradient(
+      125% 105% at 50% 36%,
+      transparent 42%,
+      rgba(2, 3, 8, 0.5) 82%,
+      rgba(1, 2, 6, 0.78) 100%
+    );
+  }
+
+  .cosmos-vignette::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 150px 150px;
+    opacity: 0.05;
+    mix-blend-mode: overlay;
+  }
+
+  html[data-narrow='on'] .cosmos-darkspots,
+  html[data-narrow='on'] .cosmos-vignette::after {
+    display: none;
+  }
+
+  /* Lighten the load on small / touch viewports */
+  html[data-narrow='on'] .cosmos-nebula-purple,
+  html[data-narrow='on'] .cosmos-nebula-red,
+  html[data-narrow='on'] .cosmos-particles,
+  html[data-coarse-pointer='on'] .cosmos-particles {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cosmos-starfield,
+    .cosmos-nebula,
+    .cosmos-particles,
+    .cosmos-planet {
+      will-change: auto;
+    }
+  }
+
   html[data-narrow='on'] .station-sky-backdrop-nebula,
   html[data-tablet='on'] .station-sky-backdrop-nebula,
   html[data-coarse-pointer='on'] .station-sky-backdrop-nebula,
@@ -388,11 +585,10 @@
     position: absolute;
     inset: 0;
     z-index: 1;
-    opacity: 0.72;
+    opacity: 1;
     mix-blend-mode: screen;
     background-attachment: scroll;
     contain: paint;
-    transition: opacity 14s cubic-bezier(0.12, 1, 0.28, 1);
     mask-image: linear-gradient(180deg, black 0%, black calc(100% - 5rem), transparent 100%);
     -webkit-mask-image: linear-gradient(180deg, black 0%, black calc(100% - 5rem), transparent 100%);
   }
@@ -405,7 +601,6 @@
     mix-blend-mode: screen;
     background-attachment: scroll;
     contain: paint;
-    transition: opacity 14s cubic-bezier(0.12, 1, 0.28, 1);
     mask-image: linear-gradient(180deg, black 0%, black calc(100% - 4rem), transparent 100%);
     -webkit-mask-image: linear-gradient(180deg, black 0%, black calc(100% - 4rem), transparent 100%);
   }
@@ -1812,7 +2007,7 @@
 
   .station-nav-link {
     border-radius: 0.35rem;
-    padding: 0.35rem 0.75rem;
+    padding: 0.35rem 0.58rem;
     font-size: 0.65rem;
     font-weight: 600;
     letter-spacing: 0.14em;
@@ -1825,6 +2020,85 @@
     color: var(--foreground);
     background: oklch(0.2 0.02 255 / 0.8);
     box-shadow: inset 0 0 0 1px oklch(0.45 0.05 248 / 0.35);
+  }
+
+  .station-nav-dropdown {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .station-nav-dropdown-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    font: inherit;
+  }
+
+  .station-nav-dropdown-caret {
+    transition: transform 0.2s ease;
+    opacity: 0.7;
+  }
+
+  .station-nav-dropdown-trigger.is-open {
+    color: var(--foreground);
+    background: oklch(0.2 0.02 255 / 0.8);
+    box-shadow: inset 0 0 0 1px oklch(0.45 0.05 248 / 0.35);
+  }
+
+  .station-nav-dropdown-trigger.is-open .station-nav-dropdown-caret {
+    transform: rotate(180deg);
+    opacity: 1;
+  }
+
+  .station-nav-dropdown-panel {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 50%;
+    transform: translateX(-50%) translateY(-0.35rem);
+    min-width: 11rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.4rem;
+    border-radius: 0.6rem;
+    background: oklch(0.16 0.02 255 / 0.97);
+    border: 1px solid oklch(0.45 0.05 248 / 0.35);
+    box-shadow: 0 18px 40px -18px oklch(0 0 0 / 0.85), inset 0 0 0 1px oklch(0.5 0.06 250 / 0.12);
+    backdrop-filter: blur(10px);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
+    z-index: 30;
+  }
+
+  .station-nav-dropdown-panel[data-open='true'] {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .station-nav-dropdown-item {
+    border-radius: 0.4rem;
+    padding: 0.5rem 0.7rem;
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+    white-space: nowrap;
+    transition: color 0.18s, background 0.18s, box-shadow 0.18s;
+  }
+
+  .station-nav-dropdown-item:hover {
+    color: var(--foreground);
+    background: oklch(0.22 0.03 255 / 0.9);
+    box-shadow: inset 0 0 0 1px oklch(0.45 0.05 248 / 0.4);
   }
 
   .station-hero-bridge {
@@ -2159,19 +2433,19 @@
 }
 
 .bg-fx-soft-blob-cyan {
-  background: radial-gradient(circle, oklch(0.84 0.16 200 / 0.11) 0%, transparent 68%);
+  background: radial-gradient(circle, oklch(0.84 0.16 200 / 0.18) 0%, transparent 70%);
 }
 
 .bg-fx-soft-blob-violet {
-  background: radial-gradient(circle, oklch(0.55 0.24 295 / 0.09) 0%, transparent 68%);
+  background: radial-gradient(circle, oklch(0.55 0.24 295 / 0.16) 0%, transparent 70%);
 }
 
 html[data-perf-tier='mid'] .bg-fx-soft-blob-cyan {
-  background: radial-gradient(circle, oklch(0.84 0.16 200 / 0.09) 0%, transparent 78%);
+  background: radial-gradient(circle, oklch(0.84 0.16 200 / 0.15) 0%, transparent 78%);
 }
 
 html[data-perf-tier='mid'] .bg-fx-soft-blob-violet {
-  background: radial-gradient(circle, oklch(0.55 0.24 295 / 0.07) 0%, transparent 78%);
+  background: radial-gradient(circle, oklch(0.55 0.24 295 / 0.12) 0%, transparent 78%);
 }
 
 .content-deferred-section {
@@ -2695,7 +2969,6 @@ html[data-scroll-busy='on'] .starship-warp-flare {
 /* Scroll idle: rich cosmic returns very slowly */
 .cosmic-scroll-fx-stack[data-cosmic-idle='on'] .cosmic-scroll-fx-crossfade--idle {
   opacity: 1;
-  transition: opacity 14s cubic-bezier(0.12, 1, 0.28, 1);
 }
 
 .cosmic-scroll-fx-stack[data-cosmic-idle='on'] .cosmic-scroll-fx-crossfade--scroll {
@@ -3452,7 +3725,7 @@ html[data-mobile-sky-lab='on'] .constellation-label {
   white-space: nowrap;
 }
 
-@media (min-width: 1720px) {
+@media (min-width: 1880px) {
   html:not([data-constellation-lab='on']) .corner-tools-dock:not(.corner-tools-dock-minimal) {
     top: max(0.75rem, env(safe-area-inset-top, 0px));
     left: max(0.75rem, env(safe-area-inset-left, 0px));
@@ -3486,7 +3759,8 @@ html[data-mobile-sky-lab='on'] .constellation-label {
 
 .site-nav-header-inner {
   width: 100%;
-  max-width: var(--site-content-max, 56rem);
+  /* Wider than the content column so the full link set fits without overlapping the CTA. */
+  max-width: 66rem;
   pointer-events: auto;
 }
 
@@ -3634,7 +3908,7 @@ html[data-narrow='on'] .site-nav-mobile-trigger {
 }
 
 /* Below desktop dock width: corner tools live in the menu. */
-@media (max-width: 1719px) {
+@media (max-width: 1879px) {
   .corner-tools-dock:not(.corner-tools-dock-minimal) {
     display: none !important;
     visibility: hidden !important;
@@ -4380,24 +4654,18 @@ html[data-fx-lite='on'] .corner-dock-icon {
 }
 
 html[data-sky-lab-hint='on'] .corner-tools-dock {
-  flex-direction: row;
+  /* Keep the column layout so the hint stacks BELOW the dock buttons,
+     never overlapping the nav bar or covering the top-left controls. */
+  flex-direction: column;
   align-items: flex-start;
-  gap: 0.75rem;
-  max-width: min(34rem, calc(100vw - max(0.75rem, env(safe-area-inset-left, 0px)) * 2));
-}
-
-html[data-sky-lab-hint='on'] .corner-tools-dock-row {
-  flex-shrink: 0;
-}
-
-html[data-sky-lab-hint='on'] .corner-tools-dock .corner-sky-lab-dock {
-  flex-shrink: 0;
+  gap: 0.6rem;
 }
 
 html[data-sky-lab-hint='on'] .sky-lab-hint-card {
-  flex: 1;
-  min-width: min(16rem, calc(100vw - 9rem));
-  max-width: none;
+  width: 100%;
+  max-width: 22rem;
+  /* Clear the fixed nav bar above the dock. */
+  margin-top: 0.6rem;
 }
 
 .site-variant-hint-card {
@@ -5604,4 +5872,1353 @@ html[data-mobile-static='on'] .cosmic-scroll-fx-root,
 html[data-mobile-static='on'] .device-profile-gated,
 html[data-mobile-static='on'] [data-portfolio-chrome] {
   display: none !important;
+}
+
+/* ============================================================
+   Development timeline (scroll-driven rotating version ring)
+   ============================================================ */
+.dev-timeline {
+  display: grid;
+  gap: 2rem;
+}
+
+@media (min-width: 1024px) {
+  .dev-timeline {
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    gap: 3rem;
+    align-items: start;
+  }
+}
+
+.dev-timeline-stage {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .dev-timeline-stage {
+    position: sticky;
+    top: 6.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    height: 70vh;
+    min-height: 30rem;
+  }
+}
+
+.dev-ring-wrap {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  perspective: 1600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dev-ring {
+  position: relative;
+  width: 260px;
+  height: 320px;
+  transform-style: preserve-3d;
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.dev-ring-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 0.35rem;
+  padding: 1.25rem;
+  border-radius: 1rem;
+  border: 1px solid var(--station-bezel);
+  box-shadow: 0 24px 60px -28px rgba(0, 0, 0, 0.85);
+  backface-visibility: hidden;
+  overflow: hidden;
+  text-align: left;
+  transition: opacity 0.6s ease, filter 0.5s ease, box-shadow 0.5s ease;
+  cursor: pointer;
+}
+
+.dev-ring-face:not(.is-active) {
+  filter: saturate(0.65) brightness(0.8);
+}
+
+.dev-ring-face.is-active {
+  filter: none;
+  border-color: color-mix(in oklab, var(--cyan) 60%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in oklab, var(--cyan) 45%, transparent),
+    0 28px 70px -26px color-mix(in oklab, var(--cyan) 55%, black);
+}
+
+.dev-ring-face::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 35%, rgba(0, 0, 0, 0.55));
+  pointer-events: none;
+}
+
+.dev-face-shot {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.dev-face-version {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--cyan);
+}
+
+.dev-face-title {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-heading, inherit);
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #fff;
+}
+
+.dev-face-phase {
+  position: relative;
+  z-index: 1;
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.dev-stage-readout {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.dev-stage-count {
+  font-family: var(--font-mono, monospace);
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #fff;
+}
+
+.dev-stage-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.dev-stage-btn {
+  display: inline-flex;
+  height: 2.25rem;
+  width: 2.25rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.6rem;
+  border: 1px solid var(--station-bezel);
+  background: color-mix(in oklab, var(--station-hull-dark) 70%, transparent);
+  color: var(--cyan);
+  transition: border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.dev-stage-btn:hover:not(:disabled) {
+  border-color: color-mix(in oklab, var(--cyan) 55%, transparent);
+  transform: translateY(-1px);
+}
+
+.dev-stage-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.dev-stage-tag {
+  min-width: 4.5rem;
+  text-align: center;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  color: var(--cyan);
+}
+
+.dev-track {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.dev-step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.75rem 1fr;
+  gap: 0.75rem;
+}
+
+@media (min-width: 1024px) {
+  .dev-step {
+    min-height: 78vh;
+    align-content: center;
+  }
+}
+
+.dev-step-rail {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.dev-step-rail::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: -1.5rem;
+  width: 2px;
+  background: linear-gradient(180deg, var(--station-bezel), transparent);
+}
+
+.dev-step:last-child .dev-step-rail::before {
+  display: none;
+}
+
+.dev-step-dot {
+  position: relative;
+  margin-top: 1.5rem;
+  height: 0.85rem;
+  width: 0.85rem;
+  border-radius: 999px;
+  border: 2px solid var(--station-bezel);
+  background: var(--station-hull-dark);
+  transition: all 0.3s ease;
+}
+
+.dev-step.is-active .dev-step-dot {
+  border-color: var(--cyan);
+  background: var(--cyan);
+  box-shadow: 0 0 0 5px color-mix(in oklab, var(--cyan) 22%, transparent);
+}
+
+.dev-step-panel {
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+@media (min-width: 1024px) {
+  .dev-step:not(.is-active) .dev-step-panel {
+    opacity: 0.5;
+    transform: scale(0.985);
+  }
+}
+
+.dev-step-poster {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  height: 8rem;
+  margin-bottom: 1.25rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--station-bezel);
+  padding: 0.85rem 1rem;
+  overflow: hidden;
+}
+
+@media (min-width: 1024px) {
+  .dev-step-poster {
+    display: none;
+  }
+}
+
+.dev-step-poster-version {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.9rem;
+  letter-spacing: 0.16em;
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+/* ============================================================
+   Journal flip-book
+   ============================================================ */
+.journal-stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  padding: 2rem 0 2.5rem;
+}
+
+/* Ambient glow behind the book */
+.journal-aura {
+  position: absolute;
+  top: 4%;
+  left: 50%;
+  width: min(96vw, 1180px);
+  height: 78%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  background:
+    radial-gradient(60% 70% at 50% 42%, color-mix(in oklab, var(--cyan) 22%, transparent), transparent 70%),
+    radial-gradient(90% 90% at 50% 60%, color-mix(in oklab, var(--cyan) 8%, transparent), transparent 75%);
+  filter: blur(28px);
+  opacity: 0.9;
+  z-index: 0;
+  animation: journalAuraPulse 7s ease-in-out infinite;
+}
+
+@keyframes journalAuraPulse {
+  0%, 100% { opacity: 0.7; transform: translateX(-50%) scale(0.98); }
+  50% { opacity: 1; transform: translateX(-50%) scale(1.03); }
+}
+
+.journal-book {
+  position: relative;
+  z-index: 1;
+  width: min(94vw, 1040px);
+  aspect-ratio: 16 / 10;
+  perspective: 2600px;
+}
+
+/* Page-thickness: a stacked-edge effect on the right side */
+.journal-book::after {
+  content: '';
+  position: absolute;
+  top: 1.5%;
+  bottom: 1.5%;
+  right: -7px;
+  width: 12px;
+  border-radius: 0 0.5rem 0.5rem 0;
+  background: repeating-linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--station-hull) 80%, white 6%),
+    color-mix(in oklab, var(--station-hull) 80%, white 6%) 2px,
+    var(--station-hull-dark) 2px,
+    var(--station-hull-dark) 4px
+  );
+  box-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.9);
+  z-index: 0;
+}
+
+.journal-book-base {
+  position: absolute;
+  inset: 0;
+  border-radius: 0.5rem 0.9rem 0.9rem 0.5rem;
+  background: linear-gradient(120deg, var(--station-hull), var(--station-hull-dark));
+  border: 1px solid var(--station-bezel);
+  box-shadow:
+    0 50px 110px -40px rgba(0, 0, 0, 0.95),
+    inset 0 0 0 1px color-mix(in oklab, var(--cyan) 10%, transparent);
+  /* Cover→open colour shift is crossfaded, not snapped (see ::after) */
+  transition: border-color 0.85s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+/* Leather cover tint lives on its own layer so it can fade smoothly
+   between the closed (cyan) and open (neutral) states. */
+.journal-book-base::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(120% 120% at 70% 25%, color-mix(in oklab, var(--cyan) 16%, transparent), transparent 70%);
+  opacity: 1;
+  transition: opacity 0.85s cubic-bezier(0.645, 0.045, 0.355, 1);
+  pointer-events: none;
+}
+
+.journal-book-base::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 2.5%;
+  bottom: 2.5%;
+  width: 6px;
+  z-index: 1;
+  transform: translateX(-50%);
+  border-radius: 3px;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    color-mix(in oklab, #000 55%, transparent) 12%,
+    color-mix(in oklab, #000 55%, transparent) 88%,
+    transparent
+  );
+  box-shadow: 0 0 18px color-mix(in oklab, var(--cyan) 22%, transparent);
+}
+
+.journal-spine-glow {
+  position: absolute;
+  left: 50%;
+  top: 6%;
+  bottom: 6%;
+  width: 2px;
+  z-index: 2;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, transparent, color-mix(in oklab, var(--cyan) 60%, transparent), transparent);
+}
+
+/* Closed book reads like a full leather cover */
+.journal-book[data-open='false'] .journal-book-base {
+  border-color: color-mix(in oklab, var(--cyan) 35%, var(--station-bezel));
+}
+
+/* Open book settles to the neutral hull — the cyan tint fades out */
+.journal-book[data-open='true'] .journal-book-base::after {
+  opacity: 0;
+}
+
+.journal-pages {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  right: 0;
+  transform-style: preserve-3d;
+}
+
+.journal-leaf {
+  position: absolute;
+  inset: 0;
+  transform-origin: left center;
+  transform-style: preserve-3d;
+  transition: transform 0.85s cubic-bezier(0.645, 0.045, 0.355, 1);
+  border-radius: 0 0.7rem 0.7rem 0;
+}
+
+.journal-leaf.is-turned {
+  transform: rotateY(-180deg);
+}
+
+.journal-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  overflow: hidden;
+  border: 1px solid var(--station-bezel);
+  border-left: none;
+  border-radius: 0 0.7rem 0.7rem 0;
+  background: linear-gradient(135deg, color-mix(in oklab, var(--station-hull) 92%, white 4%), var(--station-hull-dark));
+  padding: clamp(1rem, 2.4vw, 1.85rem);
+}
+
+.journal-face-front {
+  z-index: 2;
+}
+
+.journal-face-back {
+  transform: rotateY(180deg);
+  border-radius: 0.7rem 0 0 0.7rem;
+  border-left: 1px solid var(--station-bezel);
+  border-right: none;
+  background:
+    linear-gradient(135deg, color-mix(in oklab, var(--station-hull) 94%, white 5%), var(--station-hull-dark)),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 26px,
+      color-mix(in oklab, var(--cyan) 6%, transparent) 26px,
+      color-mix(in oklab, var(--cyan) 6%, transparent) 27px
+    );
+}
+
+/* Soft inner shading near the spine for depth on both pages */
+.journal-face-front::after,
+.journal-face-back::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 14%;
+  pointer-events: none;
+}
+.journal-face-front::after {
+  left: 0;
+  background: linear-gradient(90deg, color-mix(in oklab, #000 38%, transparent), transparent);
+}
+.journal-face-back::after {
+  right: 0;
+  background: linear-gradient(270deg, color-mix(in oklab, #000 38%, transparent), transparent);
+}
+
+.journal-end-face {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  text-align: center;
+}
+
+.journal-end-text {
+  font-size: 0.9rem;
+  color: var(--muted-foreground, rgba(255, 255, 255, 0.6));
+}
+
+.journal-back-motif {
+  font-family: var(--font-heading, inherit);
+  font-size: 2.4rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: color-mix(in oklab, var(--cyan) 40%, transparent);
+}
+
+.journal-leaf.is-cover .journal-face-front {
+  background:
+    radial-gradient(130% 130% at 28% 18%, color-mix(in oklab, var(--cyan) 20%, var(--station-hull)), var(--station-hull-dark) 72%);
+  border-color: color-mix(in oklab, var(--cyan) 45%, var(--station-bezel));
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--cyan) 22%, transparent);
+}
+
+/* Embossed frame on the cover */
+.journal-leaf.is-cover .journal-face-front::before {
+  content: '';
+  position: absolute;
+  inset: 0.9rem;
+  border-radius: 0.4rem;
+  border: 1px solid color-mix(in oklab, var(--cyan) 28%, transparent);
+  box-shadow: inset 0 0 22px color-mix(in oklab, var(--cyan) 12%, transparent);
+  pointer-events: none;
+}
+
+.journal-cover-face {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.1rem;
+  text-align: center;
+}
+
+.journal-cover-eyebrow {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.66rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--cyan) 80%, white 10%);
+}
+
+.journal-cover-rule {
+  width: 4.5rem;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--cyan) 80%, transparent), transparent);
+}
+
+.journal-cover-title {
+  font-family: var(--font-heading, inherit);
+  font-size: clamp(2.2rem, 6vw, 3.6rem);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: #fff;
+  background-image: linear-gradient(
+    100deg,
+    #fff 35%,
+    color-mix(in oklab, var(--cyan) 75%, white) 50%,
+    #fff 65%
+  );
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: journalCoverShine 6s linear infinite;
+}
+
+@keyframes journalCoverShine {
+  0% { background-position: 120% 0; }
+  100% { background-position: -120% 0; }
+}
+
+.journal-cover-sub {
+  font-size: 0.82rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.journal-cover-open {
+  margin-top: 0.6rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--cyan) 55%, transparent);
+  padding: 0.6rem 1.3rem;
+  font-size: 0.74rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  background: color-mix(in oklab, var(--cyan) 8%, transparent);
+  box-shadow: 0 0 0 0 color-mix(in oklab, var(--cyan) 40%, transparent);
+  transition: background 0.2s ease, box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.journal-cover-open:hover {
+  background: color-mix(in oklab, var(--cyan) 18%, transparent);
+  box-shadow: 0 0 26px -4px color-mix(in oklab, var(--cyan) 60%, transparent);
+  transform: translateY(-1px);
+}
+
+.journal-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.journal-tag {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.66rem;
+  letter-spacing: 0.06em;
+  color: var(--cyan);
+  border: 1px solid color-mix(in oklab, var(--cyan) 35%, transparent);
+  border-radius: 999px;
+  padding: 0.12rem 0.55rem;
+}
+
+.journal-page-num {
+  color: color-mix(in oklab, var(--cyan) 70%, white 20%);
+}
+
+/* ---- Feature (left) page ---- */
+.journal-feature {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  gap: 0.95rem;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.journal-feature::-webkit-scrollbar {
+  display: none;
+}
+
+.journal-feature-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.journal-vol {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.66rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.journal-feature-index {
+  font-family: var(--font-heading, inherit);
+  font-size: clamp(2.4rem, 6vw, 3.6rem);
+  font-weight: 800;
+  line-height: 0.9;
+  color: color-mix(in oklab, var(--cyan) 22%, transparent);
+}
+
+.journal-feature-title {
+  font-family: var(--font-heading, inherit);
+  font-size: clamp(1.5rem, 3.4vw, 2.1rem);
+  font-weight: 800;
+  line-height: 1.12;
+  color: #fff;
+}
+
+.journal-pullquote {
+  position: relative;
+  margin-top: auto;
+  padding-left: 1.1rem;
+  font-size: clamp(0.95rem, 2vw, 1.15rem);
+  font-style: italic;
+  line-height: 1.5;
+  color: color-mix(in oklab, white 82%, var(--cyan) 18%);
+  border-left: 2px solid color-mix(in oklab, var(--cyan) 55%, transparent);
+}
+
+.journal-pullquote-mark {
+  position: absolute;
+  left: 0.2rem;
+  top: -0.7rem;
+  font-family: var(--font-heading, serif);
+  font-size: 2.4rem;
+  line-height: 1;
+  color: color-mix(in oklab, var(--cyan) 45%, transparent);
+}
+
+.journal-feature-rule {
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(90deg, color-mix(in oklab, var(--cyan) 45%, transparent), transparent);
+}
+
+.journal-soon-pill {
+  align-self: flex-start;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.64rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  border: 1px dashed color-mix(in oklab, var(--cyan) 50%, transparent);
+  border-radius: 999px;
+  padding: 0.22rem 0.7rem;
+}
+
+/* ---- Notes (right) page ---- */
+.journal-notes {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  gap: 0.7rem;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.journal-notes::-webkit-scrollbar {
+  display: none;
+}
+
+.journal-notes-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.66rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.journal-notes-label {
+  margin-top: 0.4rem;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.62rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--cyan) 75%, white 10%);
+}
+
+.journal-notes-summary {
+  font-size: clamp(0.95rem, 2vw, 1.08rem);
+  line-height: 1.62;
+  color: var(--muted-foreground, rgba(255, 255, 255, 0.78));
+}
+
+.journal-notes-foot {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.journal-details-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 0.55rem;
+  border: 1px solid color-mix(in oklab, var(--cyan) 45%, transparent);
+  background: color-mix(in oklab, var(--cyan) 12%, transparent);
+  padding: 0.6rem 1.2rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #fff;
+  transition: background 0.2s ease, box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.journal-details-btn:hover {
+  background: color-mix(in oklab, var(--cyan) 24%, transparent);
+  box-shadow: 0 0 24px -6px color-mix(in oklab, var(--cyan) 70%, transparent);
+  transform: translateY(-1px);
+}
+
+.journal-readtime,
+.journal-soon-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.journal-soon-inline {
+  color: var(--cyan);
+}
+
+.journal-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.journal-page-indicator {
+  min-width: 6.5rem;
+  text-align: center;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Mobile-only title/tags live on the notes page (the feature page sits on the
+   hidden back face in single-page mode). */
+.journal-notes-mobilehead {
+  display: none;
+}
+
+.journal-notes-title {
+  font-family: var(--font-heading, inherit);
+  font-size: clamp(1.5rem, 6vw, 1.9rem);
+  font-weight: 800;
+  line-height: 1.15;
+  color: #fff;
+}
+
+/* Single-page mode on small screens for readability */
+@media (max-width: 640px) {
+  .journal-book {
+    aspect-ratio: 3 / 4;
+    width: min(94vw, 460px);
+  }
+  .journal-book::after {
+    display: none;
+  }
+  .journal-book-base {
+    display: none;
+  }
+  .journal-pages {
+    left: 0;
+  }
+  .journal-face,
+  .journal-leaf {
+    border-radius: 0.7rem;
+  }
+  .journal-face {
+    border-left: 1px solid var(--station-bezel);
+  }
+  .journal-face-front::after {
+    display: none;
+  }
+  .journal-notes-mobilehead {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.4rem;
+  }
+}
+
+/* ============================================================
+   Journal fullscreen reader
+   ============================================================ */
+.journal-reader {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(0.75rem, 3vw, 2.5rem);
+  animation: journalReaderIn 0.28s ease;
+}
+
+@keyframes journalReaderIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.journal-reader-scrim {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  cursor: pointer;
+  background: radial-gradient(120% 120% at 50% 0%, rgba(8, 14, 26, 0.86), rgba(2, 4, 10, 0.94));
+  backdrop-filter: blur(10px);
+}
+
+.journal-reader-panel {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 880px);
+  max-height: min(92vh, 1000px);
+  display: flex;
+  flex-direction: column;
+  border-radius: 1rem;
+  border: 1px solid color-mix(in oklab, var(--cyan) 28%, var(--station-bezel));
+  background:
+    radial-gradient(120% 80% at 50% -10%, color-mix(in oklab, var(--cyan) 12%, transparent), transparent 60%),
+    linear-gradient(160deg, color-mix(in oklab, var(--station-hull) 96%, white 3%), var(--station-hull-dark));
+  box-shadow: 0 50px 120px -40px rgba(0, 0, 0, 0.95), inset 0 0 0 1px color-mix(in oklab, var(--cyan) 10%, transparent);
+  overflow: hidden;
+  animation: journalPanelIn 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes journalPanelIn {
+  from { opacity: 0; transform: translateY(18px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.journal-reader-progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  transform-origin: left center;
+  transform: scaleX(0);
+  background: linear-gradient(90deg, var(--cyan), color-mix(in oklab, var(--cyan) 50%, white));
+  box-shadow: 0 0 12px color-mix(in oklab, var(--cyan) 60%, transparent);
+  z-index: 3;
+  transition: transform 0.1s linear;
+}
+
+.journal-reader-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.1rem clamp(1.1rem, 3vw, 2rem);
+  border-bottom: 1px solid color-mix(in oklab, var(--station-bezel) 80%, transparent);
+}
+
+.journal-reader-meta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.journal-reader-scroll {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--cyan) 40%, transparent) transparent;
+}
+
+.journal-reader-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+.journal-reader-scroll::-webkit-scrollbar-thumb {
+  background: color-mix(in oklab, var(--cyan) 35%, transparent);
+  border-radius: 999px;
+}
+
+.journal-reader-article {
+  max-width: 64ch;
+  margin: 0 auto;
+  padding: clamp(1.5rem, 4vw, 3rem) clamp(1.2rem, 4vw, 3rem) clamp(2.5rem, 6vw, 4rem);
+}
+
+.journal-reader-title {
+  margin-top: 1rem;
+  font-family: var(--font-heading, inherit);
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
+  font-weight: 800;
+  line-height: 1.12;
+  color: #fff;
+}
+
+.journal-reader-quote {
+  margin: 1.6rem 0;
+  padding: 1rem 1.4rem;
+  border-left: 3px solid color-mix(in oklab, var(--cyan) 60%, transparent);
+  border-radius: 0 0.5rem 0.5rem 0;
+  background: color-mix(in oklab, var(--cyan) 8%, transparent);
+  font-family: var(--font-heading, inherit);
+  font-size: clamp(1.2rem, 3vw, 1.6rem);
+  font-style: italic;
+  line-height: 1.4;
+  color: color-mix(in oklab, white 86%, var(--cyan) 14%);
+}
+
+.journal-reader-body {
+  margin-top: 1.6rem;
+}
+
+.journal-reader-body p {
+  font-size: clamp(1rem, 2.2vw, 1.12rem);
+  line-height: 1.85;
+  color: var(--muted-foreground, rgba(255, 255, 255, 0.82));
+}
+
+.journal-reader-body p + p {
+  margin-top: 1.25rem;
+}
+
+.journal-reader-body p.has-dropcap::first-letter {
+  float: left;
+  font-family: var(--font-heading, inherit);
+  font-size: 3.4rem;
+  line-height: 0.8;
+  font-weight: 800;
+  padding: 0.1rem 0.5rem 0 0;
+  color: var(--cyan);
+}
+
+.journal-reader-end {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2.5rem;
+}
+
+.journal-reader-end .journal-feature-rule {
+  flex: 1;
+  background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--cyan) 40%, transparent), transparent);
+}
+
+.journal-reader-end-mark {
+  font-family: var(--font-heading, inherit);
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: color-mix(in oklab, var(--cyan) 60%, white 10%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .journal-aura,
+  .journal-cover-title {
+    animation: none;
+  }
+  .journal-reader,
+  .journal-reader-panel {
+    animation: none;
+  }
+}
+
+/* ============================================================
+   YouTube / video log
+   ============================================================ */
+.yt-channel {
+  margin-bottom: 2rem;
+}
+
+.yt-stage {
+  display: grid;
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+@media (min-width: 900px) {
+  .yt-stage {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+.yt-player {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: 0.9rem;
+  overflow: hidden;
+  border: 1px solid var(--station-bezel);
+  box-shadow: 0 30px 70px -36px rgba(0, 0, 0, 0.85);
+}
+
+.yt-frame {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.yt-poster {
+  position: relative;
+  display: flex;
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.yt-poster-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.yt-poster-badge {
+  position: absolute;
+  top: 0.85rem;
+  left: 0.85rem;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  padding: 0.2rem 0.6rem;
+}
+
+.yt-play {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  height: 4rem;
+  width: 4rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--cyan) 88%, white 6%);
+  color: #05121a;
+  box-shadow: 0 12px 40px -10px color-mix(in oklab, var(--cyan) 65%, black);
+  transition: transform 0.2s ease;
+}
+
+.yt-poster:hover .yt-play {
+  transform: scale(1.07);
+}
+
+.yt-meta {
+  align-self: center;
+}
+
+.yt-timeline-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.yt-timeline {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding-bottom: 1rem;
+  scroll-snap-type: x mandatory;
+}
+
+.yt-timeline > li {
+  scroll-snap-align: start;
+}
+
+.yt-timeline-card {
+  display: flex;
+  width: 16rem;
+  flex-direction: column;
+  gap: 0.65rem;
+  text-align: left;
+  border-radius: 0.85rem;
+  border: 1px solid var(--station-bezel);
+  background: color-mix(in oklab, var(--station-hull-dark) 70%, transparent);
+  padding: 0.65rem;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.yt-timeline-card:hover {
+  transform: translateY(-2px);
+}
+
+.yt-timeline-card.is-active {
+  border-color: color-mix(in oklab, var(--cyan) 60%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in oklab, var(--cyan) 40%, transparent);
+}
+
+.yt-timeline-thumb {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 16 / 9;
+  border-radius: 0.55rem;
+  background-size: cover;
+  background-position: center;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.yt-timeline-thumb svg {
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.6));
+}
+
+.yt-timeline-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.yt-timeline-date {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cyan);
+}
+
+.yt-timeline-title {
+  font-size: 0.82rem;
+  line-height: 1.35;
+  color: #fff;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ============================================================
+   Pricing tiers — base price + expandable comparison
+   ============================================================ */
+.pricing-tier-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.pricing-base-price {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  font-family: var(--font-heading, inherit);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.pricing-base-label {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.55rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted-foreground, rgba(255, 255, 255, 0.55));
+}
+
+.pricing-compare-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 1.1rem;
+  padding: 0.5rem 0.85rem;
+  width: fit-content;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--cyan) 30%, var(--station-bezel));
+  background: color-mix(in oklab, var(--cyan) 7%, transparent);
+  font-family: var(--font-mono, monospace);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--cyan) 85%, white 8%);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+.pricing-compare-btn:hover {
+  border-color: color-mix(in oklab, var(--cyan) 55%, transparent);
+  background: color-mix(in oklab, var(--cyan) 12%, transparent);
+  color: #fff;
+}
+
+/* Smooth height reveal (0fr → 1fr grid trick) */
+.pricing-compare-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.42s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pricing-compare-panel[data-open='true'] {
+  grid-template-rows: 1fr;
+}
+
+.pricing-compare-inner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.pricing-compare-panel[data-open='true'] .pricing-compare-inner {
+  padding-top: 1rem;
+}
+
+.pricing-compare-group + .pricing-compare-group {
+  margin-top: 0.9rem;
+}
+
+.pricing-compare-title {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted-foreground, rgba(255, 255, 255, 0.55));
+}
+
+.pricing-compare-title span {
+  font-weight: 700;
+}
+
+.pricing-compare-title.is-gain span {
+  color: color-mix(in oklab, var(--cyan) 85%, white 10%);
+}
+
+.pricing-compare-title.is-miss span {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.pricing-compare-list {
+  margin-top: 0.55rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.pricing-compare-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.pricing-compare-list li svg {
+  margin-top: 0.18rem;
+  flex-shrink: 0;
+  color: var(--cyan);
+}
+
+.pricing-compare-list.is-miss li {
+  color: var(--muted-foreground, rgba(255, 255, 255, 0.5));
+}
+
+.pricing-compare-list.is-miss li svg {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.pricing-compare-note {
+  margin-top: 1.5rem;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--muted-foreground, rgba(255, 255, 255, 0.5));
+  text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pricing-compare-panel {
+    transition: none;
+  }
 }

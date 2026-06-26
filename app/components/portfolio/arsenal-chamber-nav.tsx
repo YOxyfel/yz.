@@ -86,7 +86,7 @@ export function ArsenalChamberNav({
                 <StationLed active />
                 Select a lab · {String(arsenalChambers.length).padStart(2, '0')} disciplines
               </p>
-              <div className="arsenal-lab-tabs grid grid-cols-2 gap-2 sm:grid-cols-4">
+              <div className="arsenal-lab-tabs grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
                 {arsenalChambers.map((chamber, chamberIndex) => {
                   const Icon = chamber.icon
                   const isActive = chamber.id === selectedId

@@ -46,6 +46,17 @@ const ArtShowcaseLab = dynamic(
   }
 )
 
+const WebStackSection = dynamic(
+  () => import('./web-stack-section').then((mod) => ({ default: mod.WebStackSection })),
+  {
+    loading: () => (
+      <div className="flex min-h-[min(52vh,480px)] items-center justify-center rounded-xl border border-white/10 bg-black/30 font-mono text-xs uppercase tracking-widest text-muted-foreground">
+        Loading web stack…
+      </div>
+    ),
+  }
+)
+
 export function ArsenalSection() {
   const { mobilePerfCut } = useDeviceProfile()
   const [activeChamber, setActiveChamber] = useState<ArsenalChamberId>('spotlight')
@@ -66,13 +77,13 @@ export function ArsenalSection() {
         <StationConsoleFrame>
           <SectionHeading
             tone="arsenal"
-            eyebrow="04 — Arsenal Bay"
+            eyebrow="02 — Arsenal Bay"
             title="The Arsenal"
-            description="Art, audio, props, and spotlight reels — open on desktop for the full interactive labs."
+            description="Art, audio, props, spotlight reels, and the web stack — open on desktop for the full interactive labs."
           />
           <p className="mt-6 text-sm leading-relaxed text-muted-foreground">
-            UE5 props, stylized art pipelines, audio-reactive systems, and character spotlight work.
-            Full chamber labs are desktop-only to keep mobile scroll fast.
+            UE5 props, stylized art pipelines, audio-reactive systems, character spotlight work, and
+            fast web builds. Full chamber labs are desktop-only to keep mobile scroll fast.
           </p>
         </StationConsoleFrame>
       </StationSection>
@@ -84,7 +95,7 @@ export function ArsenalSection() {
       <StationConsoleFrame>
         <SectionHeading
           tone="arsenal"
-          eyebrow="04 — Arsenal Bay"
+          eyebrow="02 — Arsenal Bay"
           title="The Arsenal"
           description="Beyond code, I bridge disciplines — building the art, effects, and audio that make systems feel alive. Pick one lab at a time."
         />
@@ -101,6 +112,7 @@ export function ArsenalSection() {
           {activeChamber === 'props' ? <PropShowcaseLab embedded /> : null}
           {activeChamber === 'art' ? <ArtShowcaseLab embedded /> : null}
           {activeChamber === 'audio' ? <AudioArchitecture embedded /> : null}
+          {activeChamber === 'web' ? <WebStackSection embedded /> : null}
         </div>
       </StationConsoleFrame>
     </StationSection>
