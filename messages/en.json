@@ -44,7 +44,12 @@
     "videoAudioOn": "Turn alien audio on",
     "videoAudioOff": "Mute alien audio",
     "videoVolume": "Alien video volume",
-    "videoNoAudio": "Add alien-audio.m4a to public/HeaderVideo to enable sound"
+    "videoNoAudio": "Add alien-audio.m4a to public/HeaderVideo to enable sound",
+    "videoLive": "Live transmission",
+    "videoLiveNow": "Live transmission now",
+    "videoNextTransmission": "Next transmission in",
+    "videoSignalOpen": "Portal open",
+    "videoSignalClosed": "Portal closed"
   },
   "HomeHub": {
     "eyebrow": "00 — Station map",

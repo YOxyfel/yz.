@@ -400,12 +400,13 @@
   }
 
   /* 3D gas-giant hero — sits behind the scrim so text stays legible */
+  /* Hero sky accent — upper-right, behind the alien viewport. */
   .cosmos-planet {
     position: absolute;
     z-index: 3;
-    top: 1%;
-    right: 55%;
-    width: clamp(340px, 40vw, 720px);
+    top: 4%;
+    right: 66%;
+    width: clamp(340px, 38vw, 660px);
     aspect-ratio: 1 / 1;
     pointer-events: none;
     opacity: 1;
@@ -2116,12 +2117,35 @@
   }
 
   .hero-bridge-main {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 100%;
     max-width: 48rem;
     margin-inline: auto;
+  }
+
+  /* Soft focus scrim: darkens the cosmos directly behind the intro copy so the
+     text reads clearly, while fading out before it reaches the planet. */
+  .hero-bridge-main::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    left: 50%;
+    top: 50%;
+    width: 132%;
+    height: 144%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(
+      60% 56% at 50% 48%,
+      rgba(4, 7, 16, 0.85) 0%,
+      rgba(4, 7, 16, 0.66) 40%,
+      rgba(4, 6, 14, 0.32) 64%,
+      transparent 80%
+    );
+    filter: blur(26px);
+    pointer-events: none;
   }
 
   .station-section--bridge .station-section-inner {
@@ -2300,7 +2324,7 @@
     }
 
     .station-section--bridge:has(.hero-bridge--with-video) .station-section-inner {
-      max-width: 88rem;
+      max-width: min(110rem, 100%);
       overflow: visible;
       display: flex;
       flex-direction: column;
@@ -2314,55 +2338,71 @@
       padding-block: clamp(1.5rem, 4vh, 3rem);
     }
 
+    /* Asymmetric bridge layout: copy column (left) + large alien viewport (right). */
     .hero-bridge--with-video {
       position: relative;
-      display: flex;
+      display: grid;
+      grid-template-columns: minmax(0, 0.68fr) minmax(0, 1.32fr);
       align-items: center;
-      justify-content: center;
+      gap: clamp(0.5rem, 1.5vw, 2rem);
       width: 100%;
-      min-height: clamp(30rem, 68vh, 78rem);
+      min-height: clamp(34rem, 82vh, 86rem);
       padding-block: 0;
       padding-inline: 0;
-      text-align: center;
+      text-align: left;
       overflow: visible;
     }
 
     .hero-bridge--with-video .hero-bridge-main {
       position: relative;
-      z-index: 1;
+      z-index: 2;
       display: flex;
       flex-direction: column;
-      align-items: center;
+      align-items: flex-start;
       justify-content: center;
       width: 100%;
-      max-width: 44rem;
+      max-width: 38rem;
       isolation: isolate;
-      margin-inline: auto;
+      margin-inline: 0;
     }
 
     .hero-bridge--with-video h1,
     .hero-bridge--with-video .hero-bridge-headline {
-      margin-inline: auto;
-      text-align: center;
+      margin-inline: 0;
+      text-align: left;
     }
 
     .hero-bridge--with-video .hero-bridge-headline {
-      font-size: clamp(2rem, 3.4vw, 3.25rem);
-      line-height: 1.08;
+      font-size: clamp(2.1rem, 3.2vw, 3.4rem);
+      line-height: 1.06;
     }
 
     .hero-bridge--with-video .hero-bridge-readout {
-      max-width: 42rem;
-      margin-inline: auto;
+      max-width: 34rem;
+      margin-inline: 0;
     }
 
     .hero-bridge--with-video .hero-bridge-stack {
-      justify-content: center;
+      justify-content: flex-start;
     }
 
     .hero-bridge--with-video .hero-bridge-actions {
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
+    }
+
+    /* Left-anchored focus scrim for the asymmetric layout. */
+    .hero-bridge--with-video .hero-bridge-main::before {
+      left: 42%;
+      width: 150%;
+      height: 168%;
+      background: radial-gradient(
+        58% 56% at 42% 50%,
+        rgba(4, 7, 16, 0.86) 0%,
+        rgba(4, 7, 16, 0.64) 42%,
+        rgba(4, 6, 14, 0.26) 66%,
+        transparent 82%
+      );
     }
   }
 

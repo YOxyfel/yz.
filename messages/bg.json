@@ -44,7 +44,12 @@
     "videoAudioOn": "Turn alien audio on",
     "videoAudioOff": "Mute alien audio",
     "videoVolume": "Alien video volume",
-    "videoNoAudio": "Add alien-audio.m4a to public/HeaderVideo to enable sound"
+    "videoNoAudio": "Add alien-audio.m4a to public/HeaderVideo to enable sound",
+    "videoLive": "Пряко предаване",
+    "videoLiveNow": "Пряко предаване сега",
+    "videoNextTransmission": "Следващо предаване след",
+    "videoSignalOpen": "Порталът е отворен",
+    "videoSignalClosed": "Порталът е затворен"
   },
   "HomeHub": {
     "eyebrow": "00 — Station map",
