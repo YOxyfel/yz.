@@ -315,28 +315,22 @@
   inset: 0;
   z-index: 0;
   pointer-events: none;
+  /* Self-contained soft ellipses that fade fully to transparent before the
+     element edges, so the sphere never shows a hard top/bottom cut-off. */
   background:
     radial-gradient(
-      ellipse 40% 82% at 52% 54%,
+      ellipse 40% 40% at 52% 54%,
       color-mix(in oklab, var(--hero-portal-cyan) 13%, transparent) 0%,
-      color-mix(in oklab, var(--hero-portal-violet) 7%, transparent) 42%,
-      transparent 60%
+      color-mix(in oklab, var(--hero-portal-violet) 7%, transparent) 40%,
+      transparent 68%
     ),
     radial-gradient(
-      ellipse 37% 80% at 52% 54%,
+      ellipse 40% 44% at 52% 54%,
       oklch(0.02 0.012 265 / 0.97) 0%,
-      oklch(0.03 0.018 262 / 0.9) 52%,
-      oklch(0.05 0.03 260 / 0.55) 72%,
-      transparent 92%
+      oklch(0.03 0.018 262 / 0.9) 50%,
+      oklch(0.05 0.03 260 / 0.5) 76%,
+      transparent 100%
     );
-  -webkit-mask-image: var(--hero-video-mask-image);
-  mask-image: var(--hero-video-mask-image);
-  -webkit-mask-size: 100% 100%;
-  mask-size: 100% 100%;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-mode: alpha;
-  mask-mode: alpha;
 }
 
 .hero-header-video__live {
