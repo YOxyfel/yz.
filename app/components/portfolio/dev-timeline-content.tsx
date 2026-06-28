@@ -4,29 +4,32 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { SitePageHero, SitePageLayout } from './site-page-layout'
 import { StationChip, StationPanel } from './station-console'
-import { devTimeline, type DevTimelineEntry } from './dev-timeline-data'
+import { devEras } from './dev-timeline-data'
 
-function faceGradient(entry: DevTimelineEntry) {
-  const [a, b] = entry.hue
+function faceGradient(hue: [number, number]) {
+  const [a, b] = hue
   return `linear-gradient(140deg, hsl(${a} 70% 22%), hsl(${b} 65% 14%) 60%, hsl(${a} 60% 8%))`
 }
 
 export function DevTimelineContent() {
-  const entries = devTimeline
-  const count = entries.length
+  const eras = devEras
+  const count = eras.length
   const [active, setActive] = useState(0)
   const stepRefs = useRef<Array<HTMLLIElement | null>>([])
   const lockRef = useRef(false)
 
   const step = 360 / count
   const radius = useMemo(() => {
-    // Keep neighbouring faces from overlapping for any version count.
+    // Keep neighbouring faces from overlapping for any era count, but with only a
+    // few faces the raw value collapses too small — clamp so the ring still reads
+    // as a 3D carousel with the active era front and the others to the sides.
     const half = 165
-    return Math.round(half / Math.tan((step / 2) * (Math.PI / 180)))
+    const raw = Math.round(half / Math.tan((step / 2) * (Math.PI / 180)))
+    return Math.max(raw, 340)
   }, [step])
 
-  // Scroll-driven selection: whichever step block is nearest the viewport
-  // centre becomes the active iteration and rotates the ring into view.
+  // Scroll-driven selection: whichever era block is nearest the viewport centre
+  // becomes the active era and rotates the ring into view.
   useEffect(() => {
     const observer = new IntersectionObserver(
       (obsEntries) => {
@@ -45,7 +48,7 @@ export function DevTimelineContent() {
   }, [])
 
   const goTo = useCallback((idx: number) => {
-    const clamped = Math.max(0, Math.min(devTimeline.length - 1, idx))
+    const clamped = Math.max(0, Math.min(devEras.length - 1, idx))
     setActive(clamped)
     lockRef.current = true
     // Defer the scroll past React's commit. Jumping to the first/last entry
@@ -60,7 +63,7 @@ export function DevTimelineContent() {
         if (!node) return
         // Compute the centred scroll target manually — smooth scrollIntoView is
         // unreliable when scrolling upward from the bottom (it can stick at max
-        // scroll), which left the last version unreachable via the controls.
+        // scroll), which left the last era unreachable via the controls.
         const rect = node.getBoundingClientRect()
         const target = Math.max(
           0,
@@ -74,7 +77,7 @@ export function DevTimelineContent() {
     }, 900)
   }, [])
 
-  const current = entries[active]
+  const current = eras[active]
 
   return (
     <SitePageLayout
@@ -86,7 +89,7 @@ export function DevTimelineContent() {
       <SitePageHero
         eyebrow="Build log · git tags"
         title="Development timeline"
-        description="Every release of this site, tied to its git tag. Scroll the log and the matching iteration rotates into view — or use the controls to jump between versions."
+        description="Every release of this site, grouped by major version. Scroll the log and the matching era rotates into view — each card lists the sub-versions that shipped within it."
       />
 
       <div className="dev-timeline">
@@ -96,31 +99,27 @@ export function DevTimelineContent() {
               className="dev-ring"
               style={{ transform: `translateZ(-${radius}px) rotateY(${-active * step}deg)` }}
             >
-              {entries.map((entry, i) => {
+              {eras.map((era, i) => {
                 const dist = Math.min(Math.abs(i - active), count - Math.abs(i - active))
                 const opacity = dist === 0 ? 1 : dist === 1 ? 0.4 : dist === 2 ? 0.14 : 0
                 return (
-                <button
-                  key={entry.tag}
-                  type="button"
-                  tabIndex={-1}
-                  className={`dev-ring-face ${i === active ? 'is-active' : ''}`}
-                  style={{
-                    transform: `rotateY(${i * step}deg) translateZ(${radius}px)`,
-                    background: faceGradient(entry),
-                    opacity,
-                    pointerEvents: dist > 2 ? 'none' : 'auto',
-                  }}
-                  onClick={() => goTo(i)}
-                >
-                  {entry.shot ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={entry.shot} alt="" className="dev-face-shot" />
-                  ) : null}
-                  <span className="dev-face-version">v{entry.version}</span>
-                  <span className="dev-face-title">{entry.title}</span>
-                  <span className="dev-face-phase">{entry.phase}</span>
-                </button>
+                  <button
+                    key={era.major}
+                    type="button"
+                    tabIndex={-1}
+                    className={`dev-ring-face ${i === active ? 'is-active' : ''}`}
+                    style={{
+                      transform: `rotateY(${i * step}deg) translateZ(${radius}px)`,
+                      background: faceGradient(era.hue),
+                      opacity,
+                      pointerEvents: dist > 2 ? 'none' : 'auto',
+                    }}
+                    onClick={() => goTo(i)}
+                  >
+                    <span className="dev-face-version">{era.label}</span>
+                    <span className="dev-face-title">{era.title}</span>
+                    <span className="dev-face-phase">{era.releases.length} releases</span>
+                  </button>
                 )
               })}
             </div>
@@ -134,17 +133,17 @@ export function DevTimelineContent() {
               <button
                 type="button"
                 className="dev-stage-btn"
-                aria-label="Previous version"
+                aria-label="Previous era"
                 onClick={() => goTo(active - 1)}
                 disabled={active === 0}
               >
                 <ChevronLeft className="h-4 w-4" />
               </button>
-              <span className="dev-stage-tag">{current.tag}</span>
+              <span className="dev-stage-tag">{current.label}</span>
               <button
                 type="button"
                 className="dev-stage-btn"
-                aria-label="Next version"
+                aria-label="Next era"
                 onClick={() => goTo(active + 1)}
                 disabled={active === count - 1}
               >
@@ -155,9 +154,9 @@ export function DevTimelineContent() {
         </div>
 
         <ol className="dev-track">
-          {entries.map((entry, i) => (
+          {eras.map((era, i) => (
             <li
-              key={entry.tag}
+              key={era.major}
               ref={(node) => {
                 stepRefs.current[i] = node
               }}
@@ -167,32 +166,45 @@ export function DevTimelineContent() {
               <div className="dev-step-rail" aria-hidden>
                 <span className="dev-step-dot" />
               </div>
-              <StationPanel variant="module" backLabel={`v${entry.version}`} className="dev-step-panel">
+              <StationPanel variant="module" backLabel={era.label} className="dev-step-panel">
                 <div
                   className="dev-step-poster"
-                  style={{ background: faceGradient(entry) }}
+                  style={{ background: faceGradient(era.hue) }}
                   aria-hidden
                 >
-                  <span className="dev-step-poster-version">v{entry.version}</span>
+                  <span className="dev-step-poster-version">{era.label}</span>
                 </div>
                 <div className="relative z-[1]">
                   <div className="flex flex-wrap items-center gap-2">
-                    <StationChip className="station-chip-active !text-[10px]">{entry.tag}</StationChip>
-                    <StationChip className="!text-[10px]">{entry.phase}</StationChip>
+                    <StationChip className="station-chip-active !text-[10px]">{era.label}.x</StationChip>
+                    <StationChip className="!text-[10px]">{era.releases.length} releases</StationChip>
                   </div>
-                  <h2 className="mt-3 font-heading text-2xl font-bold tracking-tight">{entry.title}</h2>
-                  <p className="mt-2 text-pretty leading-relaxed text-muted-foreground">{entry.summary}</p>
-                  <ul className="mt-4 grid gap-2 sm:grid-cols-2">
-                    {entry.highlights.map((h) => (
-                      <li key={h} className="flex gap-2.5 text-sm leading-relaxed text-muted-foreground">
-                        <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-cyan/80" aria-hidden />
-                        {h}
+                  <h2 className="mt-3 font-heading text-2xl font-bold tracking-tight">{era.title}</h2>
+                  <p className="mt-2 text-pretty leading-relaxed text-muted-foreground">{era.summary}</p>
+
+                  <ul className="mt-5 flex flex-col gap-2">
+                    {era.releases.map((release) => (
+                      <li
+                        key={release.tag}
+                        className="flex items-start gap-3 rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2"
+                      >
+                        <span className="w-12 shrink-0 pt-0.5 font-mono text-[11px] tabular-nums text-cyan/80">
+                          v{release.version}
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                            <span className="text-sm font-medium text-foreground">{release.title}</span>
+                            <span className="rounded-full border border-white/10 px-1.5 py-px text-[9px] uppercase tracking-wider text-muted-foreground/70">
+                              {release.phase}
+                            </span>
+                          </div>
+                          <p className="mt-0.5 text-xs leading-snug text-muted-foreground/70">
+                            {release.highlights.join(' · ')}
+                          </p>
+                        </div>
                       </li>
                     ))}
                   </ul>
-                  <span className="mt-5 inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-muted-foreground/70">
-                    Visualization coming soon
-                  </span>
                 </div>
               </StationPanel>
             </li>

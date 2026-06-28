@@ -316,3 +316,44 @@ export const devTimeline: DevTimelineEntry[] = [
     url: 'https://yanezhekov.dev',
   },
 ]
+
+// The ring groups releases by major version (V1 / V2 / V3). Selecting an era on
+// the ring lists every sub-version that shipped within it on the detail card.
+export type DevEra = {
+  major: string
+  label: string
+  title: string
+  summary: string
+  hue: [number, number]
+  releases: DevTimelineEntry[]
+}
+
+const eraMeta: Record<string, { title: string; summary: string; hue: [number, number] }> = {
+  '1': {
+    title: 'Launch & foundations',
+    summary:
+      'The original station went live and earned its first polish — Sky Lab, station themes, Arsenal chambers and audio VFX, then FX tiers, mobile refinement, and a unified corner dock.',
+    hue: [220, 290],
+  },
+  '2': {
+    title: 'Platform & performance',
+    summary:
+      'Grew into a multi-page, SEO-ready station with nebula visuals — followed by a long performance arc that split mobile and desktop into separate, near-zero-JS bundles.',
+    hue: [185, 260],
+  },
+  '3': {
+    title: 'Arsenal, cosmos & web stack',
+    summary:
+      'The 3D character configurator and Arsenal labs, a parallax cosmos backdrop with a 3D hero, a professional indigo recolor, the live-preview Web Stack carousel, and this timeline.',
+    hue: [270, 320],
+  },
+}
+
+export const devEras: DevEra[] = Object.entries(eraMeta).map(([major, meta]) => ({
+  major,
+  label: `V${major}`,
+  title: meta.title,
+  summary: meta.summary,
+  hue: meta.hue,
+  releases: devTimeline.filter((entry) => entry.version.split('.')[0] === major),
+}))
