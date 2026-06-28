@@ -117,4 +117,48 @@ export const devTimeline: DevTimelineEntry[] = [
     hue: [95, 160],
     url: 'https://yanezhekov.dev',
   },
+  {
+    tag: 'v3.2.0',
+    version: '3.2.0',
+    phase: 'Cosmos',
+    title: 'Parallax cosmos + Logs pages',
+    summary:
+      'A multi-layer parallax cosmos backdrop with a lazy 3D gas-giant hero, plus new Timeline, Journal, and Videos pages and a redesigned pricing compare.',
+    highlights: ['Parallax cosmos backdrop', '3D gas-giant hero', 'Timeline / Journal / Videos', 'Pricing compare + Logs nav'],
+    hue: [225, 270],
+    url: 'https://yanezhekov.dev',
+  },
+  {
+    tag: 'v3.2.1',
+    version: '3.2.1',
+    phase: 'Identity',
+    title: 'Indigo recolor + Web Stack bay',
+    summary:
+      'A professional indigo/periwinkle palette across the station, Oxyfel branding, and a full-width Web Stack carousel with live in-card website previews.',
+    highlights: ['Indigo/periwinkle palette', 'Oxyfel branding', 'Live-preview Web Stack carousel', 'Updated contact + projects'],
+    hue: [258, 295],
+    url: 'https://yanezhekov.dev',
+  },
+  {
+    tag: 'v3.2.2',
+    version: '3.2.2',
+    phase: 'Controls',
+    title: 'Timeline jump controls',
+    summary:
+      'Reworked the timeline jump controls to compute the scroll target manually so every version — including the last — is reachable and stays in sync with the ring.',
+    highlights: ['Manual scroll targeting', 'Last version reachable', 'Trailing scroll buffer', 'Ring/panel in sync'],
+    hue: [240, 275],
+    url: 'https://yanezhekov.dev',
+  },
+  {
+    tag: 'v3.2.3',
+    version: '3.2.3',
+    phase: 'Sync',
+    title: 'Timeline sync fix',
+    summary:
+      'Fixed the last-version desync where the detail panel lagged behind the ring — deferring the scroll past the button-disable re-render so the jump always lands in view.',
+    highlights: ['Deferred scroll past commit', 'Last-item panel in view', 'Boundary button fix', 'Verified with real clicks'],
+    hue: [250, 288],
+    url: 'https://yanezhekov.dev',
+  },
 ]
