@@ -1,6 +1,6 @@
 'use client'
 
-import { ArrowUpRight, ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { SitePageHero, SitePageLayout } from './site-page-layout'
 import { StationChip, StationPanel } from './station-console'
@@ -190,17 +190,9 @@ export function DevTimelineContent() {
                       </li>
                     ))}
                   </ul>
-                  {entry.url ? (
-                    <a
-                      href={entry.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="station-button station-button-ghost mt-5 inline-flex items-center gap-2 !text-[11px]"
-                    >
-                      Visit this build
-                      <ArrowUpRight className="h-4 w-4" />
-                    </a>
-                  ) : null}
+                  <span className="mt-5 inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-muted-foreground/70">
+                    Visualization coming soon
+                  </span>
                 </div>
               </StationPanel>
             </li>
