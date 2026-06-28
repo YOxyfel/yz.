@@ -1,5 +1,48 @@
 # Release history
 
+## V3.2.1 (`v3.2.1`)
+
+**Saved:** professional indigo/periwinkle recolor, Oxyfel branding, Web Stack live-preview carousel, and timeline reachability fix.
+
+| | |
+|---|---|
+| **Git tag** | `v3.2.1` |
+| **Production URL** | https://yanezhekov.dev |
+
+### What this version includes
+
+- **Site-wide recolor**: shifted the palette from teal/neutral to a professional
+  indigo/periwinkle across panels, rails, buttons, chips, lab tabs, and promo
+  sections (hull/bezel/screen/background tokens nudged into the same violet family).
+- **Oxyfel branding**: "by Oxyfel" studio credit in the footer.
+- **Station-only**: locked the site to the station variant and removed the
+  variant-picker UI/logic.
+- **Contact + data**: updated email, GitHub, and LinkedIn across the site,
+  structured data, lead capture, and `llms.txt`.
+- **Game projects**: years bumped to 2026, "Wang Cultivator" → "Wan&Lin Immortals"
+  with a cover image, "visuals coming soon" placeholders elsewhere.
+- **Web Stack Bay**: full-width carousel with ethereal arrows, an outward nebula
+  aura, and a constellation progress indicator. Live in-card website previews
+  (browser chrome + "live" indicator) for the deployed Wan&Lin Immortals build;
+  highlight-only hover (no motion). Removed the GitHub showcase card and the
+  tech-stack chips.
+- **Dev timeline**: added trailing scroll buffer so the final version is reachable
+  via the arrows, with breathing room before the footer.
+
+### Revert to V3.2.1
+
+```powershell
+cd D:\999.Personal\Website\website
+git checkout v3.2.1 -- .
+git clean -fd -e .env.local -e node_modules -e .next -e .vercel
+npm install
+npm run build
+```
+
+Or hard reset: `git reset --hard v3.2.1`
+
+---
+
 ## V3.2.0 (`v3.2.0`)
 
 **Saved:** parallax cosmos background, Journal / Timeline / Videos pages, pricing comparison, and nav restructuring.

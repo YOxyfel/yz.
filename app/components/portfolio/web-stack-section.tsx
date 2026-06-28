@@ -174,9 +174,13 @@ function WebProjectsCarousel({ animate = true }: { animate?: boolean }) {
   return (
     <div className="web-projects-carousel relative mt-14 w-full">
       <div className="relative">
-        {/* Soft nebula aura drifting behind the card */}
+        {/* Soft nebula aura radiating outward from behind the card */}
         <div
-          className="pointer-events-none absolute -inset-6 -z-10 rounded-[2.5rem] bg-[radial-gradient(60%_55%_at_50%_45%,oklch(0.45_0.13_285/0.22),transparent_72%)] blur-2xl"
+          className="pointer-events-none absolute -inset-8 -z-10 rounded-[2.75rem] bg-[radial-gradient(58%_60%_at_50%_50%,oklch(0.46_0.14_285/0.3),transparent_74%)] blur-3xl"
+          aria-hidden
+        />
+        <div
+          className="pointer-events-none absolute -inset-x-10 inset-y-4 -z-10 bg-[radial-gradient(40%_70%_at_0%_50%,oklch(0.4_0.12_285/0.28),transparent_70%),radial-gradient(40%_70%_at_100%_50%,oklch(0.4_0.12_285/0.28),transparent_70%)] blur-2xl"
           aria-hidden
         />
 
@@ -195,16 +199,6 @@ function WebProjectsCarousel({ animate = true }: { animate?: boolean }) {
               </div>
             ))}
           </div>
-
-          {/* Cinematic edge scrims — the card dissolves into the void */}
-          <div
-            className="pointer-events-none absolute inset-y-0 left-0 z-20 w-20 bg-gradient-to-r from-[oklch(0.07_0.025_286/0.8)] via-[oklch(0.07_0.025_286/0.25)] to-transparent sm:w-28"
-            aria-hidden
-          />
-          <div
-            className="pointer-events-none absolute inset-y-0 right-0 z-20 w-20 bg-gradient-to-l from-[oklch(0.07_0.025_286/0.8)] via-[oklch(0.07_0.025_286/0.25)] to-transparent sm:w-28"
-            aria-hidden
-          />
         </div>
 
         <button
