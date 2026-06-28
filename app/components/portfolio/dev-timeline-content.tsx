@@ -50,10 +50,18 @@ export function DevTimelineContent() {
     const node = stepRefs.current[clamped]
     if (node) {
       lockRef.current = true
-      node.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      // Compute the centred scroll target manually — smooth scrollIntoView is
+      // unreliable when scrolling upward from the bottom (it can stick at max
+      // scroll), which left the last version unreachable via the controls.
+      const rect = node.getBoundingClientRect()
+      const target = Math.max(
+        0,
+        rect.top + window.scrollY - (window.innerHeight - rect.height) / 2
+      )
+      window.scrollTo({ top: target, behavior: 'smooth' })
       window.setTimeout(() => {
         lockRef.current = false
-      }, 700)
+      }, 800)
     }
   }, [])
 

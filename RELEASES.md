@@ -1,5 +1,37 @@
 # Release history
 
+## V3.2.2 (`v3.2.2`)
+
+**Saved:** fix the dev timeline controls so the last version is reliably reachable and in sync.
+
+| | |
+|---|---|
+| **Git tag** | `v3.2.2` |
+| **Production URL** | https://yanezhekov.dev |
+
+### What this version includes
+
+- **Timeline navigation fix**: `goTo` now computes the centred scroll target
+  manually and uses `window.scrollTo`, instead of `scrollIntoView({behavior:'smooth'})`.
+  Smooth `scrollIntoView` was unreliable when scrolling *upward from the bottom* —
+  it stuck at max scroll, so the ring/counter would show the last version while
+  the detail panel still showed the previous one. Verified via automated arrow
+  clicks across all 9 versions: every step centres and stays in sync.
+
+### Revert to V3.2.2
+
+```powershell
+cd D:\999.Personal\Website\website
+git checkout v3.2.2 -- .
+git clean -fd -e .env.local -e node_modules -e .next -e .vercel
+npm install
+npm run build
+```
+
+Or hard reset: `git reset --hard v3.2.2`
+
+---
+
 ## V3.2.1 (`v3.2.1`)
 
 **Saved:** professional indigo/periwinkle recolor, Oxyfel branding, Web Stack live-preview carousel, and timeline reachability fix.
