@@ -184,7 +184,7 @@
     "title": "Case study coming soon",
     "description": "A full signal log for my in-development UE5 title is on the way—no fabricated metrics or placeholder systems copy in the meantime.",
     "status": "Coming soon",
-    "projectName": "Wang Cultivator",
+    "projectName": "Wan&Lin Immortals",
     "projectSubtitle": "UE5 action RPG · in development",
     "summary": "Write-up in progress. This page will get an honest breakdown when there is real material to show—not AI-filled placeholder specs.",
     "sections": [],
@@ -217,6 +217,7 @@
     "title": "Game Projects",
     "description": "In-development titles on the bridge deck—full specs and media land here when there is real material to share.",
     "defaultCardCta": "Details coming soon",
+    "visualsComingSoon": "Визуализациите очаквайте скоро",
     "comingSoonLabel": "Coming soon",
     "comingSoonTitle": "Write-up in progress",
     "comingSoonBody": "Full specs, footage, and technical notes are on the way—no placeholder filler until then.",
@@ -261,7 +262,7 @@
       }
     ],
     "nowTitle": "Current focus",
-    "nowBody": "I am building Wang Cultivator, a UE5 action RPG in active development. A full case study and project breakdown are coming soon—in the meantime I bring the same systems discipline to contract and co-dev work.",
+    "nowBody": "I am building Wan&Lin Immortals, a UE5 action RPG in active development. A full case study and project breakdown are coming soon—in the meantime I bring the same systems discipline to contract and co-dev work.",
     "caseStudiesCta": "Read case study",
     "servicesCta": "View services",
     "cta": "Get in touch",
@@ -269,7 +270,7 @@
     "eeatTitle": "Опит и сигнали за доверие",
     "eeatBody": "Честни EEAT маркери—без надуени награди или фалшиви client лога. Ето какво можете да проверите днес.",
     "eeatItems": [
-      "Самостоятелен UE5 gameplay инженер с in-development title (Wang Cultivator)—case study и specs coming soon",
+      "Самостоятелен UE5 gameplay инженер с in-development title (Wan&Lin Immortals)—case study и specs coming soon",
       "Партньорства с milestone обхват и директна комуникация с инженера—без agency посредници",
       "Отворено GitHub портфолио и жива case study вместо заети web-client лога",
       "Прозрачни ценови нива и ЧЗВ—обхват преди ангажимент"
@@ -493,7 +494,7 @@
       {
         "title": "GitHub — engine repos & experiments",
         "body": "Open-source and portfolio repos for gameplay systems, web prototypes, and pipeline scripts.",
-        "href": "https://github.com/yanezhekov",
+        "href": "https://github.com/YOxyfel/YOxyfel",
         "external": true
       }
     ]

@@ -17,7 +17,7 @@ const ArsenalPromoHero = dynamic(
   () => import('./arsenal-promo-hero').then((mod) => ({ default: mod.ArsenalPromoHero })),
   {
     loading: () => (
-      <div className="flex min-h-[min(52vh,480px)] items-center justify-center rounded-xl border border-white/10 bg-black/30 font-mono text-xs uppercase tracking-widest text-muted-foreground">
+      <div className="flex min-h-[min(52vh,480px)] items-center justify-center rounded-xl border border-white/10 bg-[oklch(0.18_0.04_284)]/50 font-mono text-xs uppercase tracking-widest text-muted-foreground">
         Loading spotlight…
       </div>
     ),
@@ -28,7 +28,7 @@ const PropShowcaseLab = dynamic(
   () => import('./prop-showcase-lab').then((mod) => ({ default: mod.PropShowcaseLab })),
   {
     loading: () => (
-      <div className="flex min-h-[min(52vh,480px)] items-center justify-center rounded-xl border border-white/10 bg-black/30 font-mono text-xs uppercase tracking-widest text-muted-foreground">
+      <div className="flex min-h-[min(52vh,480px)] items-center justify-center rounded-xl border border-white/10 bg-[oklch(0.18_0.04_284)]/50 font-mono text-xs uppercase tracking-widest text-muted-foreground">
         Loading props lab…
       </div>
     ),
@@ -39,7 +39,7 @@ const ArtShowcaseLab = dynamic(
   () => import('./art-showcase-lab').then((mod) => ({ default: mod.ArtShowcaseLab })),
   {
     loading: () => (
-      <div className="flex min-h-[min(52vh,480px)] items-center justify-center rounded-xl border border-white/10 bg-black/30 font-mono text-xs uppercase tracking-widest text-muted-foreground">
+      <div className="flex min-h-[min(52vh,480px)] items-center justify-center rounded-xl border border-white/10 bg-[oklch(0.18_0.04_284)]/50 font-mono text-xs uppercase tracking-widest text-muted-foreground">
         Loading art lab…
       </div>
     ),
@@ -50,7 +50,7 @@ const WebStackSection = dynamic(
   () => import('./web-stack-section').then((mod) => ({ default: mod.WebStackSection })),
   {
     loading: () => (
-      <div className="flex min-h-[min(52vh,480px)] items-center justify-center rounded-xl border border-white/10 bg-black/30 font-mono text-xs uppercase tracking-widest text-muted-foreground">
+      <div className="flex min-h-[min(52vh,480px)] items-center justify-center rounded-xl border border-white/10 bg-[oklch(0.18_0.04_284)]/50 font-mono text-xs uppercase tracking-widest text-muted-foreground">
         Loading web stack…
       </div>
     ),

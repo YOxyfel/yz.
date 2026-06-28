@@ -305,15 +305,15 @@ export function CharacterConfigurator() {
           }}
         >
           <div className="pointer-events-none absolute inset-y-0 left-1/2 w-0.5 -translate-x-1/2 bg-cyan shadow-[0_0_16px_var(--cyan)]" />
-          <div className="pointer-events-none absolute left-1/2 top-1/2 flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-cyan/50 bg-[oklch(0.08_0.012_270/0.92)] text-cyan shadow-[0_0_16px_var(--cyan)]">
+          <div className="pointer-events-none absolute left-1/2 top-1/2 flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-cyan/50 bg-[oklch(0.12_0.04_285/0.92)] text-cyan shadow-[0_0_16px_var(--cyan)]">
             <ChevronLeft className="-mr-1.5 h-3.5 w-3.5" />
             <ChevronRight className="-ml-1.5 h-3.5 w-3.5" />
           </div>
         </div>
-        <div className="pointer-events-none absolute bottom-3 left-3 rounded-full border border-white/10 bg-[oklch(0.08_0.012_270/0.9)] px-2 py-1 font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
+        <div className="pointer-events-none absolute bottom-3 left-3 rounded-full border border-white/10 bg-[oklch(0.12_0.04_285/0.9)] px-2 py-1 font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
           Wireframe
         </div>
-        <div className="pointer-events-none absolute bottom-3 right-3 rounded-full border border-white/10 bg-[oklch(0.08_0.012_270/0.9)] px-2 py-1 font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
+        <div className="pointer-events-none absolute bottom-3 right-3 rounded-full border border-white/10 bg-[oklch(0.12_0.04_285/0.9)] px-2 py-1 font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
           Rendered
         </div>
       </div>
@@ -373,11 +373,11 @@ export function CharacterConfigurator() {
                     type="button"
                     onClick={() => cycleRow(row, -1)}
                     aria-label={`Previous ${row.label}`}
-                    className="flex h-9 w-9 items-center justify-center rounded-full border border-cyan/40 bg-[oklch(0.08_0.012_270/0.85)] text-cyan transition-transform hover:scale-110"
+                    className="flex h-9 w-9 items-center justify-center rounded-full border border-cyan/40 bg-[oklch(0.12_0.04_285/0.85)] text-cyan transition-transform hover:scale-110"
                   >
                     <ChevronLeft className="h-4 w-4" />
                   </button>
-                  <span className="rounded-full border border-white/10 bg-[oklch(0.08_0.012_270/0.9)] px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
+                  <span className="rounded-full border border-white/10 bg-[oklch(0.12_0.04_285/0.9)] px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
                     {row.label} · {rowValueLabel(row, outfit)}
                   </span>
                 </div>
@@ -385,7 +385,7 @@ export function CharacterConfigurator() {
                   type="button"
                   onClick={() => cycleRow(row, 1)}
                   aria-label={`Next ${row.label}`}
-                  className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-full border border-cyan/40 bg-[oklch(0.08_0.012_270/0.85)] text-cyan transition-transform hover:scale-110"
+                  className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-full border border-cyan/40 bg-[oklch(0.12_0.04_285/0.85)] text-cyan transition-transform hover:scale-110"
                 >
                   <ChevronRight className="h-4 w-4" />
                 </button>

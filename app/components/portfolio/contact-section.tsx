@@ -37,20 +37,20 @@ function YouTubeIcon(props: React.SVGProps<SVGSVGElement>) {
 const links = [
   {
     label: 'Email',
-    value: 'yane.zhekov@proton.me',
-    href: 'mailto:yane.zhekov@proton.me',
+    value: 'zhekov.yane123@gmail.com',
+    href: 'mailto:zhekov.yane123@gmail.com',
     icon: Mail,
   },
   {
     label: 'GitHub',
-    value: '@yanezhekov',
-    href: 'https://github.com/yanezhekov',
+    value: '@YOxyfel',
+    href: 'https://github.com/YOxyfel/YOxyfel',
     icon: GitHubIcon,
   },
   {
     label: 'LinkedIn',
-    value: 'in/yanezhekov',
-    href: 'https://linkedin.com',
+    value: 'in/yane-zhekov',
+    href: 'https://www.linkedin.com/in/yane-zhekov-993703277/',
     icon: LinkedInIcon,
   },
   {
@@ -92,7 +92,7 @@ export function ContactSection() {
 
         <Reveal delay={0.15}>
           <StationButton
-            href="mailto:yane.zhekov@proton.me"
+            href="mailto:zhekov.yane123@gmail.com"
             variant="primary"
             className="mt-10"
           >

@@ -5,7 +5,7 @@ import { FormEvent, useState } from 'react'
 import { useLocale, useTranslations } from 'next-intl'
 import { StationButton, StationChip, StationPanel } from './station-console'
 
-const CONTACT_EMAIL = 'yane.zhekov@proton.me'
+const CONTACT_EMAIL = 'zhekov.yane123@gmail.com'
 
 export function LeadCapturePanel({ className }: { className?: string }) {
   const t = useTranslations('LeadCapture')

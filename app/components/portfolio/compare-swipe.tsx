@@ -83,16 +83,16 @@ export function CompareSwipe({
 
       <div className="compare-swipe-divider pointer-events-none absolute inset-y-0 z-10 w-0.5 bg-cyan shadow-[0_0_16px_var(--cyan)]" />
       <div
-        className="compare-swipe-handle absolute top-1/2 z-20 flex h-10 w-10 cursor-ew-resize items-center justify-center rounded-full border border-cyan/50 bg-[oklch(0.08_0.012_270/0.92)] text-cyan shadow-[0_0_24px_-4px_var(--cyan)]"
+        className="compare-swipe-handle absolute top-1/2 z-20 flex h-10 w-10 cursor-ew-resize items-center justify-center rounded-full border border-cyan/50 bg-[oklch(0.12_0.04_285/0.92)] text-cyan shadow-[0_0_24px_-4px_var(--cyan)]"
         aria-hidden
       >
         <span className="font-mono text-[10px]">⟷</span>
       </div>
 
-      <div className="pointer-events-none absolute bottom-3 left-3 rounded-full border border-white/10 bg-[oklch(0.08_0.012_270/0.9)] px-2 py-1 font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
+      <div className="pointer-events-none absolute bottom-3 left-3 rounded-full border border-white/10 bg-[oklch(0.12_0.04_285/0.9)] px-2 py-1 font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
         {labelLeft}
       </div>
-      <div className="pointer-events-none absolute bottom-3 right-3 rounded-full border border-white/10 bg-[oklch(0.08_0.012_270/0.9)] px-2 py-1 font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
+      <div className="pointer-events-none absolute bottom-3 right-3 rounded-full border border-white/10 bg-[oklch(0.12_0.04_285/0.9)] px-2 py-1 font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
         {labelRight}
       </div>
     </div>

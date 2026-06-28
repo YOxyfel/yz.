@@ -9,9 +9,23 @@ export type WebProject = {
   accent: 'cyan' | 'violet' | 'amber'
   /** Optional preview under public/ — add when available */
   preview?: string
+  /** Optional live URL to embed as an in-card iframe preview. */
+  embed?: string
 }
 
 export const webProjects: WebProject[] = [
+  {
+    id: 'wan-lin-immortal',
+    title: 'Wan&Lin Immortals',
+    domain: 'yoxyfel.github.io/wan-lin-immortal',
+    href: 'https://yoxyfel.github.io/wan-lin-immortal/',
+    client: 'Game promo site · GitHub Pages',
+    description:
+      'Promo site for the Wan&Lin Immortals UE5 action RPG — cinematic landing page with a live, in-card preview of the deployed build.',
+    stack: ['HTML', 'CSS', 'JavaScript'],
+    accent: 'violet',
+    embed: 'https://yoxyfel.github.io/wan-lin-immortal/',
+  },
   {
     id: 'stilmerseng',
     title: 'Stilmerseng',
@@ -60,8 +74,8 @@ export const webProjects: WebProject[] = [
 
 export const githubShowcase = {
   title: 'GitHub',
-  handle: '@yanezhekov',
-  href: 'https://github.com/yanezhekov',
+  handle: '@YOxyfel',
+  href: 'https://github.com/YOxyfel/YOxyfel',
   description:
     'Engine repos, experiments, and tooling — game systems, web prototypes, and pipeline scripts.',
   preview: '/Info/GithubPreview.png',

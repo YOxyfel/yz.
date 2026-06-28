@@ -13,7 +13,7 @@ import { OffscreenAnimationFreeze } from './offscreen-animation-freeze'
 import { usePointerBoundsCache } from './use-pointer-bounds-cache'
 
 const accentRing: Record<ArtPiece['accent'], string> = {
-  cyan: 'ring-cyan/35 shadow-[0_0_60px_-12px_oklch(0.84_0.16_200/0.5)] border-cyan/25',
+  cyan: 'ring-cyan/35 shadow-[0_0_60px_-12px_oklch(0.78_0.12_260/0.5)] border-cyan/25',
   violet: 'ring-violet/35 shadow-[0_0_60px_-12px_oklch(0.55_0.24_295/0.5)] border-violet/25',
   amber: 'ring-amber-400/35 shadow-[0_0_60px_-12px_oklch(0.75_0.15_75/0.45)] border-amber-400/25',
 }
@@ -166,7 +166,7 @@ function ArtConsole({ piece }: { piece: ArtPiece }) {
           type="button"
           onClick={() => go(-1)}
           aria-label="Previous POV"
-          className="absolute left-3 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-[oklch(0.08_0.012_270/0.9)] text-foreground transition-colors hover:border-cyan/40 hover:text-cyan"
+          className="absolute left-3 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-[oklch(0.12_0.04_285/0.9)] text-foreground transition-colors hover:border-cyan/40 hover:text-cyan"
         >
           <ChevronLeft className="h-5 w-5" />
         </button>
@@ -174,12 +174,12 @@ function ArtConsole({ piece }: { piece: ArtPiece }) {
           type="button"
           onClick={() => go(1)}
           aria-label="Next POV"
-          className="absolute right-3 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-[oklch(0.08_0.012_270/0.9)] text-foreground transition-colors hover:border-cyan/40 hover:text-cyan"
+          className="absolute right-3 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-[oklch(0.12_0.04_285/0.9)] text-foreground transition-colors hover:border-cyan/40 hover:text-cyan"
         >
           <ChevronRight className="h-5 w-5" />
         </button>
 
-        <div className="absolute bottom-4 left-4 z-20 rounded-full border border-white/10 bg-[oklch(0.08_0.012_270/0.9)] px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+        <div className="absolute bottom-4 left-4 z-20 rounded-full border border-white/10 bg-[oklch(0.12_0.04_285/0.9)] px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
           {piece.povLabels[povIndex]} · {String(povIndex + 1).padStart(2, '0')} /{' '}
           {String(piece.views.length).padStart(2, '0')}
         </div>
@@ -202,7 +202,7 @@ function ArtConsole({ piece }: { piece: ArtPiece }) {
       </div>
       </OffscreenAnimationFreeze>
 
-      <div className="flex flex-col justify-between gap-6 rounded-2xl border border-white/10 bg-black/30 p-6">
+      <div className="flex flex-col justify-between gap-6 rounded-2xl border border-white/10 bg-[oklch(0.2_0.045_284)]/55 p-6">
         <div>
           <p className={`font-mono text-[10px] uppercase tracking-[0.35em] ${accentText[piece.accent]}`}>
             {piece.role} · Xianxia cultivation
@@ -278,7 +278,7 @@ function ArtShowcaseLabInner({ embedded = false }: { embedded?: boolean }) {
       embedded={embedded}
       eyebrow="Concept art · AI-assisted pipeline"
       title="Cultivation Gallery"
-      description="Character sheets and gallery notes for Wang Cultivator—full write-up coming soon."
+      description="Character sheets and gallery notes for Wan&Lin Immortals—full write-up coming soon."
       icon={Sparkles}
       controls={<LabFxControls />}
     >

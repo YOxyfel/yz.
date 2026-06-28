@@ -44,7 +44,7 @@ const sourceIcons: Record<AudioSourceType, typeof Mic> = {
 }
 
 const accentRing: Record<AudioTrack['accent'], string> = {
-  cyan: 'ring-cyan/40 shadow-[0_0_60px_-12px_oklch(0.84_0.16_200/0.55)] border-cyan/30',
+  cyan: 'ring-cyan/40 shadow-[0_0_60px_-12px_oklch(0.78_0.12_260/0.55)] border-cyan/30',
   violet:
     'ring-violet/40 shadow-[0_0_60px_-12px_oklch(0.55_0.24_295/0.55)] border-violet/30',
   emerald:

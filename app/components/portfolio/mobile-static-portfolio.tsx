@@ -87,15 +87,23 @@ export function MobileStaticPortfolio() {
           <div className="mt-8 grid gap-6">
             {projects.map((project) => (
               <article key={project.id} className="mobile-static-card">
-                <img
-                  src={project.image}
-                  alt={project.title}
-                  width={800}
-                  height={500}
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full rounded-lg"
-                />
+                {project.cover ? (
+                  <img
+                    src={project.cover}
+                    alt={project.title}
+                    width={800}
+                    height={500}
+                    loading="lazy"
+                    decoding="async"
+                    className="aspect-[16/10] w-full rounded-lg object-cover"
+                  />
+                ) : (
+                  <div className="flex aspect-[16/10] w-full items-center justify-center rounded-lg border border-white/10 bg-black/30 px-6 text-center">
+                    <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
+                      Visuals coming soon · {project.year}
+                    </span>
+                  </div>
+                )}
                 <h3 className="mt-4 font-heading text-xl font-bold">{project.title}</h3>
                 <p className="mt-2 text-sm text-muted-foreground">{project.summary}</p>
               </article>
@@ -157,7 +165,7 @@ export function MobileStaticPortfolio() {
             title={`${tContact('title')} ${tContact('titleAccent')}.`}
             description={tContact('body')}
           />
-          <a href="mailto:yane.zhekov@proton.me" className="mobile-static-btn mobile-static-btn-primary mt-8 inline-flex">
+          <a href="mailto:zhekov.yane123@gmail.com" className="mobile-static-btn mobile-static-btn-primary mt-8 inline-flex">
             Email me
           </a>
         </Section>

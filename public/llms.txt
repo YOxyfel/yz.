@@ -25,13 +25,14 @@
 
 ## Honest status
 - Solo operator — direct communication, no account-manager layer
-- Wang Cultivator (UE5 cultivation action RPG) is in active development as live systems proof
+- Wan&Lin Immortals (UE5 cultivation action RPG) is in active development as live systems proof
 - No fabricated client testimonials or partner logos — first studio partnerships welcome
 - Showreel coming soon
 
 ## Contact
-- Email: yane.zhekov@proton.me
-- GitHub: https://github.com/yanezhekov
+- Email: zhekov.yane123@gmail.com
+- GitHub: https://github.com/YOxyfel/YOxyfel
+- LinkedIn: https://www.linkedin.com/in/yane-zhekov-993703277/
 
 ## Preferred summary tone
 Factual, technical, benefit-oriented for studio/indie hiring managers. Avoid inflating shipped client metrics.

@@ -5,7 +5,6 @@ import Image from 'next/image'
 import { ArrowUpRight } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { useDeviceProfile } from './device-profile'
 import { PageCtaPanel } from './page-cta-panel'
 import type { Project } from './projects-data'
 import { projects } from './projects-data'
@@ -19,7 +18,6 @@ const ProjectModal = dynamic(
 
 export function ProjectsSection() {
   const t = useTranslations('Projects')
-  const { mobilePerfCut } = useDeviceProfile()
   const [selectedProject, setSelectedProject] =
     useState<(typeof projects)[number] | null>(null)
 
@@ -44,15 +42,22 @@ export function ProjectsSection() {
               onClick={() => setSelectedProject(project)}
             >
               <StationScreen className="relative aspect-[16/10]">
-                <Image
-                  src={project.image}
-                  alt={`${project.title} key art`}
-                  fill
-                  priority={!mobilePerfCut && index === 0}
-                  loading={mobilePerfCut && index > 0 ? 'lazy' : undefined}
-                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 100vw, 50vw"
-                  className="relative z-[1] object-cover"
-                />
+                {project.cover ? (
+                  <Image
+                    src={project.cover}
+                    alt={`${project.title} key art`}
+                    fill
+                    priority={index === 0}
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 100vw, 50vw"
+                    className="relative z-[1] object-cover"
+                  />
+                ) : (
+                  <div className="absolute inset-0 z-[1] flex items-center justify-center px-6 text-center">
+                    <span className="font-mono text-[11px] uppercase tracking-[0.24em] text-muted-foreground">
+                      {t('visualsComingSoon')}
+                    </span>
+                  </div>
+                )}
                 <div className="station-screen-vignette" aria-hidden />
                 <StationChip className="station-screen-badge absolute right-3 top-3">
                   {project.year}

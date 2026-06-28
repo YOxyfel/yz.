@@ -12,14 +12,17 @@ export function buildPersonSchema(locale: string) {
     name: 'Yane Zhekov',
     jobTitle: 'Technical Game Developer',
     url,
-    email: 'mailto:yane.zhekov@proton.me',
+    email: 'mailto:zhekov.yane123@gmail.com',
     knowsAbout: [
       'Unreal Engine 5',
       'Gameplay Ability System',
       'C++ gameplay programming',
       'Modular game architecture',
     ],
-    sameAs: ['https://github.com/yanezhekov', 'https://linkedin.com/in/yanezhekov'],
+    sameAs: [
+      'https://github.com/YOxyfel/YOxyfel',
+      'https://www.linkedin.com/in/yane-zhekov-993703277/',
+    ],
   }
 }
 

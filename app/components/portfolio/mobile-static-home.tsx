@@ -159,7 +159,7 @@ export async function MobileStaticHome({ locale }: MobileStaticHomeProps) {
             description={tContact('body')}
           />
           <a
-            href="mailto:yane.zhekov@proton.me"
+            href="mailto:zhekov.yane123@gmail.com"
             className="mobile-static-btn mobile-static-btn-primary"
             style={{ marginTop: '2rem' }}
           >

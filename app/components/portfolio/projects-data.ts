@@ -2,7 +2,8 @@ export type Project = {
   id: string
   title: string
   subtitle: string
-  image: string
+  /** Optional cover image under public/ — falls back to a "visuals coming soon" placeholder. */
+  cover?: string
   year: string
   tech: string[]
   summary: string
@@ -17,10 +18,10 @@ export type Project = {
 export const projects: Project[] = [
   {
     id: 'wang-cultivator',
-    title: 'Wang Cultivator',
+    title: 'Wan&Lin Immortals',
     subtitle: 'Action RPG — Cultivation Systems',
-    image: '/project-wang-cultivator.png',
-    year: '2024',
+    year: '2026',
+    cover: '/project-wan-lin-immortals.png',
     tech: ['Unreal Engine 5', 'C++', 'Gameplay Ability System', 'Niagara'],
     comingSoon: true,
     cardCta: 'Breakdown coming soon',
@@ -43,8 +44,7 @@ export const projects: Project[] = [
     id: 'run-and-bank',
     title: 'Run & Bank',
     subtitle: 'Hyper-Casual Endless Runner',
-    image: '/project-run-and-bank.png',
-    year: '2023',
+    year: '2026',
     tech: ['Unreal Engine 5', 'Lua', 'Procedural Gen', 'Mobile'],
     comingSoon: true,
     cardCta: 'Specs on the way',

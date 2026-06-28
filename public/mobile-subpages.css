@@ -2,7 +2,7 @@
 :root {
   --foreground: oklch(0.98 0 0);
   --muted-foreground: var(--muted);
-  --cyan: oklch(0.84 0.16 200);
+  --cyan: oklch(0.8 0.108 258);
   --violet: oklch(0.58 0.2 295);
   --station-hull: oklch(0.16 0.018 262);
   --station-hull-light: oklch(0.2 0.02 258);
@@ -175,7 +175,7 @@
 .mobile-subpage .bg-\[var\(--station-hull-dark\)\]\/40,
 .mobile-subpage .bg-\[var\(--station-hull-dark\)\]\/50,
 .mobile-subpage [class*='station-hull-dark'] {
-  background: oklch(1 0 0 / 0.03);
+  background: oklch(0.155 0.036 286 / 0.5);
 }
 
 .mobile-subpage .bg-cyan { background: var(--cyan); }
@@ -218,7 +218,7 @@
   margin-bottom: 1.25rem;
   border-radius: 0.875rem;
   border: 1px solid oklch(1 0 0 / 0.1);
-  background: oklch(1 0 0 / 0.03);
+  background: linear-gradient(155deg, oklch(0.27 0.055 281 / 0.55), oklch(0.155 0.036 286 / 0.62));
   overflow: hidden;
 }
 
@@ -265,7 +265,7 @@
 }
 
 .mobile-subpage .station-chip-active {
-  border-color: oklch(0.84 0.16 200 / 0.45);
+  border-color: oklch(0.84 0.16 258 / 0.45);
   color: var(--cyan);
 }
 
@@ -291,8 +291,8 @@
 }
 
 .mobile-subpage .station-button-primary {
-  border: 1px solid oklch(0.84 0.16 200 / 0.45);
-  background: oklch(0.84 0.16 200 / 0.14);
+  border: 1px solid oklch(0.84 0.16 258 / 0.45);
+  background: oklch(0.84 0.16 258 / 0.14);
   color: var(--cyan);
 }
 

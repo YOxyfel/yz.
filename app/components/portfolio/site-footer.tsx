@@ -51,6 +51,9 @@ export function SiteFooter() {
           <Link href={home} className="font-heading text-sm font-bold tracking-widest">
             YZ<span className="text-cyan">.</span>
           </Link>
+          <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+            by <span className="text-cyan">Oxyfel</span>
+          </p>
           <p className="mt-3 max-w-xs text-pretty text-sm leading-relaxed text-muted-foreground">
             {t('tagline')}
           </p>
@@ -98,7 +101,7 @@ export function SiteFooter() {
 
       <div className="site-footer-bottom">
         <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
-          © {new Date().getFullYear()} Yane Zhekov
+          © {new Date().getFullYear()} Yane Zhekov · by Oxyfel
         </p>
         <p className="text-pretty text-xs text-muted-foreground">{t('builtWith')}</p>
       </div>

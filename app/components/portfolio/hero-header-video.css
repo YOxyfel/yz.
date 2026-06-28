@@ -455,16 +455,16 @@
   width: 2.35rem;
   height: 2.35rem;
   border-radius: 9999px;
-  border: 1px solid oklch(0.84 0.16 200 / 0.4);
+  border: 1px solid oklch(0.8 0.108 258 / 0.4);
   background: oklch(0.1 0.012 270 / 0.88);
-  color: oklch(0.84 0.16 200);
+  color: oklch(0.8 0.108 258);
   cursor: pointer;
   backdrop-filter: blur(8px);
   box-shadow: 0 4px 16px oklch(0.04 0.01 270 / 0.5);
 }
 
 .hero-header-video__audio-toggle:hover {
-  border-color: oklch(0.84 0.16 200 / 0.6);
+  border-color: oklch(0.8 0.108 258 / 0.6);
   background: oklch(0.14 0.014 270 / 0.94);
 }
 

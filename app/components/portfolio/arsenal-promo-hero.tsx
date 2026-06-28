@@ -126,7 +126,7 @@ function PromoCopyShell({
   const layoutId = sharedLayout ? 'promo-hero-copy' : undefined
   if (placement === 'overlay') {
     return (
-      <div className={`relative max-w-2xl overflow-hidden rounded-2xl border border-white/20 bg-black/90 px-5 py-7 shadow-[0_12px_48px_rgba(0,0,0,0.75)] sm:px-8 sm:py-9 ${className}`}>
+      <div className={`relative max-w-2xl overflow-hidden rounded-2xl border border-white/20 bg-[oklch(0.13_0.045_285)]/92 px-5 py-7 shadow-[0_12px_48px_rgba(0,0,0,0.75)] sm:px-8 sm:py-9 ${className}`}>
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/25 via-black/45 to-black/65" />
         <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan/45 to-transparent" />
         <motion.div
@@ -143,7 +143,7 @@ function PromoCopyShell({
   if (placement === 'sidebar') {
     return (
       <div
-        className={`relative flex min-h-0 flex-col overflow-hidden border-white/10 bg-black/90 lg:border-r ${className}`}
+        className={`relative flex min-h-0 flex-col overflow-hidden border-white/10 bg-[oklch(0.13_0.045_285)]/92 lg:border-r ${className}`}
       >
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-cyan/6 via-transparent to-violet/8" />
         <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan/40 to-transparent" />
@@ -160,7 +160,7 @@ function PromoCopyShell({
 
   return (
     <div
-      className={`relative overflow-hidden rounded-2xl border border-white/12 bg-black/92 p-6 shadow-[0_12px_48px_-16px_rgba(0,0,0,0.85)] sm:p-8 ${className}`}
+      className={`relative overflow-hidden rounded-2xl border border-white/12 bg-[oklch(0.13_0.045_285)]/92 p-6 shadow-[0_12px_48px_-16px_rgba(0,0,0,0.85)] sm:p-8 ${className}`}
     >
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-cyan/8 via-transparent to-violet/8" />
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan/55 to-transparent" />
@@ -690,7 +690,7 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
 
   const theaterShellClass = mobileLandscapeTheater
     ? 'promo-mobile-landscape-theater fixed inset-0 z-[100] flex items-center justify-center overflow-hidden bg-black'
-    : 'promo-theater-shell fixed z-[100] flex flex-col overflow-hidden rounded-2xl border border-cyan/25 bg-black shadow-[0_0_120px_-20px_oklch(0.84_0.16_200/0.55)]'
+    : 'promo-theater-shell fixed z-[100] flex flex-col overflow-hidden rounded-2xl border border-cyan/25 bg-black shadow-[0_0_120px_-20px_oklch(0.78_0.12_260/0.55)]'
   const theaterPlaceholderStyle = {
     width: `min(calc(100vw - 1.5rem), ${THEATER_MAX_WIDTH_PX}px)`,
     maxWidth: '100%',
@@ -760,7 +760,7 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
               <button
                 type="button"
                 onClick={beginReel}
-                className="inline-flex items-center gap-2.5 rounded-full border border-cyan/40 bg-cyan/15 px-6 py-3 font-mono text-xs uppercase tracking-wider text-cyan shadow-[0_0_32px_-8px_oklch(0.84_0.16_200/0.65)] transition-transform hover:scale-105 sm:px-8 sm:text-sm"
+                className="inline-flex items-center gap-2.5 rounded-full border border-cyan/40 bg-cyan/15 px-6 py-3 font-mono text-xs uppercase tracking-wider text-cyan shadow-[0_0_32px_-8px_oklch(0.78_0.12_260/0.65)] transition-transform hover:scale-105 sm:px-8 sm:text-sm"
               >
                 <Play className="h-4 w-4 fill-current" />
                 Press to play
@@ -780,7 +780,7 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
             <button
               type="button"
               onClick={beginReel}
-              className="inline-flex items-center gap-2.5 rounded-full border border-cyan/40 bg-cyan/15 px-6 py-3 font-mono text-xs uppercase tracking-wider text-cyan shadow-[0_0_32px_-8px_oklch(0.84_0.16_200/0.65)]"
+              className="inline-flex items-center gap-2.5 rounded-full border border-cyan/40 bg-cyan/15 px-6 py-3 font-mono text-xs uppercase tracking-wider text-cyan shadow-[0_0_32px_-8px_oklch(0.78_0.12_260/0.65)]"
             >
               <Play className="h-4 w-4 fill-current" />
               Press to play
@@ -797,7 +797,7 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
               manualMinimizeRef.current = false
               setMobileTheaterOpen(true)
             }}
-            className="inline-flex items-center gap-2.5 rounded-full border border-cyan/40 bg-[oklch(0.08_0.012_270/0.94)] px-6 py-3 font-mono text-xs uppercase tracking-wider text-cyan"
+            className="inline-flex items-center gap-2.5 rounded-full border border-cyan/40 bg-[oklch(0.12_0.04_285/0.94)] px-6 py-3 font-mono text-xs uppercase tracking-wider text-cyan"
           >
             <Play className="h-4 w-4 fill-current" />
             Resume
@@ -816,7 +816,7 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
         <button
           type="button"
           onClick={collapseExpanded}
-          className="absolute right-3 top-3 z-40 inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-[oklch(0.08_0.012_270/0.94)] px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider text-foreground transition-colors hover:border-cyan/40 hover:text-cyan"
+          className="absolute right-3 top-3 z-40 inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-[oklch(0.12_0.04_285/0.94)] px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider text-foreground transition-colors hover:border-cyan/40 hover:text-cyan"
         >
           <Minimize2 className="h-3.5 w-3.5" />
           Minimize
@@ -838,7 +838,7 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
           <PromoCopyShell
             placement="sidebar"
             sharedLayout={!isTheater}
-            className="promo-theater-sidebar min-h-0 min-w-0 overflow-hidden border-white/10 bg-black/90 lg:border-r"
+            className="promo-theater-sidebar min-h-0 min-w-0 overflow-hidden border-white/10 bg-[oklch(0.13_0.045_285)]/92 lg:border-r"
           />
         ) : null}
         <div
@@ -865,7 +865,7 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
       </div>
 
       <div
-        className={`relative z-30 shrink-0 flex flex-wrap items-center justify-between gap-2 border-t border-white/10 bg-[oklch(0.08_0.012_270/0.94)] p-3 sm:gap-3 sm:p-5 ${
+        className={`relative z-30 shrink-0 flex flex-wrap items-center justify-between gap-2 border-t border-white/10 bg-[oklch(0.12_0.04_285/0.94)] p-3 sm:gap-3 sm:p-5 ${
           isMobileVideo ? 'hidden' : ''
         }`}
       >
@@ -873,7 +873,7 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
           <button
             type="button"
             onClick={togglePlay}
-            className="inline-flex items-center gap-2 rounded-full border border-cyan/35 bg-[oklch(0.08_0.012_270/0.94)] px-3 py-2 font-mono text-[10px] uppercase tracking-wider text-cyan transition-transform hover:scale-105 sm:px-4 sm:text-xs"
+            className="inline-flex items-center gap-2 rounded-full border border-cyan/35 bg-[oklch(0.12_0.04_285/0.94)] px-3 py-2 font-mono text-[10px] uppercase tracking-wider text-cyan transition-transform hover:scale-105 sm:px-4 sm:text-xs"
           >
             {!reelStarted ? (
               <>
@@ -896,7 +896,7 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
           <button
             type="button"
             onClick={restartReel}
-            className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-[oklch(0.08_0.012_270/0.94)] px-3 py-2 font-mono text-[10px] uppercase tracking-wider text-foreground transition-transform hover:scale-105 sm:px-4 sm:text-xs"
+            className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-[oklch(0.12_0.04_285/0.94)] px-3 py-2 font-mono text-[10px] uppercase tracking-wider text-foreground transition-transform hover:scale-105 sm:px-4 sm:text-xs"
           >
             <RotateCcw className="h-4 w-4" />
             Restart
@@ -906,7 +906,7 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
             <button
               type="button"
               onClick={collapseExpanded}
-              className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-[oklch(0.08_0.012_270/0.94)] px-3 py-2 font-mono text-[10px] uppercase tracking-wider text-foreground transition-transform hover:scale-105 sm:px-4 sm:text-xs"
+              className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-[oklch(0.12_0.04_285/0.94)] px-3 py-2 font-mono text-[10px] uppercase tracking-wider text-foreground transition-transform hover:scale-105 sm:px-4 sm:text-xs"
             >
               <Minimize2 className="h-4 w-4" />
               Minimize
@@ -923,7 +923,7 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
           ) : null}
         </div>
 
-        <div className="flex items-center gap-1.5 rounded-full border border-white/15 bg-[oklch(0.08_0.012_270/0.94)] p-1">
+        <div className="flex items-center gap-1.5 rounded-full border border-white/15 bg-[oklch(0.12_0.04_285/0.94)] p-1">
           <button
             type="button"
             aria-label="Decrease volume"
@@ -975,7 +975,7 @@ export function ArsenalPromoHero({ embedded = false }: { embedded?: boolean }) {
       key="promo-shell"
       layout={!isTheater && !mobilePerfCut}
       data-portfolio-chrome={isTheater ? true : undefined}
-      className={`group/promo overflow-hidden border bg-black shadow-[0_0_100px_-28px_oklch(0.84_0.16_200/0.45)] ${
+      className={`group/promo overflow-hidden border bg-[oklch(0.08_0.035_286)] shadow-[0_0_100px_-28px_oklch(0.78_0.12_260/0.5)] ${
         isTheater ? theaterShellClass : 'relative w-full rounded-[1.75rem] border-white/10'
       }`}
       initial={

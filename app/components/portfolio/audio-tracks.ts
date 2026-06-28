@@ -135,7 +135,7 @@ export const audioTracks: AudioTrack[] = [
     title: 'Game OST',
     subtitle: 'Main Theme · Adaptive Score',
     gameContext:
-      'The flagship soundtrack — melodic identity for Wang Cultivator, carrying wuxia tone, momentum, and emotional lift.',
+      'The flagship soundtrack — melodic identity for Wan&Lin Immortals, carrying wuxia tone, momentum, and emotional lift.',
     src: '/arsenal/OST.MP3',
     sources: [
       { type: 'ai', label: 'AI-generated melodic draft' },

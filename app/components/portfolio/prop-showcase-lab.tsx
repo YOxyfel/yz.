@@ -15,7 +15,7 @@ export function PropShowcaseLab({ embedded = false }: { embedded?: boolean }) {
     >
       <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
         <CharacterConfigurator />
-        <div className="flex flex-col justify-center space-y-5 rounded-2xl border border-white/10 bg-black/30 p-6">
+        <div className="flex flex-col justify-center space-y-5 rounded-2xl border border-white/10 bg-[oklch(0.2_0.045_284)]/55 p-6">
           <div>
             <p className="font-mono text-[10px] uppercase tracking-[0.35em] text-cyan">
               Real-time 3D

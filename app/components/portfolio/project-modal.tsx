@@ -75,19 +75,23 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
 
             <div className="project-modal-body">
               <div className="project-modal-media group relative aspect-video w-full shrink-0 overflow-hidden rounded-[0.35rem] border border-black/55">
-                <Image
-                  src={project.image}
-                  alt={`${project.title} gameplay`}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 896px"
-                  className="relative z-[1] object-cover"
-                />
-                <div className="station-screen-vignette" aria-hidden />
-                {project.comingSoon ? (
-                  <div className="absolute inset-0 z-[4] flex items-center justify-center bg-background/45">
-                    <StationChip className="station-chip-active !text-[10px]">{t('comingSoonLabel')}</StationChip>
-                  </div>
+                {project.cover ? (
+                  <Image
+                    src={project.cover}
+                    alt={`${project.title} key art`}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 896px"
+                    className="relative z-[1] object-cover"
+                  />
                 ) : (
+                  <div className="absolute inset-0 z-[1] flex items-center justify-center px-6 text-center">
+                    <span className="font-mono text-xs uppercase tracking-[0.24em] text-muted-foreground">
+                      {t('visualsComingSoon')}
+                    </span>
+                  </div>
+                )}
+                <div className="station-screen-vignette" aria-hidden />
+                {!project.comingSoon ? (
                   <button
                     aria-label="Play showreel"
                     className="absolute inset-0 z-[4] flex items-center justify-center"
@@ -96,7 +100,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
                       <Play className="ml-1 h-6 w-6 fill-current" />
                     </span>
                   </button>
-                )}
+                ) : null}
               </div>
 
               <div className="p-6 sm:p-8">

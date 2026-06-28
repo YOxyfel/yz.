@@ -701,7 +701,7 @@ export function AudioScreenFx({
                   event.stopPropagation()
                   onStop?.()
                 }}
-                className="audio-screen-fx-stop-btn absolute left-1/2 top-[max(1rem,env(safe-area-inset-top))] z-[2] inline-flex -translate-x-1/2 items-center gap-2 rounded-full border border-rose-400/45 bg-[oklch(0.08_0.012_270/0.94)] px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.18em] text-rose-100 shadow-[0_8px_32px_-8px_oklch(0_0_0/0.85)]"
+                className="audio-screen-fx-stop-btn absolute left-1/2 top-[max(1rem,env(safe-area-inset-top))] z-[2] inline-flex -translate-x-1/2 items-center gap-2 rounded-full border border-rose-400/45 bg-[oklch(0.12_0.04_285/0.94)] px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.18em] text-rose-100 shadow-[0_8px_32px_-8px_oklch(0_0_0/0.85)]"
               >
                 <Square className="h-3.5 w-3.5 fill-current" />
                 Stop

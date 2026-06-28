@@ -6,22 +6,7 @@ import { useCallback, useRef, useState } from 'react'
 import { SectionHeading } from './section-heading'
 import { StationChip, StationPanel, StationScreen, StationSection } from './station-console'
 import { useDeviceProfile } from './device-profile'
-import { githubShowcase, webProjects } from './web-projects-data'
-
-const stack = [
-  'WordPress',
-  'CSS',
-  'HTML',
-  'JavaScript',
-  'Java',
-  'C++',
-  'C#',
-  'Lua',
-  'Figma',
-  'GitHub',
-  'Cursor',
-  'AI-assisted pipelines',
-]
+import { webProjects } from './web-projects-data'
 
 const accentPanelClass: Record<(typeof webProjects)[number]['accent'], string> = {
   cyan: 'station-card-accent-cyan',
@@ -33,6 +18,19 @@ const accentText: Record<(typeof webProjects)[number]['accent'], string> = {
   cyan: 'text-cyan',
   violet: 'text-violet',
   amber: 'text-amber-300',
+}
+
+const accentScreenRing: Record<(typeof webProjects)[number]['accent'], string> = {
+  cyan: 'shadow-[0_14px_46px_-18px_oklch(0.62_0.13_220/0.55)] transition-shadow duration-500 group-hover:shadow-[0_22px_64px_-14px_oklch(0.68_0.16_220/0.9)]',
+  violet:
+    'shadow-[0_14px_46px_-18px_oklch(0.55_0.14_285/0.55)] transition-shadow duration-500 group-hover:shadow-[0_22px_64px_-14px_oklch(0.66_0.16_285/0.95)]',
+  amber: 'shadow-[0_14px_46px_-18px_oklch(0.7_0.14_80/0.5)] transition-shadow duration-500 group-hover:shadow-[0_22px_64px_-14px_oklch(0.78_0.16_80/0.85)]',
+}
+
+const accentCta: Record<(typeof webProjects)[number]['accent'], string> = {
+  cyan: 'border-[oklch(0.7_0.13_220/0.55)] text-[oklch(0.88_0.1_220)]',
+  violet: 'border-[oklch(0.72_0.14_285/0.55)] text-[oklch(0.88_0.1_285)]',
+  amber: 'border-[oklch(0.78_0.14_80/0.55)] text-[oklch(0.88_0.12_80)]',
 }
 
 function WebProjectCard({
@@ -58,8 +56,28 @@ function WebProjectCard({
           backLabel="WEB-MOD"
           className={`flex h-full flex-col ${accentPanelClass[project.accent]}`}
         >
-          <StationScreen className="relative aspect-[16/10]">
-            {project.preview ? (
+          <StationScreen className={`relative aspect-[16/10] overflow-hidden ${accentScreenRing[project.accent]}`}>
+            {/* Faux browser chrome — reads as a real, live site */}
+            <div className="absolute inset-x-0 top-0 z-[5] flex items-center border-b border-white/10 bg-[oklch(0.16_0.03_286)] px-3 py-2">
+              <span className="truncate font-mono text-[10px] tracking-wide text-foreground/75">
+                {project.domain}
+              </span>
+            </div>
+
+            {project.embed ? (
+              <div className="absolute inset-0 top-[34px] z-[1] overflow-hidden bg-[oklch(0.08_0.03_286)]">
+                <iframe
+                  src={project.embed}
+                  title={`${project.title} live preview`}
+                  loading="lazy"
+                  tabIndex={-1}
+                  aria-hidden
+                  scrolling="no"
+                  sandbox="allow-scripts allow-same-origin"
+                  className="pointer-events-none absolute left-0 top-0 h-[250%] w-[250%] origin-top-left border-0 [transform:scale(0.4)]"
+                />
+              </div>
+            ) : project.preview ? (
               <Image
                 src={project.preview}
                 alt={`${project.title} website preview`}
@@ -75,8 +93,27 @@ function WebProjectCard({
                 </p>
               </div>
             )}
+
             <div className="station-screen-vignette" aria-hidden />
-            <StationChip className="station-screen-badge absolute right-3 top-3">Live uplink</StationChip>
+
+            {/* Hover call-to-action rising from the base */}
+            <div className="absolute inset-x-0 bottom-0 top-[34px] z-[3] flex items-end justify-center bg-gradient-to-t from-[oklch(0.07_0.02_286/0.9)] via-[oklch(0.07_0.02_286/0.15)] to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+              <span
+                className={`mb-4 inline-flex items-center gap-1.5 rounded-full border bg-[oklch(0.12_0.03_286/0.85)] px-4 py-2 font-mono text-[11px] uppercase tracking-wider backdrop-blur-md ${accentCta[project.accent]}`}
+              >
+                Visit live site
+                <ArrowUpRight className="h-3.5 w-3.5" />
+              </span>
+            </div>
+
+            {/* Live indicator badge */}
+            <span className="absolute right-3 top-12 z-[4] inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-[oklch(0.1_0.025_286/0.8)] px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-foreground/90 backdrop-blur-md">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[oklch(0.8_0.18_150)] opacity-75" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[oklch(0.8_0.18_150)]" />
+              </span>
+              {project.embed ? 'Live' : 'Online'}
+            </span>
           </StationScreen>
 
           <div className="station-screen-body flex flex-1 flex-col">
@@ -106,17 +143,18 @@ function WebProjectCard({
   )
 }
 
-function WebProjectsCarousel() {
+function WebProjectsCarousel({ animate = true }: { animate?: boolean }) {
   const [index, setIndex] = useState(0)
   const touchStartX = useRef<number | null>(null)
+  const count = webProjects.length
 
   const goPrev = useCallback(() => {
-    setIndex((current) => (current - 1 + webProjects.length) % webProjects.length)
-  }, [])
+    setIndex((current) => (current - 1 + count) % count)
+  }, [count])
 
   const goNext = useCallback(() => {
-    setIndex((current) => (current + 1) % webProjects.length)
-  }, [])
+    setIndex((current) => (current + 1) % count)
+  }, [count])
 
   const onTouchStart = (event: React.TouchEvent) => {
     touchStartX.current = event.touches[0]?.clientX ?? null
@@ -134,106 +172,103 @@ function WebProjectsCarousel() {
   }
 
   return (
-    <div className="web-projects-carousel mt-14">
-      <div
-        className="relative overflow-hidden rounded-[1rem] border border-[var(--station-bezel)]/50 bg-[var(--station-hull-dark)]/40 p-1 shadow-[inset_0_1px_0_oklch(0.5_0.04_245/0.2),0_12px_36px_-16px_oklch(0_0_0/0.75)]"
-        onTouchStart={onTouchStart}
-        onTouchEnd={onTouchEnd}
-      >
-        <WebProjectCard project={webProjects[index]!} flipDelay={0} />
-      </div>
+    <div className="web-projects-carousel relative mt-14 w-full">
+      <div className="relative">
+        {/* Soft nebula aura drifting behind the card */}
+        <div
+          className="pointer-events-none absolute -inset-6 -z-10 rounded-[2.5rem] bg-[radial-gradient(60%_55%_at_50%_45%,oklch(0.45_0.13_285/0.22),transparent_72%)] blur-2xl"
+          aria-hidden
+        />
 
-      <div className="mt-4 flex items-center justify-between gap-3">
+        <div
+          className="relative overflow-hidden rounded-[1.4rem]"
+          onTouchStart={onTouchStart}
+          onTouchEnd={onTouchEnd}
+        >
+          <div
+            className={`flex ${animate ? 'transition-transform duration-700 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)]' : ''}`}
+            style={{ transform: `translateX(-${index * 100}%)` }}
+          >
+            {webProjects.map((project) => (
+              <div key={project.id} className="w-full shrink-0 px-0.5 pb-1" aria-hidden={project.id !== webProjects[index]!.id}>
+                <WebProjectCard project={project} flipDelay={0} />
+              </div>
+            ))}
+          </div>
+
+          {/* Cinematic edge scrims — the card dissolves into the void */}
+          <div
+            className="pointer-events-none absolute inset-y-0 left-0 z-20 w-20 bg-gradient-to-r from-[oklch(0.07_0.025_286/0.8)] via-[oklch(0.07_0.025_286/0.25)] to-transparent sm:w-28"
+            aria-hidden
+          />
+          <div
+            className="pointer-events-none absolute inset-y-0 right-0 z-20 w-20 bg-gradient-to-l from-[oklch(0.07_0.025_286/0.8)] via-[oklch(0.07_0.025_286/0.25)] to-transparent sm:w-28"
+            aria-hidden
+          />
+        </div>
+
         <button
           type="button"
           onClick={goPrev}
           aria-label="Previous project"
-          className="station-button station-button-secondary !h-10 !w-10 !p-0"
+          className="group/arrow absolute left-2 top-1/2 z-30 grid h-12 w-12 -translate-y-1/2 place-items-center rounded-full transition-transform duration-300 hover:scale-110 active:scale-95 sm:left-4 sm:h-14 sm:w-14"
         >
-          <ChevronLeft className="h-5 w-5" />
+          <span
+            className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_center,oklch(0.7_0.13_285/0.4),transparent_68%)] opacity-50 blur-md transition-opacity duration-300 group-hover/arrow:opacity-100"
+            aria-hidden
+          />
+          <span
+            className="absolute inset-1.5 rounded-full border border-[oklch(0.7_0.12_285/0.22)] bg-[oklch(0.12_0.03_286/0.45)] backdrop-blur-sm transition-colors duration-300 group-hover/arrow:border-[oklch(0.78_0.14_285/0.6)]"
+            aria-hidden
+          />
+          <ChevronLeft className="relative h-5 w-5 text-[oklch(0.88_0.07_285)] drop-shadow-[0_0_8px_oklch(0.72_0.14_285/0.85)] transition-transform duration-300 group-hover/arrow:-translate-x-1" />
         </button>
-
-        <div className="flex flex-1 items-center justify-center gap-1.5">
-          {webProjects.map((project, dotIndex) => (
-            <button
-              key={project.id}
-              type="button"
-              aria-label={`Show ${project.title}`}
-              aria-current={dotIndex === index}
-              onClick={() => setIndex(dotIndex)}
-              className={`h-1.5 rounded-full transition-all ${
-                dotIndex === index
-                  ? 'w-6 bg-cyan shadow-[0_0_10px_var(--cyan)]'
-                  : 'w-1.5 bg-[var(--station-bezel)]'
-              }`}
-            />
-          ))}
-        </div>
 
         <button
           type="button"
           onClick={goNext}
           aria-label="Next project"
-          className="station-button station-button-secondary !h-10 !w-10 !p-0"
+          className="group/arrow absolute right-2 top-1/2 z-30 grid h-12 w-12 -translate-y-1/2 place-items-center rounded-full transition-transform duration-300 hover:scale-110 active:scale-95 sm:right-4 sm:h-14 sm:w-14"
         >
-          <ChevronRight className="h-5 w-5" />
+          <span
+            className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_center,oklch(0.7_0.13_285/0.4),transparent_68%)] opacity-50 blur-md transition-opacity duration-300 group-hover/arrow:opacity-100"
+            aria-hidden
+          />
+          <span
+            className="absolute inset-1.5 rounded-full border border-[oklch(0.7_0.12_285/0.22)] bg-[oklch(0.12_0.03_286/0.45)] backdrop-blur-sm transition-colors duration-300 group-hover/arrow:border-[oklch(0.78_0.14_285/0.6)]"
+            aria-hidden
+          />
+          <ChevronRight className="relative h-5 w-5 text-[oklch(0.88_0.07_285)] drop-shadow-[0_0_8px_oklch(0.72_0.14_285/0.85)] transition-transform duration-300 group-hover/arrow:translate-x-1" />
         </button>
       </div>
 
-      <p className="mt-2 text-center font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-        {String(index + 1).padStart(2, '0')} / {String(webProjects.length).padStart(2, '0')}
-      </p>
-    </div>
-  )
-}
+      {/* Constellation progress */}
+      <div className="mt-8 flex items-center justify-center gap-3">
+        {webProjects.map((project, dotIndex) => (
+          <button
+            key={project.id}
+            type="button"
+            aria-label={`Show ${project.title}`}
+            aria-current={dotIndex === index}
+            onClick={() => setIndex(dotIndex)}
+            className="group/dot grid h-5 w-5 place-items-center"
+          >
+            <span
+              className={`rounded-full transition-all duration-500 ${
+                dotIndex === index
+                  ? 'h-2.5 w-2.5 bg-[oklch(0.85_0.11_285)] shadow-[0_0_14px_3px_oklch(0.72_0.14_285/0.7)]'
+                  : 'h-1.5 w-1.5 bg-[oklch(0.55_0.05_285/0.55)] group-hover/dot:h-2 group-hover/dot:w-2 group-hover/dot:bg-[oklch(0.75_0.1_285/0.8)]'
+              }`}
+            />
+          </button>
+        ))}
+      </div>
 
-function GitHubShowcaseCard() {
-  return (
-    <div className="mt-14">
-      <a
-        href={githubShowcase.href}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="group block"
-      >
-        <StationPanel
-          variant="display"
-          interactive
-          fill
-          flipDelay={0.12}
-          backLabel="GIT-UPLINK"
-        >
-          <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:gap-8">
-            <StationScreen className="station-screen-hover-soft relative min-h-[220px] lg:min-h-[280px]">
-              <Image
-                src={githubShowcase.preview}
-                alt="GitHub profile preview"
-                fill
-                unoptimized
-                className="relative z-[1] object-cover object-top"
-                sizes="(max-width: 1024px) 100vw, 55vw"
-              />
-              <div className="station-screen-vignette" aria-hidden />
-            </StationScreen>
-            <div className="relative z-[2] flex flex-col justify-center rounded-[0.4rem] bg-[var(--station-hull-dark)] px-5 py-6 sm:px-6 lg:px-8 lg:py-8">
-              <p className="station-readout-label">Open source uplink</p>
-              <h3 className="font-heading mt-2 text-2xl font-bold tracking-tight">
-                {githubShowcase.title}
-              </h3>
-              <p className="mt-1 font-mono text-sm text-muted-foreground">
-                {githubShowcase.handle}
-              </p>
-              <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-                {githubShowcase.description}
-              </p>
-              <span className="mt-5 inline-flex w-fit items-center gap-2 font-mono text-xs uppercase tracking-wider text-cyan">
-                View profile
-                <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-              </span>
-            </div>
-          </div>
-        </StationPanel>
-      </a>
+      <p className="mt-3 text-center font-mono text-[10px] uppercase tracking-[0.32em] text-muted-foreground">
+        <span className="text-[oklch(0.82_0.1_285)]">{String(index + 1).padStart(2, '0')}</span>
+        <span className="mx-2 text-[oklch(0.7_0.12_285)]">✦</span>
+        {String(count).padStart(2, '0')}
+      </p>
     </div>
   )
 }
@@ -244,7 +279,7 @@ type WebStackSectionProps = {
 }
 
 export function WebStackSection({ embedded = false }: WebStackSectionProps = {}) {
-  const { mobilePerfCut, isNarrow } = useDeviceProfile()
+  const { mobilePerfCut } = useDeviceProfile()
 
   const projectsGrid = mobilePerfCut ? (
     <div className={`${embedded ? 'mt-2' : 'mt-14'} grid gap-6`}>
@@ -252,35 +287,12 @@ export function WebStackSection({ embedded = false }: WebStackSectionProps = {})
         <WebProjectCard key={project.id} project={project} flipDelay={0} />
       ))}
     </div>
-  ) : isNarrow ? (
-    <WebProjectsCarousel />
   ) : (
-    <div className={`${embedded ? 'mt-2' : 'mt-14'} grid gap-6 sm:grid-cols-2 lg:grid-cols-4`}>
-      {webProjects.map((project, index) => (
-        <WebProjectCard key={project.id} project={project} flipDelay={index * 0.08} />
-      ))}
-    </div>
-  )
-
-  const stackChips = (
-    <div className="mt-14 flex flex-wrap justify-center gap-3">
-      {stack.map((item) => (
-        <StationChip key={item} className="whitespace-nowrap !px-5 !py-2.5 !text-xs">
-          <span className="station-led station-led-cyan station-led-on" />
-          {item}
-        </StationChip>
-      ))}
-    </div>
+    <WebProjectsCarousel />
   )
 
   if (embedded) {
-    return (
-      <div className="web-stack-embedded">
-        {projectsGrid}
-        <GitHubShowcaseCard />
-        {stackChips}
-      </div>
-    )
+    return <div className="web-stack-embedded">{projectsGrid}</div>
   }
 
   return (
@@ -294,10 +306,6 @@ export function WebStackSection({ embedded = false }: WebStackSectionProps = {})
       />
 
       {projectsGrid}
-
-      <GitHubShowcaseCard />
-
-      {stackChips}
     </StationSection>
   )
 }

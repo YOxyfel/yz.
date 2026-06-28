@@ -17,10 +17,10 @@ export type ArtPiece = {
 export const artPieces: ArtPiece[] = [
   {
     id: 'wang-lin',
-    title: 'Wang Cultivator MC',
+    title: 'Wan&Lin Immortals MC',
     role: 'Protagonist',
     description:
-      'Protagonist character sheet for Wang Cultivator—gallery notes and lore breakdown coming soon.',
+      'Protagonist character sheet for Wan&Lin Immortals—gallery notes and lore breakdown coming soon.',
     theme: 'xianxia',
     folder: 'Wang Lin',
     views: multiviewPaths('Wang Lin'),
@@ -29,10 +29,10 @@ export const artPieces: ArtPiece[] = [
   },
   {
     id: 'situ-nan',
-    title: 'Wang Cultivator Villain',
+    title: 'Wan&Lin Immortals Villain',
     role: 'Antagonist',
     description:
-      'Antagonist character sheet for Wang Cultivator—full character notes on the way.',
+      'Antagonist character sheet for Wan&Lin Immortals—full character notes on the way.',
     theme: 'xianxia',
     folder: 'Situ Nan',
     views: multiviewPaths('Situ Nan'),
@@ -41,10 +41,10 @@ export const artPieces: ArtPiece[] = [
   },
   {
     id: 'li-muwan',
-    title: 'Wang Cultivator Maiden',
+    title: 'Wan&Lin Immortals Maiden',
     role: 'Lead maiden',
     description:
-      'Lead maiden character sheet for Wang Cultivator—profile write-up coming soon.',
+      'Lead maiden character sheet for Wan&Lin Immortals—profile write-up coming soon.',
     theme: 'xianxia',
     folder: 'Li Muwan',
     views: multiviewPaths('Li Muwan'),

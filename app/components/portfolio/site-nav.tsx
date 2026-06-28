@@ -30,8 +30,6 @@ import { useConstellationChrome } from './constellation-context'
 import { useNavScrolled } from './use-nav-scrolled'
 import { SiteFxControls } from './site-fx-controls'
 import { StationButton, StationLed } from './station-console'
-import { SiteVariantPicker } from './site-variant-picker'
-
 const pageLinks = [
   { href: '/about', key: 'about' as const },
   { href: '/services', key: 'services' as const },
@@ -207,11 +205,6 @@ export function SiteNav() {
   const mobileTools = (
     <div className={linksInMenu ? 'site-nav-mobile-tools mt-6 border-t border-[var(--station-bezel)]/35 pt-5' : 'site-nav-mobile-tools'}>
       <SiteFxControls embedded />
-
-      <div className="mt-4">
-        <p className="site-nav-mobile-section-label mb-2">{t('themes')}</p>
-        <SiteVariantPicker className="station-nav-theme-menu flex flex-col gap-2" />
-      </div>
 
       <button
         type="button"
