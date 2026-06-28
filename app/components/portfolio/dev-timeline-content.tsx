@@ -47,22 +47,31 @@ export function DevTimelineContent() {
   const goTo = useCallback((idx: number) => {
     const clamped = Math.max(0, Math.min(devTimeline.length - 1, idx))
     setActive(clamped)
-    const node = stepRefs.current[clamped]
-    if (node) {
-      lockRef.current = true
-      // Compute the centred scroll target manually — smooth scrollIntoView is
-      // unreliable when scrolling upward from the bottom (it can stick at max
-      // scroll), which left the last version unreachable via the controls.
-      const rect = node.getBoundingClientRect()
-      const target = Math.max(
-        0,
-        rect.top + window.scrollY - (window.innerHeight - rect.height) / 2
-      )
-      window.scrollTo({ top: target, behavior: 'smooth' })
-      window.setTimeout(() => {
-        lockRef.current = false
-      }, 800)
-    }
+    lockRef.current = true
+    // Defer the scroll past React's commit. Jumping to the first/last entry
+    // disables the Prev/Next button that was just clicked; that re-render plus
+    // the focus blur on the now-disabled button cancels a smooth scroll issued
+    // in the same tick, which left the ring rotated but the detail panel stuck
+    // on the previous entry. Running it on the next frame lets the commit
+    // settle first so the scroll actually sticks.
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const node = stepRefs.current[clamped]
+        if (!node) return
+        // Compute the centred scroll target manually — smooth scrollIntoView is
+        // unreliable when scrolling upward from the bottom (it can stick at max
+        // scroll), which left the last version unreachable via the controls.
+        const rect = node.getBoundingClientRect()
+        const target = Math.max(
+          0,
+          rect.top + window.scrollY - (window.innerHeight - rect.height) / 2
+        )
+        window.scrollTo({ top: target, behavior: 'smooth' })
+      })
+    })
+    window.setTimeout(() => {
+      lockRef.current = false
+    }, 900)
   }, [])
 
   const current = entries[active]

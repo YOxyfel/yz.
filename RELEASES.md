@@ -1,5 +1,40 @@
 # Release history
 
+## V3.2.3 (`v3.2.3`)
+
+**Saved:** real fix for the timeline detail panel desync on the last version.
+
+| | |
+|---|---|
+| **Git tag** | `v3.2.3` |
+| **Production URL** | https://yanezhekov.dev |
+
+### What this version includes
+
+- **Timeline last-item desync fix**: clicking the **Next** arrow into the final
+  version rotated the ring + counter but left the detail panel stuck on the
+  previous entry (it dampened instead of scrolling into view). Root cause: jumping
+  to the first/last entry disables the very Prev/Next button that was just clicked,
+  and that re-render + focus blur on the now-disabled button **cancelled the smooth
+  scroll** issued in the same tick. `goTo` now defers the `window.scrollTo` to the
+  next animation frame so the commit settles first and the scroll sticks. Verified
+  with real (non-synthetic) arrow clicks: ring, counter, and panel all land on the
+  last version together (`scrollY` centres step 9, `activeIdx === nearestIdx === 8`).
+
+### Revert to V3.2.3
+
+```powershell
+cd D:\999.Personal\Website\website
+git checkout v3.2.3 -- .
+git clean -fd -e .env.local -e node_modules -e .next -e .vercel
+npm install
+npm run build
+```
+
+Or hard reset: `git reset --hard v3.2.3`
+
+---
+
 ## V3.2.2 (`v3.2.2`)
 
 **Saved:** fix the dev timeline controls so the last version is reliably reachable and in sync.
